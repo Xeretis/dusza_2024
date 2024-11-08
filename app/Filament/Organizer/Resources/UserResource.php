@@ -64,7 +64,9 @@ class UserResource extends Resource
                     ->label('Iskola')
                     ->relationship('school', 'name')
                     ->disabled(fn(Forms\Get $get) => $get('role') == UserRole::Organizer->value)
-                    ->native(false),
+                    ->native(false)
+                    ->selectablePlaceholder(false)
+                    ->required(fn(Forms\Get $get) => $get('role') != UserRole::Organizer->value),
             ]);
     }
 
