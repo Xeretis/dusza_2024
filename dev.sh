@@ -4,6 +4,24 @@
 # Not the prettiest script, it is definetely hacked together, but I digress. I mean, it does the job
 # Windows users: My sincere apologies, I don't know powershell
 
-tmux new-session php artisan octane:start --watch \; split-window -h "docker compose up" \; split-window -h "sleep 5 && php artisan horizon" \; split-window -d "pnpm dev" \; split-window -v "while :; do php artisan schedule:run; sleep 60; done" \; attach
+if ! command -v supervisorctl &>/dev/null; then
+    echo "supervisorctl could not be found"
+    echo "Please install supervisor"
+    exit
+fi
+
+if ! command -v unbuffer &>/dev/null; then
+    echo "unbuffer could not be found"
+    echo "Please install expect"
+    exit
+fi
+
+if ! command -v docker &>/dev/null; then
+    echo "docker could not be found"
+    echo "Please install docker"
+    exit
+fi
+
+supervisord -c supervisord.conf
 
 docker compose down --volumes -t 00
