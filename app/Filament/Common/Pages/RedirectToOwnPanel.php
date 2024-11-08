@@ -2,6 +2,7 @@
 
 namespace App\Filament\Common\Pages;
 
+use App\Enums\UserRole;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
 use Illuminate\Routing\Redirector;
@@ -24,9 +25,10 @@ class RedirectToOwnPanel extends Page
         $user = auth()->user();
 
         $url = match ($user->role) {
-            'competitor' => Filament::getPanel('competitor')->getUrl(),
-            'organizer' => Filament::getPanel('organizer')->getUrl(),
-            'school-manager' => Filament::getPanel('school-manager')->getUrl(),
+            UserRole::Competitor => Filament::getPanel('competitor')->getUrl(),
+            UserRole::Organizer => Filament::getPanel('organizer')->getUrl(),
+            UserRole::SchoolManager => Filament::getPanel('school-manager')->getUrl(),
+            UserRole::Teacher => Filament::getPanel('teacher')->getUrl()
         };
 
         return redirect($url);
