@@ -14,7 +14,8 @@
         "laravel/octane": "^2.5",
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.5",
-        "predis/predis": "^2.2"
+        "predis/predis": "^2.2",
+        "spatie/laravel-settings": "^3.4"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.14",
