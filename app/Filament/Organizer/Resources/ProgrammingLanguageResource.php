@@ -2,7 +2,6 @@
 
 namespace App\Filament\Organizer\Resources;
 
-use App\Filament\Organizer\Resources\CategoryResource\RelationManagers\TeamsRelationManager;
 use App\Filament\Organizer\Resources\ProgrammingLanguageResource\Pages;
 use App\Filament\Organizer\Resources\ProgrammingLanguageResource\RelationManagers;
 use App\Models\ProgrammingLanguage;
@@ -26,6 +25,10 @@ class ProgrammingLanguageResource extends Resource
     protected static ?string $label = 'programozási nyelv';
 
     protected static ?string $pluralLabel = 'programozási nyelvek';
+
+    protected static ?string $navigationGroup = 'Verseny';
+
+    protected static ?int $navigationSort = 1;
 
 
     public static function form(Form $form): Form
@@ -85,7 +88,7 @@ class ProgrammingLanguageResource extends Resource
 
     public static function getRelations(): array
     {
-        return [TeamsRelationManager::class];
+        return [RelationManagers\TeamsRelationManager::class];
     }
 
     public static function getPages(): array

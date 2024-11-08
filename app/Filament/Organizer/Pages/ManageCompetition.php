@@ -19,6 +19,10 @@ class ManageCompetition extends SettingsPage
 
     protected static ?string $title = 'Verseny kezelése';
 
+    protected static ?string $navigationGroup = 'Verseny';
+
+    protected static ?int $navigationSort = 3;
+
     public function getFormActions(): array
     {
         return [
