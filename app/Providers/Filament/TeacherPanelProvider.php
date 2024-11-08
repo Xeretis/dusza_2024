@@ -18,30 +18,23 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-class SchoolManagerPanelProvider extends PanelProvider
+class TeacherPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->id("school-manager")
-            ->path("school-manager")
-            ->viteTheme("resources/css/filament/school-manager/theme.css")
+            ->id('teacher')
+            ->path('teacher')
+            ->viteTheme('resources/css/filament/teacher/theme.css')
             ->colors([
-                "primary" => Color::Amber,
+                'primary' => Color::Amber,
             ])
-            ->discoverResources(
-                in: app_path("Filament/SchoolManager/Resources"),
-                for: "App\\Filament\\SchoolManager\\Resources"
-            )
-            ->discoverPages(
-                in: app_path("Filament/SchoolManager/Pages"),
-                for: "App\\Filament\\SchoolManager\\Pages"
-            )
-            ->pages([Pages\Dashboard::class])
-            ->discoverWidgets(
-                in: app_path("Filament/SchoolManager/Widgets"),
-                for: "App\\Filament\\SchoolManager\\Widgets"
-            )
+            ->discoverResources(in: app_path('Filament/Teacher/Resources'), for: 'App\\Filament\\Teacher\\Resources')
+            ->discoverPages(in: app_path('Filament/Teacher/Pages'), for: 'App\\Filament\\Teacher\\Pages')
+            ->pages([
+                Pages\Dashboard::class,
+            ])
+            ->discoverWidgets(in: app_path('Filament/Teacher/Widgets'), for: 'App\\Filament\\Teacher\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
@@ -57,6 +50,8 @@ class SchoolManagerPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->authMiddleware([Authenticate::class]);
+            ->authMiddleware([
+                Authenticate::class,
+            ]);
     }
 }

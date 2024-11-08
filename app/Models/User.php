@@ -47,7 +47,7 @@ class User extends Authenticatable
         if ($this->role === UserRole::SchoolManager) {
             return $this->belongsTo(School::class);
         }
-        return null;
+        return $this->competitorProfile()->school();
     }
 
     public function competitorProfile()
