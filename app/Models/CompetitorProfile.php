@@ -13,9 +13,9 @@ class CompetitorProfile extends Model
         "type" => CompetitorProfileType::class,
     ];
 
-    public function team()
+    public function teams()
     {
-        return $this->belongsTo(Team::class);
+        return $this->belongsToMany(Team::class, "team_competitor_profile");
     }
 
     public function user()
@@ -36,17 +36,5 @@ class CompetitorProfile extends Model
     public function isSubstitute(): bool
     {
         return $this->type === CompetitorProfileType::SubstituteStudent;
-    }
-
-    public function pushToUser()
-    {
-        if ($this->user_id === null) {
-            return;
-        }
-
-        $user = $this->user;
-        $user->email = $this->email;
-        $user->name = $this->name;
-        $user->save();
     }
 }

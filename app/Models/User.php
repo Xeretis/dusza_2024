@@ -52,7 +52,14 @@ class User extends Authenticatable
 
     public function competitorProfile()
     {
-        return $this->hasMany(CompetitorProfile::class);
+        if (
+            $this->role !== UserRole::Competitor ||
+            $this->role !== UserRole::Teacher
+        ) {
+            return null;
+        }
+
+        return $this->belongsTo(CompetitorProfile::class);
     }
 
     public function teams()

@@ -11,7 +11,10 @@ class Team extends Model
 
     public function competitorProfiles()
     {
-        return $this->hasMany(CompetitorProfile::class);
+        return $this->belongsToMany(
+            CompetitorProfile::class,
+            "team_competitor_profile"
+        );
     }
 
     public function category()
