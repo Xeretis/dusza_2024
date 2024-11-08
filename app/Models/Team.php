@@ -55,6 +55,11 @@ class Team extends Model
         );
     }
 
+    public function school()
+    {
+        return $this->belongsTo(School::class);
+    }
+
     public function teachers()
     {
         return $this->competitorProfiles()->where(
