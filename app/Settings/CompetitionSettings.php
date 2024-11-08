@@ -2,6 +2,7 @@
 
 namespace App\Settings;
 
+use App\Settings\Casts\CarbonCast;
 use Carbon\Carbon;
 use Spatie\LaravelSettings\Settings;
 use Spatie\LaravelSettings\SettingsCasts\DateTimeInterfaceCast;
@@ -21,8 +22,8 @@ class CompetitionSettings extends Settings
     public static function casts(): array
     {
         return [
-            'registration_deadline' => new DateTimeInterfaceCast(Carbon::class),
-            'registration_cancelled_at' => new DateTimeInterfaceCast(Carbon::class)
+            'registration_deadline' => CarbonCast::class,
+            'registration_cancelled_at' => CarbonCast::class
         ];
     }
 }

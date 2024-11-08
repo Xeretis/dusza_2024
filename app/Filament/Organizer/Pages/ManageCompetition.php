@@ -39,7 +39,6 @@ class ManageCompetition extends SettingsPage
                     ]),
                 Forms\Components\DateTimePicker::make('registration_deadline')
                 ->native(false)
-                ->dehydrateStateUsing(fn (string $state) => Carbon::parse($state)),
             ])->columns(1);
     }
 }
