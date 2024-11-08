@@ -25,7 +25,7 @@ class SchoolManagerPanelProvider extends PanelProvider
         return $panel
             ->id('school-manager')
             ->path('school-manager')
-            ->viteTheme('resources/css/school-manager/common/theme.css')
+            ->viteTheme('resources/css/filament/school-managers/theme.css')
             ->colors([
                 'primary' => Color::Amber,
             ])

@@ -5,14 +5,13 @@ namespace App\Settings;
 use App\Settings\Casts\CarbonCast;
 use Carbon\Carbon;
 use Spatie\LaravelSettings\Settings;
-use Spatie\LaravelSettings\SettingsCasts\DateTimeInterfaceCast;
 
 class CompetitionSettings extends Settings
 {
     public string $name;
     public ?string $description;
-    public string $registration_deadline;
-    public ?string $registration_cancelled_at;
+    public Carbon|string $registration_deadline;
+    public Carbon|string|null $registration_cancelled_at;
 
     public static function group(): string
     {
