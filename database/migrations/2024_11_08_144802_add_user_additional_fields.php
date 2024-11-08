@@ -12,8 +12,8 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table("users", function (Blueprint $table) {
-            $table->string("username");
-            $table->foreignIdFor(School::class, "school_id")->nullable();
+            $table->string("username")->after('id');
+            $table->foreignIdFor(School::class, "school_id")->nullable()->after('role');
         });
     }
 

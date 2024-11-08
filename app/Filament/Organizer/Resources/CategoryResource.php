@@ -3,19 +3,18 @@
 namespace App\Filament\Organizer\Resources;
 
 use App\Filament\Organizer\Resources\CategoryResource\Pages;
-use App\Filament\Organizer\Resources\CategoryResource\RelationManagers;
 use App\Filament\Organizer\Resources\CategoryResource\RelationManagers\TeamsRelationManager;
 use App\Models\Category;
-use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\Split;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CategoryResource extends Resource
 {
@@ -23,9 +22,33 @@ class CategoryResource extends Resource
 
     protected static ?string $navigationIcon = "heroicon-o-tag";
 
+    protected static ?string $label = 'kategória';
+
+    protected static ?string $pluralLabel = 'kategóriák';
+
     public static function form(Form $form): Form
     {
-        return $form->schema([TextInput::make("name")]);
+        return $form->schema([TextInput::make("name")->label('Név')]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist->schema([
+            Split::make([
+                Section::make([
+                    TextEntry::make('name')
+                        ->label('Név'),
+                ])->columns()->grow(),
+                Section::make([
+                    TextEntry::make('created_at')
+                        ->label('Létrehozva')
+                        ->dateTime(),
+                    TextEntry::make('updated_at')
+                        ->label('Frissítve')
+                        ->dateTime(),
+                ])->grow(false),
+            ])->from('md'),
+        ])->columns(false);
     }
 
     public static function table(Table $table): Table
@@ -33,22 +56,28 @@ class CategoryResource extends Resource
         return $table
             ->columns([
                 TextColumn::make("name")
+                    ->label('Név')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Létrehozva')
+                    ->dateTime()
+                    ->since()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Frissítve')
+                    ->dateTime()
+                    ->since()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                DeleteAction::make()->disabled(
-                    fn(Category $record) => $record->teams()->exists()
-                ),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
     }
 
@@ -62,6 +91,7 @@ class CategoryResource extends Resource
         return [
             "index" => Pages\ListCategories::route("/"),
             "create" => Pages\CreateCategory::route("/create"),
+            'view' => Pages\ViewCategory::route('/{record}'),
             "edit" => Pages\EditCategory::route("/{record}/edit"),
         ];
     }
