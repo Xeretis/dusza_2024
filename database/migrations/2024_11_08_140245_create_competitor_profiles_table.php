@@ -17,11 +17,8 @@ return new class extends Migration {
             $table->string("email")->nullable();
             $table->string("name");
             $table->integer("grade")->nullable();
-            $table->foreignIdFor(Team::class, "team_id")->constrained();
-            $table
-                ->foreignIdFor(User::class, "user_id")
-                ->nullable()
-                ->constrained();
+            $table->foreignIdFor(Team::class, "team_id");
+            $table->foreignIdFor(User::class, "user_id")->nullable();
             $table->tinyInteger("type")->default(0);
             $table->timestamps();
         });

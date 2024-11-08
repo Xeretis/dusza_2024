@@ -13,11 +13,7 @@ return new class extends Migration {
     {
         Schema::table("users", function (Blueprint $table) {
             $table->string("username");
-            $table->tinyInteger("role")->default(0);
-            $table
-                ->foreignIdFor(School::class, "school_id")
-                ->nullable()
-                ->constrained();
+            $table->foreignIdFor(School::class, "school_id")->nullable();
         });
     }
 
@@ -28,8 +24,6 @@ return new class extends Migration {
     {
         Schema::table("users", function (Blueprint $table) {
             $table->dropColumn("username");
-            $table->dropColumn("role");
-            $table->dropForeign(["school_id"]);
             $table->dropColumn("school_id");
         });
     }
