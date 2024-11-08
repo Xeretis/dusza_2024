@@ -6,4 +6,4 @@
 
 tmux new-session php artisan octane:start \; split-window -h "docker compose up" \; split-window -h "sleep 5 && php artisan horizon" \; split-window -d "pnpm dev" \; split-window -v "while :; do php artisan schedule:run; sleep 2; done" \; attach
 
-docker-compose down --volumes -t 00
+docker compose down --volumes -t 00
