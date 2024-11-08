@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\Enums\UserRole;
 use App\Models\Team;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class TeamPolicy
 {
@@ -23,12 +22,12 @@ class TeamPolicy
     public function view(User $user, Team $team): bool
     {
         return $user
-            ->teams()
-            ->where("id", $team->id)
-            ->exists() ||
+                ->teams()
+                ->where("id", $team->id)
+                ->exists() ||
             $user->role === UserRole::Organizer ||
             ($user->role === UserRole::SchoolManager &&
-                $team->school->id === $user->school->id);
+                $team->school_id === $user->school_id);
     }
 
     /**
@@ -45,9 +44,9 @@ class TeamPolicy
     public function update(User $user, Team $team): bool
     {
         return $user
-            ->teams()
-            ->where("id", $team->id)
-            ->exists() ||
+                ->teams()
+                ->where("id", $team->id)
+                ->exists() ||
             $user->role === UserRole::Organizer ||
             ($user->role === UserRole::SchoolManager &&
                 $team->school->id === $user->school->id);

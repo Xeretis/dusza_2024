@@ -6,7 +6,6 @@ use App\Enums\CompetitorProfileType;
 use App\Enums\UserRole;
 use App\Models\CompetitorProfile;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class CompetitorProfilePolicy
 {
@@ -24,7 +23,16 @@ class CompetitorProfilePolicy
     public function view(User $user, CompetitorProfile $competitorProfile): bool
     {
         return $user->competitorProfile?->id === $competitorProfile->id ||
-            $user->role === UserRole::Organizer ||
+            $user->role === UserRole::Organizer || (
+                $user->role === UserRole::SchoolManager && $competitorProfile->teams()->whereHas(
+                    function ($query) use ($user) {
+                        $query->where(
+                            "school_id",
+                            $user->school_id
+                        );
+                    }
+                )
+            ) ||
             $competitorProfile
                 ->teams()
                 ->whereHas("competitorProfiles", function ($query) use ($user) {
@@ -48,9 +56,10 @@ class CompetitorProfilePolicy
      * Determine whether the user can update the model.
      */
     public function update(
-        User $user,
+        User              $user,
         CompetitorProfile $competitorProfile
-    ): bool {
+    ): bool
+    {
         return $user->competitorProfile?->id === $competitorProfile->id ||
             $user->role === UserRole::Organizer ||
             ($competitorProfile->type !== CompetitorProfileType::Teacher &&
@@ -71,9 +80,10 @@ class CompetitorProfilePolicy
      * Determine whether the user can delete the model.
      */
     public function delete(
-        User $user,
+        User              $user,
         CompetitorProfile $competitorProfile
-    ): bool {
+    ): bool
+    {
         return $user->role === UserRole::Organizer;
     }
 
@@ -81,9 +91,10 @@ class CompetitorProfilePolicy
      * Determine whether the user can restore the model.
      */
     public function restore(
-        User $user,
+        User              $user,
         CompetitorProfile $competitorProfile
-    ): bool {
+    ): bool
+    {
         return $user->role === UserRole::Organizer;
     }
 
@@ -91,9 +102,10 @@ class CompetitorProfilePolicy
      * Determine whether the user can permanently delete the model.
      */
     public function forceDelete(
-        User $user,
+        User              $user,
         CompetitorProfile $competitorProfile
-    ): bool {
+    ): bool
+    {
         return $user->role === UserRole::Organizer;
     }
 }

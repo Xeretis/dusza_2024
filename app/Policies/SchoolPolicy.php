@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\Enums\UserRole;
 use App\Models\School;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class SchoolPolicy
 {
@@ -39,7 +38,7 @@ class SchoolPolicy
     public function update(User $user, School $school): bool
     {
         return ($user->role === UserRole::SchoolManager &&
-            $user->school->id === $school->id) ||
+                $user->school_id === $school->id) ||
             $user->role === UserRole::Organizer;
     }
 

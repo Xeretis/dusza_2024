@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\Enums\UserRole;
 use App\Models\TeamEvent;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class TeamEventPolicy
 {
@@ -44,14 +43,14 @@ class TeamEventPolicy
     public function update(User $user, TeamEvent $teamEvent): bool
     {
         return $user
-            ->teams()
-            ->whereHas("events", function ($query) use ($teamEvent) {
-                $query->where("id", $teamEvent->id);
-            })
-            ->exists() ||
+                ->teams()
+                ->whereHas("events", function ($query) use ($teamEvent) {
+                    $query->where("id", $teamEvent->id);
+                })
+                ->exists() ||
             $user->role === UserRole::Organizer ||
             ($user->role === UserRole::SchoolManager &&
-                $teamEvent->team->school->id === $user->school->id);
+                $teamEvent->team->school_id === $user->school_id);
     }
 
     /**
