@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\School;
+use App\Models\Team;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,9 +11,8 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table("users", function (Blueprint $table) {
-            $table->string("username")->after('id');
-            $table->foreignIdFor(School::class, "school_id")->nullable()->after('role');
+        Schema::table("competitor_profiles", function (Blueprint $table) {
+            $table->dropColumn("team_id");
         });
     }
 
@@ -22,9 +21,8 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table("users", function (Blueprint $table) {
-            $table->dropColumn("username");
-            $table->dropColumn("school_id");
+        Schema::table("competitor_profiles", function (Blueprint $table) {
+            $table->foreignIdFor(Team::class, "team_id");
         });
     }
 };

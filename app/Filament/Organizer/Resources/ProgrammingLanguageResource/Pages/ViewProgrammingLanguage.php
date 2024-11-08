@@ -3,22 +3,17 @@
 namespace App\Filament\Organizer\Resources\ProgrammingLanguageResource\Pages;
 
 use App\Filament\Organizer\Resources\ProgrammingLanguageResource;
-use App\Models\ProgrammingLanguage;
 use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\ViewRecord;
 
-class EditProgrammingLanguage extends EditRecord
+class ViewProgrammingLanguage extends ViewRecord
 {
     protected static string $resource = ProgrammingLanguageResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make()->disabled(
-                fn(ProgrammingLanguage $record) => $record
-                    ->teams()
-                    ->exists()
-            ),
+            Actions\EditAction::make(),
         ];
     }
 }

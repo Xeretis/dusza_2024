@@ -15,10 +15,15 @@ class ManageCompetition extends SettingsPage
 
     protected static string $settings = CompetitionSettings::class;
 
+    protected static ?string $navigationLabel = 'Verseny Kezelése';
+
+    protected static ?string $title = 'Verseny kezelése';
+
     public function getFormActions(): array
     {
         return [
             Action::make('endRegistration')
+                ->label('Jelentkezés lezárása')
                 ->icon('heroicon-m-x-circle')
                 ->color('danger')
                 ->requiresConfirmation()
@@ -27,6 +32,7 @@ class ManageCompetition extends SettingsPage
                     $settings->save();
                 })->visible(fn(CompetitionSettings $settings) => $settings->registration_cancelled_at == null),
             Action::make('resumeRegistration')
+                ->label('Jelentkezés megnyitása')
                 ->icon('heroicon-m-check-circle')
                 ->color('success')
                 ->requiresConfirmation()
@@ -42,8 +48,10 @@ class ManageCompetition extends SettingsPage
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name'),
+                Forms\Components\TextInput::make('name')
+                    ->label('Verseny neve'),
                 Forms\Components\RichEditor::make('description')
+                    ->label('Verseny leírása')
                     ->fileAttachmentsDisk('public')
                     ->toolbarButtons([
                         'attachFiles',
@@ -63,8 +71,10 @@ class ManageCompetition extends SettingsPage
                         'undo',
                     ]),
                 Forms\Components\DateTimePicker::make('registration_deadline')
+                    ->label('A jelentkezés határideje')
                     ->native(false),
                 Forms\Components\Placeholder::make('registrations_open')
+                    ->label('A jelentkezés állapota')
                     ->content(fn(CompetitionSettings $settings) => Carbon::parse($settings->registration_deadline)->isAfter(now()) && $settings->registration_cancelled_at == null ? 'Engedélyezett' : 'Tiltott')
             ])->columns(1);
     }
