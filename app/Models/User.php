@@ -12,11 +12,12 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 class User extends Authenticatable implements FilamentUser, HasName
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRelationships;
 
     /**
      * The attributes that are mass assignable.
@@ -44,7 +45,7 @@ class User extends Authenticatable implements FilamentUser, HasName
 
     public function teams()
     {
-        return $this->hasManyThrough(Team::class, CompetitorProfile::class);
+        return $this->hasManyDeep(Team::class, [CompetitorProfile::class, 'team_competitor_profile']);
     }
 
     public function getFilamentName(): string

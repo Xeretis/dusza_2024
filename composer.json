@@ -17,7 +17,8 @@
         "livewire/livewire": "^3.5",
         "predis/predis": "^2.2",
         "spatie/laravel-data": "^4.11",
-        "spatie/laravel-settings": "^3.4"
+        "spatie/laravel-settings": "^3.4",
+        "staudenmeir/eloquent-has-many-deep": "^1.7"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.14",
