@@ -1,0 +1,52 @@
+name: Build projekt_neve_itt Docker image
+on: "workflow_dispatch"
+jobs:
+  build-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          #extensions: imagick, swoole
+      - name: Checkout master
+        uses: actions/checkout@v3
+      - name: ls
+        run: ls
+      - name: Install Composer
+        run: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+      - name: Copy .env
+        run: cp ci/.env.ci .env
+      - name: Replace secrets in .env
+        run: |
+          sed -i "s@__APP_KEY__.*@${{ secrets.APP_KEY }}@g" .env
+          sed -i "s@__DB_DATABASE__.*@${{ secrets.DB_DATABASE }}@g" .env
+          sed -i "s@__DB_USERNAME__.*@${{ secrets.DB_USERNAME }}@g" .env
+          sed -i "s@__DB_PASSWORD__.*@${{ secrets.DB_PASSWORD }}@g" .env
+          sed -i "s@__REVERB_APP_KEY__.*@${{ secrets.REVERB_APP_KEY }}@g" .env
+          sed -i "s@__REVERB_APP_SECRET__.*@${{ secrets.REVERB_APP_SECRET }}@g" .env
+      - name: Update Dependencies
+        run: composer update
+      - name: Build Larawhale
+        run: bash ./ci/build.sh
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: TODO
+          draft: true
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./dist/larawhale_linux-x86_64
+          asset_name: larawhale_linux-x86_64
+          asset_content_type: application/octet-stream
