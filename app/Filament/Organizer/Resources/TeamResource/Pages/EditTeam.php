@@ -89,10 +89,11 @@ class EditTeam extends EditRecord
                 ->toArray()
         );
 
+
         // Update teacher associations (many to many)
         if (isset($data["teachers"])) {
             $record->teachers()->detach();
-            $record->teachers()->sync($data["teachers"]);
+            $record->teachers()->sync(collect($data["teachers"])->map(fn($t) => $t['id'])->toArray());
         }
 
         // Update competitor1
@@ -106,7 +107,8 @@ class EditTeam extends EditRecord
     protected function updateCompetitor(
         Model $record,
         array $competitorData
-    ): void {
+    ): void
+    {
         // Check if competitor ID is null
         if ($competitorData["id"] == null) {
             // Create a new competitor profile
