@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Guava\FilamentKnowledgeBase\Filament\Panels\KnowledgeBasePanel;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +12,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        KnowledgeBasePanel::configureUsing(
+            fn(KnowledgeBasePanel $panel) => $panel
+                ->viteTheme('resources/css/filament/common/theme.css')
+                ->guestAccess()
+        );
     }
 
     /**

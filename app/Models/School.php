@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use Database\Factories\SchoolFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class School extends BaseModel
 {
-
+    /** @use HasFactory<SchoolFactory> */
     use HasFactory;
 
     protected $guarded = [];

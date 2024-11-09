@@ -9,6 +9,7 @@
         "barryvdh/laravel-ide-helper": "^3.2",
         "filament/filament": "^3.2",
         "filament/spatie-laravel-settings-plugin": "^3.2",
+        "guava/filament-knowledge-base": "^1.10",
         "laravel-lang/common": "^6.4",
         "laravel/framework": "^11.9",
         "laravel/horizon": "^5.29",
