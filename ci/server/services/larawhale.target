@@ -1,0 +1,6 @@
+[Unit]
+Description=Larawhale's Services
+Requires=multi-user.target default.target
+Conflicts=rescue.service rescue.target
+After=multi-user.target default.target
+AllowIsolate=yes
