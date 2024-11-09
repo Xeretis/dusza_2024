@@ -91,6 +91,7 @@ class EditTeam extends EditRecord
 
         // Update teacher associations (many to many)
         if (isset($data["teachers"])) {
+            $record->teachers()->detach();
             $record->teachers()->sync($data["teachers"]);
         }
 
@@ -125,10 +126,15 @@ class EditTeam extends EditRecord
             // Attach the competitor profile to the record
             $competitorProfile->teams()->attach($record->id);
         } elseif (empty($competitorData["name"])) {
-            CompetitorProfile::where("id", $competitorData["id"])->delete();
+            $competitorProfile = CompetitorProfile::whereId(
+                $competitorData["id"]
+            )->delete();
         } else {
-            // Update existing competitor profile
-            CompetitorProfile::where("id", $competitorData["id"])->update(
+            $competitorProfile = CompetitorProfile::whereId(
+                $competitorData["id"]
+            )->first();
+
+            $competitorProfile->update(
                 collect($competitorData)
                     ->forget(["id"])
                     ->toArray()
