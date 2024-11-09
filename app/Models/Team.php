@@ -9,17 +9,14 @@ class Team extends Model
 {
     protected $guarded = [];
 
-    public function competitorProfiles()
-    {
-        return $this->belongsToMany(
-            CompetitorProfile::class,
-            "team_competitor_profile"
-        );
-    }
-
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function programmingLanguage()
+    {
+        return $this->belongsTo(ProgrammingLanguage::class);
     }
 
     public function competitors()
@@ -27,6 +24,14 @@ class Team extends Model
         return $this->competitorProfiles()
             ->where("type", CompetitorProfileType::Student)
             ->orWhere("type", CompetitorProfileType::SubstituteStudent);
+    }
+
+    public function competitorProfiles()
+    {
+        return $this->belongsToMany(
+            CompetitorProfile::class,
+            "team_competitor_profile"
+        );
     }
 
     public function students()
@@ -45,11 +50,21 @@ class Team extends Model
         );
     }
 
+    public function school()
+    {
+        return $this->belongsTo(School::class);
+    }
+
     public function teachers()
     {
         return $this->competitorProfiles()->where(
             "type",
             CompetitorProfileType::Teacher
         );
+    }
+
+    public function teamEvents()
+    {
+        return $this->hasMany(TeamEvent::class);
     }
 }

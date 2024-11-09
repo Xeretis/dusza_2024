@@ -19,6 +19,10 @@ class ManageCompetition extends SettingsPage
 
     protected static ?string $title = 'Verseny kezelése';
 
+    protected static ?string $navigationGroup = 'Verseny';
+
+    protected static ?int $navigationSort = 3;
+
     public function getFormActions(): array
     {
         return [
@@ -70,12 +74,14 @@ class ManageCompetition extends SettingsPage
                         'underline',
                         'undo',
                     ]),
-                Forms\Components\DateTimePicker::make('registration_deadline')
-                    ->label('A jelentkezés határideje')
-                    ->native(false),
-                Forms\Components\Placeholder::make('registrations_open')
-                    ->label('A jelentkezés állapota')
-                    ->content(fn(CompetitionSettings $settings) => Carbon::parse($settings->registration_deadline)->isAfter(now()) && $settings->registration_cancelled_at == null ? 'Engedélyezett' : 'Tiltott')
+                Forms\Components\Grid::make()->schema([
+                    Forms\Components\DateTimePicker::make('registration_deadline')
+                        ->label('A jelentkezés határideje')
+                        ->native(false),
+                    Forms\Components\Placeholder::make('registrations_open')
+                        ->label('A jelentkezés állapota')
+                        ->content(fn(CompetitionSettings $settings) => Carbon::parse($settings->registration_deadline)->isAfter(now()) && $settings->registration_cancelled_at == null ? 'Engedélyezett' : 'Tiltott')
+                ])
             ])->columns(1);
     }
 }

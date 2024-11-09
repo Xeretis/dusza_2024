@@ -26,6 +26,10 @@ class UserResource extends Resource
 
     protected static ?string $pluralLabel = 'felhasználók';
 
+    protected static ?string $navigationGroup = 'Résztvevők';
+
+    protected static ?int $navigationSort = 1;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -64,7 +68,9 @@ class UserResource extends Resource
                     ->label('Iskola')
                     ->relationship('school', 'name')
                     ->disabled(fn(Forms\Get $get) => $get('role') == UserRole::Organizer->value)
-                    ->native(false),
+                    ->native(false)
+                    ->selectablePlaceholder(false)
+                    ->required(fn(Forms\Get $get) => $get('role') != UserRole::Organizer->value),
             ]);
     }
 

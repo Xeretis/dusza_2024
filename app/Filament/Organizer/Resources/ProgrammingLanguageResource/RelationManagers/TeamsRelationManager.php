@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Organizer\Resources\CategoryResource\RelationManagers;
+namespace App\Filament\Organizer\Resources\ProgrammingLanguageResource\RelationManagers;
 
 use App\Filament\Organizer\Resources\TeamResource;
 use App\Models\Team;
@@ -10,7 +10,7 @@ use Filament\Tables\Table;
 
 class TeamsRelationManager extends RelationManager
 {
-    protected static string $relationship = "teams";
+    protected static string $relationship = 'teams';
 
     protected static ?string $title = 'Csapatok';
 
