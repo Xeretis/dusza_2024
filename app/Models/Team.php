@@ -5,10 +5,9 @@ namespace App\Models;
 use App\Enums\CompetitorProfileType;
 use App\Observers\TeamObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Model;
 
 #[ObservedBy([TeamObserver::class])]
-class Team extends Model
+class Team extends BaseModel
 {
     protected $guarded = [];
 

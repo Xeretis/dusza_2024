@@ -12,12 +12,13 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spiritix\LadaCache\Database\LadaCacheTrait;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 class User extends Authenticatable implements FilamentUser, HasName
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasRelationships;
+    use HasFactory, Notifiable, HasRelationships, LadaCacheTrait;
 
     /**
      * The attributes that are mass assignable.

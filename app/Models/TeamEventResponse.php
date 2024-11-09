@@ -3,10 +3,9 @@
 namespace App\Models;
 
 use App\Enums\TeamEventResponseStatus;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class TeamEventResponse extends Model
+class TeamEventResponse extends BaseModel
 {
     protected $guarded = [];
 
@@ -18,8 +17,8 @@ class TeamEventResponse extends Model
     protected function casts(): array
     {
         return [
-            'changes' => 'array',
-            'status' => TeamEventResponseStatus::class
+            "changes" => "array",
+            "status" => TeamEventResponseStatus::class,
         ];
     }
 }

@@ -5,18 +5,16 @@ namespace App\Models;
 use App\Enums\TeamEventScope;
 use App\Enums\TeamEventStatus;
 use App\Enums\TeamEventType;
-use Illuminate\Database\Eloquent\Model;
 
-class TeamEvent extends Model
+class TeamEvent extends BaseModel
 {
     public $casts = [
         "type" => TeamEventType::class,
         "status" => TeamEventStatus::class,
         "scope" => TeamEventScope::class,
     ];
-    
-    protected $guarded = [];
 
+    protected $guarded = [];
 
     public function team()
     {

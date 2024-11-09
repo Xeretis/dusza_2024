@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Disabling cache
@@ -11,7 +10,7 @@ return [
     | This may be useful for debugging purposes.
     |
     */
-    'active' => env('LADA_CACHE_ACTIVE', true),
+    "active" => env("LADA_CACHE_ACTIVE", true),
 
     /*
     |--------------------------------------------------------------------------
@@ -22,7 +21,7 @@ return [
     | Do not change this value in production, it will cause unexpected behavior.
     |
     */
-    'prefix' => 'lada:',
+    "prefix" => "lada:",
 
     /*
     |--------------------------------------------------------------------------
@@ -34,7 +33,7 @@ return [
     | be a good idea to set this value to something like 604800 (7 days).
     |
     */
-    'expiration-time' => null,
+    "expiration-time" => 600,
 
     /*
     |--------------------------------------------------------------------------
@@ -48,8 +47,7 @@ return [
     | not recommended to do so in production environment.
     |
     */
-    'consider-rows' => true,
-
+    "consider-rows" => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -71,7 +69,7 @@ return [
     | ],
     |
     */
-    'include-tables' => [],
+    "include-tables" => [],
 
     /*
     |--------------------------------------------------------------------------
@@ -83,8 +81,8 @@ return [
     | will not be cached.
     |
     */
-    'exclude-tables' => [],
-    
+    "exclude-tables" => [],
+
     /*
     |--------------------------------------------------------------------------
     | Debugbar Collector
@@ -94,6 +92,5 @@ return [
     | This may be useful for debugging purposes.
     |
     */
-    'enable-debugbar' => env('LADA_CACHE_ENABLE_DEBUGBAR', true),
-
+    "enable-debugbar" => env("LADA_CACHE_ENABLE_DEBUGBAR", true),
 ];
