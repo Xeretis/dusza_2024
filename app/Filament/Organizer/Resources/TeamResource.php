@@ -255,7 +255,15 @@ class TeamResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('category')
+                    ->label('Kategória')
+                    ->relationship('category', 'name'),
+                Tables\Filters\SelectFilter::make('programmingLanguage')
+                    ->label('Programozási nyelv')
+                    ->relationship('programmingLanguage', 'name'),
+                Tables\Filters\SelectFilter::make('school')
+                    ->label('Iskola')
+                    ->relationship('school', 'name')
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

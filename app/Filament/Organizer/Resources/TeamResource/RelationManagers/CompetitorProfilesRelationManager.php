@@ -29,11 +29,11 @@ class CompetitorProfilesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Név'),
                 Tables\Columns\TextColumn::make('type')
                     ->label('Szerep')
                     ->badge(),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Név'),
                 Tables\Columns\TextColumn::make('grade')
                     ->label('Évfolyam')
                     ->placeholder('Nem értelmezhető'),

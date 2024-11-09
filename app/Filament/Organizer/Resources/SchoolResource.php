@@ -219,7 +219,18 @@ class SchoolResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('zip')
+                    ->label('Irányítószám')
+                    ->options(Station::all()->mapWithKeys(fn($val) => [(string)$val->zip => (string)$val->zip]))
+                    ->searchable(),
+                Tables\Filters\SelectFilter::make('state')
+                    ->label('Vármegye')
+                    ->options(Station::all()->unique('state')->mapWithKeys(fn($val) => [(string)$val->state => (string)$val->sate]))
+                    ->searchable(),
+                Tables\Filters\SelectFilter::make('city')
+                    ->label('Város')
+                    ->options(Station::all()->unique('city')->mapWithKeys(fn($val) => [(string)$val->city => (string)$val->city]))
+                    ->searchable()
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
