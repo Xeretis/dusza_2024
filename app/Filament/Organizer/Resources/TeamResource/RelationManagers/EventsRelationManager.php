@@ -7,6 +7,7 @@ use App\Enums\TeamEventStatus;
 use App\Enums\TeamEventType;
 use App\Filament\Organizer\Resources\TeamResource\Pages\ViewTeam;
 use App\Models\TeamEvent;
+use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -70,8 +71,13 @@ class EventsRelationManager extends RelationManager
                     };
                 })
                 ->badge(),
-            TextEntry::make('message')
-                ->label('Üzenet')
+            TextEntry::make('created_at')
+                ->label('Létrehozva')
+                ->dateTime(),
+            Grid::make(1)->schema([
+                TextEntry::make('message')
+                    ->label('Üzenet')
+            ])
         ])->columns();
     }
 
@@ -124,6 +130,11 @@ class EventsRelationManager extends RelationManager
                         };
                     })
                     ->badge(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Létrehozva')
+                    ->date()
+                    ->since()
+                    ->sortable()
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

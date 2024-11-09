@@ -80,7 +80,7 @@ class ManageCompetition extends SettingsPage
                         ->native(false),
                     Forms\Components\Placeholder::make('registrations_open')
                         ->label('A jelentkezés állapota')
-                        ->content(fn(CompetitionSettings $settings) => Carbon::parse($settings->registration_deadline)->isAfter(now()) && $settings->registration_cancelled_at == null ? 'Engedélyezett' : 'Tiltott')
+                        ->content(fn(CompetitionSettings $settings) => Carbon::parse($settings->registration_deadline)->isAfter(now()) && $settings->registration_cancelled_at == null ? 'Nyitott' : 'Zárt')
                 ])
             ])->columns(1);
     }
