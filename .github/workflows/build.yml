@@ -4,17 +4,10 @@ jobs:
   build-app:
     runs-on: ubuntu-latest
     steps:
-      - name: Install PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.3"
-          #extensions: imagick, swoole
       - name: Checkout master
         uses: actions/checkout@v3
       - name: ls
         run: ls
-      - name: Install Composer
-        run: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
       - name: Copy .env
         run: cp ci/.env.ci .env
       - name: Replace secrets in .env
