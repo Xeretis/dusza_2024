@@ -36,7 +36,6 @@ class ProgrammingLanguageResource extends Resource
         return $form->schema([TextInput::make("name")->label('Név')])->columns(1);
     }
 
-
     public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist->schema([
