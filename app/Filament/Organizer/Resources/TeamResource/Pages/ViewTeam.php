@@ -26,16 +26,16 @@ class ViewTeam extends ViewRecord
                 ->form([
                     Textarea::make('message')->label('Üzenet')->required()
                 ])
-                ->action(function (array $data, Team $record) {
+                ->action(function (array $data, Team $record, $livewire) {
                     TeamEvent::create([
                         'message' => $data['message'],
-                        'artifact_url' => '', //TODO: Do whatever you want with this
                         'team_id' => $record->id,
                         'scope' => TeamEventScope::Organizer,
                         'type' => TeamEventType::AmendRequest,
                         'status' => TeamEventStatus::Pending,
+                        'user_id' => auth()->id()
                     ]);
-
+                    
                     //TODO: Send out an email notification about this
 
                     Notification::make()->title('Kérvény elküldve')->success()->send();

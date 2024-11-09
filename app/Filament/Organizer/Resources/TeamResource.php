@@ -2,10 +2,13 @@
 
 namespace App\Filament\Organizer\Resources;
 
+use App\Enums\CompetitorProfileType;
 use App\Filament\Organizer\Resources\TeamResource\Pages;
 use App\Filament\Organizer\Resources\TeamResource\RelationManagers;
 use App\Livewire\TeamEventsActivitySection;
+use App\Models\CompetitorProfile;
 use App\Models\Team;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Grid;
@@ -58,6 +61,138 @@ class TeamResource extends Resource
                     ->required()
                     ->native(false)
                     ->selectablePlaceholder(false),
+                Forms\Components\Section::make('Résztvevők és egyéb adatok')
+                    ->description('Ezeket az adatokat később is meg lehet adni, nem kötelező a cspata létrehozásakor.')
+                    ->collapsible()
+                    ->schema([
+                        Forms\Components\Fieldset::make('1. Csapattag')->schema([
+                            Forms\Components\TextInput::make('competitor1.name')
+                                ->label('Név')
+                                ->requiredWith('competitor1.grade')
+                                ->requiredWith('competitor1.email'),
+                            Forms\Components\TextInput::make('competitor1.grade')
+                                ->label('Évfolyam')
+                                ->requiredWith('competitor1.name')
+                                ->requiredWith('competitor1.email'),
+                            Forms\Components\TextInput::make('competitor1.email')
+                                ->label('E-mail cím')
+                                ->hintIcon('heroicon-m-information-circle')
+                                ->hintIconTooltip('Felhasználó meghívásához szükséges megadni')
+                                ->email()
+                                ->live(onBlur: true),
+                            Forms\Components\Toggle::make('competitor1.invite')
+                                ->label('Felhasználó meghívása')
+                                ->hintIcon('heroicon-m-information-circle')
+                                ->hintIconTooltip(function (Forms\Get $get) {
+                                    if ($get('competitor1.email') != null && User::where('email', $get('competitor1.email'))->exists()) {
+                                        return 'Már létezik felhasználó ezzel az e-mail címmel';
+                                    }
+
+                                    return 'E-mail küldése a megadott e-mail címre a regisztrációs linkkel';
+                                })
+                                ->inline(false)
+                                ->disabled(fn(Forms\Get $get) => $get('competitor1.email') == null || User::where('email', $get('competitor1.email'))->exists())
+                        ]),
+                        Forms\Components\Fieldset::make('2. Csapattag')->schema([
+                            Forms\Components\TextInput::make('competitor2.name')
+                                ->label('Név')
+                                ->requiredWith('competitor2.grade')
+                                ->requiredWith('competitor2.email'),
+                            Forms\Components\TextInput::make('competitor2.grade')
+                                ->label('Évfolyam')
+                                ->requiredWith('competitor2.name')
+                                ->requiredWith('competitor2.email'),
+                            Forms\Components\TextInput::make('competitor2.email')
+                                ->label('E-mail cím')
+                                ->hintIcon('heroicon-m-information-circle')
+                                ->hintIconTooltip('Felhasználó meghívásához szükséges megadni')
+                                ->email()
+                                ->live(onBlur: true),
+                            Forms\Components\Toggle::make('competitor2.invite')
+                                ->label('Felhasználó meghívása')
+                                ->hintIcon('heroicon-m-information-circle')
+                                ->hintIconTooltip(function (Forms\Get $get) {
+                                    if ($get('competitor2.email') != null && User::where('email', $get('competitor2.email'))->exists()) {
+                                        return 'Már létezik felhasználó ezzel az e-mail címmel';
+                                    }
+
+                                    return 'E-mail küldése a megadott e-mail címre a regisztrációs linkkel';
+                                })
+                                ->inline(false)
+                                ->disabled(fn(Forms\Get $get) => $get('competitor2.email') == null || User::where('email', $get('competitor2.email'))->exists())
+                        ]),
+                        Forms\Components\Fieldset::make('3. Csapattag')->schema([
+                            Forms\Components\TextInput::make('competitor3.name')
+                                ->label('Név')
+                                ->requiredWith('competitor3.grade')
+                                ->requiredWith('competitor3.email'),
+                            Forms\Components\TextInput::make('competitor3.grade')
+                                ->label('Évfolyam')
+                                ->requiredWith('competitor3.name')
+                                ->requiredWith('competitor3.email'),
+                            Forms\Components\TextInput::make('competitor3.email')
+                                ->label('E-mail cím')
+                                ->hintIcon('heroicon-m-information-circle')
+                                ->hintIconTooltip('Felhasználó meghívásához szükséges megadni')
+                                ->email()
+                                ->live(onBlur: true),
+                            Forms\Components\Toggle::make('competitor3.invite')
+                                ->label('Felhasználó meghívása')
+                                ->hintIcon('heroicon-m-information-circle')
+                                ->hintIconTooltip(function (Forms\Get $get) {
+                                    if ($get('competitor3.email') != null && User::where('email', $get('competitor3.email'))->exists()) {
+                                        return 'Már létezik felhasználó ezzel az e-mail címmel';
+                                    }
+
+                                    return 'E-mail küldése a megadott e-mail címre a regisztrációs linkkel';
+                                })
+                                ->inline(false)
+                                ->disabled(fn(Forms\Get $get) => $get('competitor3.email') == null || User::where('email', $get('competitor3.email'))->exists())
+                        ]),
+                        Forms\Components\Fieldset::make('Felkészítő tanárok')->schema([
+                            Forms\Components\Repeater::make('teachers')
+                                ->label('')
+                                ->schema([
+                                    Forms\Components\Select::make('id')
+                                        ->label('Név')
+                                        ->options(CompetitorProfile::where('type', CompetitorProfileType::Teacher)->pluck('name', 'id'))
+                                        ->createOptionForm([
+                                            Forms\Components\TextInput::make('name')
+                                                ->label('Név')
+                                                ->required(),
+                                            Forms\Components\TextInput::make('email')
+                                                ->label('E-mail cím')
+                                                ->hintIcon('heroicon-m-information-circle')
+                                                ->hintIconTooltip('Felhasználó meghívásához szükséges megadni')
+                                                ->email()
+                                                ->live(onBlur: true),
+                                            Forms\Components\Toggle::make('invite')
+                                                ->label('Felhasználó meghívása')
+                                                ->hintIcon('heroicon-m-information-circle')
+                                                ->hintIconTooltip(function (Forms\Get $get) {
+                                                    if ($get('email') != null && User::where('email', $get('email'))->exists()) {
+                                                        return 'Már létezik felhasználó ezzel az e-mail címmel';
+                                                    }
+
+                                                    return 'E-mail küldése a megadott e-mail címre a regisztrációs linkkel';
+                                                })
+                                                ->inline(false)
+                                                ->disabled(fn(Forms\Get $get) => $get('email') == null || User::where('email', $get('email'))->exists())
+                                        ])
+                                        ->createOptionUsing(function (array $data): int {
+                                            //TODO: Send invite out
+                                            return CompetitorProfile::create([
+                                                'name' => $data['name'],
+                                                'email' => $data['email'],
+                                                'type' => CompetitorProfileType::Teacher,
+                                            ])->getKey();
+                                        })
+                                        ->distinct()
+                                        ->fixIndistinctState(),
+                                ])->columns(1)->addActionLabel('Új tanár hozzáadása'),
+                        ])->columns(1)
+                    ])
+                    ->columns(2)
             ]);
     }
 

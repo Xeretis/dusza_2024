@@ -33,7 +33,7 @@ class ProgrammingLanguageResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form->schema([TextInput::make("name")->label('Név')]);
+        return $form->schema([TextInput::make("name")->label('Név')])->columns(1);
     }
 
 
