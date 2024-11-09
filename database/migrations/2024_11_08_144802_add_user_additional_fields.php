@@ -13,7 +13,7 @@ return new class extends Migration {
     {
         Schema::table("users", function (Blueprint $table) {
             $table->string("username")->after('id');
-            $table->foreignIdFor(School::class, "school_id")->nullable()->after('role');
+            $table->foreignIdFor(School::class, "school_id")->after('role')->nullable()->constrained()->onDelete('cascade');
         });
     }
 
