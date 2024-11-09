@@ -23,20 +23,9 @@ export default {
                     '0%': { backgroundPosition: '0% center' },
                     '100%': { backgroundPosition: '-200% center' },
                 },
-                scalekf: {
-                    '0%': { transform: 'scale(0)' },
-                    '50%': { transform: 'scale(1)' },
-                    '100%': { transform: 'scale(0)' },
-                },
-                rotatekf: {
-                    '0%': { transform: 'rotate(0deg)' },
-                    '100%': { transform: 'rotate(180deg)' },
-                }
             },
             animation: {
                 bgpan: 'bgpankf 5s linear infinite',
-                scale: 'scalekf 1500ms ease forwards',
-                rotate: 'rotatekf 1000ms linear infinite',
             }
         },
     },

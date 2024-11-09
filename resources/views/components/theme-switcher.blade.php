@@ -1,18 +1,25 @@
 <div class="absolute top-2 left-2 z-40 ">
     <x-filament::button
-        x-on:click="console.log('clicked')"
-        x-data="theme: 'light'"
-        x-effect="localStorage.getItem('theme') = theme"
         color="gray"
         id="themeSwitcher"
         size="lg"
+        x-effect="if(!theme) {localsStorage.setItem('theme', 'system'); }"
+        x-data="theme = localStorage.getItem('theme');"
+        x-on:click=""
     >
         <x-heroicon-m-moon class="h-6 w-6" />
     </x-filament::button>
+
 </div>
 @push('scripts')
+{{--    TODO: make this actually work--}}
     <script>
-        // TODO: make this actually work
+        console.log('script loaded');
+        window.onload = function () {
+            setTheme();
+            console.log('window.onload loaded');
+        }
+
         const themeSwitcher = document.getElementById('themeSwitcher');
 
         themeSwitcher.addEventListener('click', () => {
@@ -29,8 +36,8 @@
         });
 
         function setTheme() {
+            console.log('clicked');
             const themeSwitcher = document.getElementById('themeSwitcher');
-            console.log("i want to kill myself");
             const mode = localStorage.getItem('theme');
             if (mode === 'dark') {
                 themeSwitcher.innerHTML = '<x-heroicon-m-sun class="h-6 w-6" />';
