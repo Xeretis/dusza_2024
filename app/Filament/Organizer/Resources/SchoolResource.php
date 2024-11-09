@@ -60,6 +60,11 @@ class SchoolResource extends Resource
                                     $set("city", $station->city);
                                     $set("state", $station->state);
                                 }
+                            })
+                            ->datalist(function () {
+                                return \App\Models\Station::all()
+                                    ->pluck("zip")
+                                    ->unique();
                             }),
                         Forms\Components\TextInput::make("city")
                             ->label("Város")
@@ -75,6 +80,12 @@ class SchoolResource extends Resource
                                     $set("state", $station->state);
                                 }
                             })
+                            ->live()
+                            ->datalist(function () {
+                                return \App\Models\Station::all()
+                                    ->pluck("city")
+                                    ->unique();
+                            })
                             ->maxLength(255),
                         Forms\Components\TextInput::make("state")
                             ->label("Vármegye")
@@ -84,6 +95,14 @@ class SchoolResource extends Resource
                         Forms\Components\TextInput::make("street")
                             ->label("Utca, házszám")
                             ->required()
+                            // datalist using state
+                            ->datalist(function (Get $get) {
+                                $zip = $get("zip");
+                                return \App\Models\Street::whereZip($zip)
+                                    ->whereNotIn("zip", [""])
+                                    ->pluck("name")
+                                    ->unique();
+                            })
                             ->maxLength(255),
                     ])
                     ->columns(),

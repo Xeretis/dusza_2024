@@ -1,5 +1,7 @@
 <?php
 
+use App\Jobs\ChunkedStationImportJob;
+use App\Jobs\StationImportJob;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,18 +18,11 @@ return new class extends Migration {
             $table->integer("zip");
             $table->string("city");
             $table->string("state");
+            $table->index("zip");
+            $table->index("city");
         });
 
-        $file = fopen("resources/store/telepules_lista.csv", "r");
-        $data = fgetcsv($file);
-        while (($data = fgetcsv($file, separator: ";")) !== false) {
-            DB::table("stations")->insert([
-                "zip" => $data[0],
-                "city" => $data[2],
-                "state" => $data[1],
-            ]);
-        }
-        fclose($file);
+        ChunkedStationImportJob::dispatch();
     }
 
     /**
