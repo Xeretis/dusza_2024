@@ -19,6 +19,7 @@ systemctl --user enable larawhale_reverb
 systemctl --user enable larawhale_cron
 
 systemctl --user enable larawhale.target
+systemctl --user stop larawhale.target
 systemctl --user start larawhale.target
 
 sleep 1
