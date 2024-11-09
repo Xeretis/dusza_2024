@@ -8,11 +8,6 @@ COPY . .
 # Alternatively, add these files to a .dockerignore file
 RUN rm -Rf tests/
 
-# Copy .env file
-RUN cp .env.example .env
-# Change APP_ENV and APP_DEBUG to be production ready
-RUN sed -i'' -e 's/^APP_ENV=.*/APP_ENV=production/' -e 's/^APP_DEBUG=.*/APP_DEBUG=false/' .env
-
 RUN apk add --no-cache nodejs npm
 RUN rm -rf node_modules/ package-lock.json
 RUN npm install -g pnpm
