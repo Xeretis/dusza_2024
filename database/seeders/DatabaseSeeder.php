@@ -3,9 +3,9 @@
 namespace Database\Seeders;
 
 use App\Enums\UserRole;
+use App\Models\Category;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Tests\Integration\Database\EloquentHasManyThroughTest\Category;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
