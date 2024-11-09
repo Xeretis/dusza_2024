@@ -11,6 +11,27 @@ jobs:
     steps:
       - name: Checkout master
         uses: actions/checkout@v3
+      - name: Pull latest draft release
+        id: pull_latest_draft_release
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const { data: releases } = await github.repos.listReleases({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 1,
+              draft: true
+            });
+            return releases[0];
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download release asset
+        id: download_release_asset
+        uses: actions/download-artifact@v2
+        with:
+          name: larawhale_linux-x86_64
+      - name: Move larawhale_linux-x86_64 to ci folder
+        run: mv larawhale_linux-x86_64 ci/larawhale_linux-x86_64
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
         with:
@@ -19,7 +40,7 @@ jobs:
       - name: Adding Known Hosts
         run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
       - name: Deploy with rsync
-        run: rsync -avz --ignore-errors ./ci ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/larawhale
+        run: rsync -avz --ignore-errors ./ci ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/dusza/larawhale
       - name: Run deploy script on server
         if: success() || failure()
         run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "bash /opt/larawhale/deploy.sh"
