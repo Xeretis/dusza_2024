@@ -21,12 +21,23 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            "email" => "test@example.com",
+            "email" => "competitor@example.com",
+            "role" => UserRole::Competitor,
         ]);
 
         User::factory()->create([
-            "email" => "test2@example.com",
+            "email" => "organizer@example.com",
+            "role" => UserRole::Organizer,
+        ]);
+
+        User::factory()->create([
+            "email" => "manager@example.com",
             "role" => UserRole::SchoolManager,
+        ]);
+
+        User::factory()->create([
+            "email" => "teacher@example.com",
+            "role" => UserRole::Teacher,
         ]);
 
         Category::factory(10)->create();
