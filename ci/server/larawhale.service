@@ -6,7 +6,7 @@ Type=simple
 
 [Service]
 WorkingDirectory=/home/dusza/larawhale
-ExecStart=/home/dusza/.local/bin/supervisord /home/dusza/larawhale/server/supervisord.conf
+ExecStart=/home/dusza/.local/bin/supervisord /home/dusza/larawhale/supervisord.conf
 Restart=always
 StandardOutput=syslog
 StandardError=syslog
