@@ -26,6 +26,7 @@ class ListTeams extends ListRecords
         return [
             Actions\ExportAction::make()
                 ->label('Csapatok exportálása')
+                ->modalHeading('Csapatok exportálása')
                 ->exporter(TeamExporter::class)
                 ->form(fn(ExportAction|ExportTableAction|ExportTableBulkAction $action): array => [
                     ...($action->hasColumnMapping() ? [Fieldset::make(__('filament-actions::export.modal.form.columns.label'))
