@@ -6,7 +6,7 @@
         x-data="{ theme: localStorage.getItem('theme') || 'system' }"
         x-on:click="theme = theme === 'dark' ? 'light' : (theme === 'light' ? 'system' : 'dark'); localStorage.setItem('theme', theme); setTheme(theme);"
     >
-        <x-heroicon-m-moon class="h-6 w-6" x-show="theme === 'system' || theme === 'dark'" />
+        <x-heroicon-m-moon class="h-6 w-6" x-show="theme === 'dark'" />
         <x-heroicon-m-sun class="h-6 w-6" x-show="theme === 'light'" />
         <x-heroicon-m-computer-desktop class="h-6 w-6" x-show="theme === 'system'" />
     </x-filament::button>

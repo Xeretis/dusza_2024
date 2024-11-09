@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Tests\Integration\Database\EloquentHasManyThroughTest\Category;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
@@ -24,6 +25,9 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             "email" => "test2@example.com",
             "role" => UserRole::SchoolManager,
+        ]);
+        Category::factory()->create([
+            "name" => "Test category",
         ]);
     }
 }
