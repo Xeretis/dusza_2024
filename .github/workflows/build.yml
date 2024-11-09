@@ -6,8 +6,6 @@ jobs:
     steps:
       - name: Checkout master
         uses: actions/checkout@v3
-      - name: ls
-        run: ls
       - name: Copy .env
         run: cp ci/.env.ci .env
       - name: Replace secrets in .env
