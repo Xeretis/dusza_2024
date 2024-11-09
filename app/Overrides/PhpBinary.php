@@ -2,8 +2,6 @@
 
 namespace App\Overrides;
 
-use Laravel\Horizon\PhpBinary as HorizonPhpBinary;
-
 class PhpBinary
 {
     /**
@@ -15,8 +13,10 @@ class PhpBinary
     {
         $escape = '\\' === DIRECTORY_SEPARATOR ? '"' : '\'';
 
-        return $escape .
-            config('app.horizon_binary_override', PHP_BINARY) .
-            $escape;
+        if (config('app.horizon_binary_override')) {
+            return $escape . config('app.horizon_binary_override') . $escape;
+        }
+
+        return $escape . PHP_BINARY . $escape;
     }
 }
