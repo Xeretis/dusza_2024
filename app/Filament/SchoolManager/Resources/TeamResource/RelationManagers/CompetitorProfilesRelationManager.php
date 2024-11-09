@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Organizer\Resources\TeamResource\RelationManagers;
+namespace App\Filament\SchoolManager\Resources\TeamResource\RelationManagers;
 
 use App\Filament\SchoolManager\Resources\TeamResource\Pages\ViewTeam;
 use Filament\Resources\RelationManagers\RelationManager;
