@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class UserPolicy
 {
@@ -24,7 +23,7 @@ class UserPolicy
         return $user->id === $model->id ||
             $user->role === UserRole::Organizer ||
             ($user->role === UserRole::SchoolManager &&
-                $user->school->id === $model->school->id);
+                $user->school_id === $model->school_id);
     }
 
     /**
@@ -43,7 +42,7 @@ class UserPolicy
         return $user->id === $model->id ||
             $user->role === UserRole::Organizer ||
             ($user->role === UserRole::SchoolManager &&
-                $user->school->id === $model->school->id);
+                $user->school_id === $model->school_id);
     }
 
     /**

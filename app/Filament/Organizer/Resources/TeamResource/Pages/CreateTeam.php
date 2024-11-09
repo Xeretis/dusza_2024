@@ -2,6 +2,7 @@
 
 namespace App\Filament\Organizer\Resources\TeamResource\Pages;
 
+use App\Enums\CompetitorProfileType;
 use App\Filament\Organizer\Resources\TeamResource;
 use App\Models\CompetitorProfile;
 use App\Models\User;
@@ -43,8 +44,8 @@ class CreateTeam extends CreateRecord
 
             $competitorProfile = CompetitorProfile::create(
                 collect($competitorData)
-                    ->forget('invite')
-                    ->merge(['user_id' => $userId])
+                    ->forget(['id', 'invite'])
+                    ->merge(['user_id' => $userId, 'type' => CompetitorProfileType::Student])
                     ->toArray()
             );
 
