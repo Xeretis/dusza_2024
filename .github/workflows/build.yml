@@ -18,24 +18,8 @@ jobs:
           sed -i "s@__REVERB_APP_SECRET__.*@${{ secrets.REVERB_APP_SECRET }}@g" .env
       - name: Build Larawhale
         run: bash ./ci/build.sh
-      - name: Create release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      - name: Upload Release Artifact
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: TODO
-          draft: true
-          prerelease: false
-      - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: ./dist/larawhale_linux-x86_64
-          asset_name: larawhale_linux-x86_64
-          asset_content_type: application/octet-stream
+          name: larawhale_linux-x86_64
+          path: dist/larawhale_linux-x86_64
