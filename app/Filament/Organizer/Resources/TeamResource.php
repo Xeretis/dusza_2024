@@ -72,6 +72,7 @@ class TeamResource extends Resource
                                 ->requiredWith('competitor1.email'),
                             Forms\Components\TextInput::make('competitor1.grade')
                                 ->label('Évfolyam')
+                                ->numeric()
                                 ->requiredWith('competitor1.name')
                                 ->requiredWith('competitor1.email'),
                             Forms\Components\TextInput::make('competitor1.email')
@@ -100,6 +101,7 @@ class TeamResource extends Resource
                                 ->requiredWith('competitor2.email'),
                             Forms\Components\TextInput::make('competitor2.grade')
                                 ->label('Évfolyam')
+                                ->numeric()
                                 ->requiredWith('competitor2.name')
                                 ->requiredWith('competitor2.email'),
                             Forms\Components\TextInput::make('competitor2.email')
@@ -128,6 +130,7 @@ class TeamResource extends Resource
                                 ->requiredWith('competitor3.email'),
                             Forms\Components\TextInput::make('competitor3.grade')
                                 ->label('Évfolyam')
+                                ->numeric()
                                 ->requiredWith('competitor3.name')
                                 ->requiredWith('competitor3.email'),
                             Forms\Components\TextInput::make('competitor3.email')
@@ -189,7 +192,7 @@ class TeamResource extends Resource
                                         })
                                         ->distinct()
                                         ->fixIndistinctState(),
-                                ])->columns(1)->addActionLabel('Új tanár hozzáadása'),
+                                ])->columns(1)->addActionLabel('Új tanár hozzáadása')->reorderable(false)->itemLabel('Új felkészítő tanár')->defaultItems(0),
                         ])->columns(1)
                     ])
                     ->columns(2)

@@ -3,10 +3,51 @@
 namespace App\Filament\Organizer\Resources\TeamResource\Pages;
 
 use App\Filament\Organizer\Resources\TeamResource;
-use Filament\Actions;
+use App\Models\CompetitorProfile;
+use App\Models\User;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Database\Eloquent\Model;
 
 class CreateTeam extends CreateRecord
 {
     protected static string $resource = TeamResource::class;
+
+    protected function handleRecordCreation(array $data): Model
+    {
+        $model = static::getModel()::create([
+            'name' => $data['name'],
+            'category_id' => $data['category_id'],
+            'programming_language_id' => $data['programming_language_id'],
+            'school_id' => $data['school_id']
+        ]);
+
+        //TODO: Send out invites
+
+        if ($data['competitor1']['name'] != null) {
+            $p1 = CompetitorProfile::create(collect($data['competitor1'])->merge(collect([
+                'user_id' => User::where('email', $data['competitor1']['email'])->first()?->id
+            ]))->toArray());
+
+            $p1->teams()->attach($model);
+        }
+
+        if ($data['competitor2']['name'] != null) {
+            $p1 = CompetitorProfile::create(collect($data['competitor2'])->merge(collect([
+                'user_id' => User::where('email', $data['competitor2']['email'])->first()?->id
+            ]))->toArray());
+
+            $p1->teams()->attach($model);
+        }
+
+        if ($data['competitor3']['name'] != null) {
+            $p1 = CompetitorProfile::create(collect($data['competitor3'])->merge(collect([
+                'user_id' => User::where('email', $data['competitor3']['email'])->first()?->id
+            ]))->toArray());
+
+            $p1->teams()->attach($model);
+        }
+
+
+        return $model;
+    }
 }
