@@ -1,0 +1,16 @@
+[Unit]
+Description=Start Valkey
+After=syslog.target
+After=network.target
+Type=simple
+
+[Service]
+WorkingDirectory=/home/dusza/larawhale/valkey
+ExecStart=/home/dusza/.local/bin/supervisord /home/dusza/larawhale/supervisord.conf
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=valkey
+
+[Install]
+WantedBy=default.target
