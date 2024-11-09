@@ -1,4 +1,4 @@
-<div class="bg-white dark:bg-gray-950 max-w-screen max-h-screen h-screen w-screen flex justify-center items-center relative">
+<div class="bg-gray-50 dark:bg-gray-950 max-w-screen max-h-screen h-screen w-screen flex justify-center items-center relative">
     <div name="theme-switcher" class="fixed top-2 left-5 place-content-center z-20">
         <x-theme-switcher />
     </div>
