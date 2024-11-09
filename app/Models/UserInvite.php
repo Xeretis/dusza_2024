@@ -12,6 +12,7 @@ class UserInvite extends BaseModel
     {
         return [
             "role" => UserRole::class,
+            'expires_at' => 'datetime'
         ];
     }
 }

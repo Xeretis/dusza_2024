@@ -26,6 +26,7 @@ class CommonPanelProvider extends PanelProvider
             ->path('common')
             ->viteTheme('resources/css/filament/common/theme.css')
             ->login()
+            ->registration()
             ->passwordReset()
             ->colors([
                 'primary' => Color::Amber,
