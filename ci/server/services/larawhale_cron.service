@@ -8,6 +8,7 @@ Type=simple
 WorkingDirectory=/home/dusza/larawhale
 ExecStart=/home/dusza/larawhale/frankenphp php-cli artisan schedule:work
 Restart=always
+RestartSec=1s
 
 [Install]
 WantedBy=larawhale.target
