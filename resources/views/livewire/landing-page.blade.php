@@ -19,9 +19,9 @@
                 Jelentkezés a <span class="z-20 font-bold whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r dark:from-blue-800 dark:via-purple dark:via-violet dark:via-pink dark:to-blue-800 from-red-500 via-purple via-violet via-pink to-red-500 bg-200% animate-bgpan">Dusza Versenyre</span>
             </h1>
             <div name="Links">
-                <x-filament::button class="z-20" href="/" tag="a" color="gray">Bejelentkezés</x-filament::button>
-                <x-filament::button class="z-20" color="gray">Dokumentáció</x-filament::button>
-            </div>
+                <x-filament::button class="z-20" href="/common/login" tag="a" color="gray">Bejelentkezés</x-filament::button>
+                <x-filament::button class="z-20" href="/kb/prologue/getting-started" tag="a" color="gray">Dokumentáció</x-filament::button>
+        </div>
         </div>
     </div>
 </div>
