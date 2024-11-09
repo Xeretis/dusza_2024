@@ -16,121 +16,131 @@ class EditTeam extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $members = CompetitorProfile::where(
-            "type",
-            CompetitorProfileType::Student
-        )
-            ->whereHas("teams", function ($query) use ($data) {
-                $query->where("teams.id", $data["id"]);
+        $members = CompetitorProfile::where('type', CompetitorProfileType::Student)
+            ->whereHas('teams', function ($query) use ($data) {
+                $query->where('teams.id', $data['id']);
             })
             ->take(3)
             ->get();
 
-        // Fill competitor1, competitor2, and competitor3 with the member data
         if ($members->count() > 0) {
-            $data["competitor1"] = [
-                "id" => $members[0]->id,
-                "name" => $members[0]->name,
-                "grade" => $members[0]->grade,
-                "email" => $members[0]->email,
-                "invite" => false, // or true based on your logic
+            $data['competitor1'] = [
+                'id' => $members[0]->id,
+                'name' => $members[0]->name,
+                'grade' => $members[0]->grade,
+                'email' => $members[0]->email,
+                'invite' => false,
             ];
         }
 
         if ($members->count() > 1) {
-            $data["competitor2"] = [
-                "id" => $members[1]->id,
-                "name" => $members[1]->name,
-                "grade" => $members[1]->grade,
-                "email" => $members[1]->email,
-                "invite" => false, // or true based on your logic
+            $data['competitor2'] = [
+                'id' => $members[1]->id,
+                'name' => $members[1]->name,
+                'grade' => $members[1]->grade,
+                'email' => $members[1]->email,
+                'invite' => false,
             ];
         }
 
         if ($members->count() > 2) {
-            $data["competitor3"] = [
-                "id" => $members[2]->id,
-                "name" => $members[2]->name,
-                "grade" => $members[2]->grade,
-                "email" => $members[2]->email,
-                "invite" => false, // or true based on your logic
+            $data['competitor3'] = [
+                'id' => $members[2]->id,
+                'name' => $members[2]->name,
+                'grade' => $members[2]->grade,
+                'email' => $members[2]->email,
+                'invite' => false,
             ];
         }
 
-        $teachers = CompetitorProfile::where(
-            "type",
-            CompetitorProfileType::Teacher
-        )
-            ->whereHas("teams", function ($query) use ($data) {
-                $query->where("teams.id", $data["id"]);
+        $substitute = CompetitorProfile::where('type', CompetitorProfileType::SubstituteStudent)
+            ->whereHas('teams', function ($query) use ($data) {
+                $query->where('teams.id', $data['id']);
+            })
+            ->first();
+
+        if ($substitute != null) {
+            $data['substitute'] = [
+                'id' => $substitute->id,
+                'name' => $substitute->name,
+                'grade' => $substitute->grade,
+                'email' => $substitute->email,
+                'invite' => false,
+            ];
+        }
+
+        $teachers = CompetitorProfile::where('type', CompetitorProfileType::Teacher)
+            ->whereHas('teams', function ($query) use ($data) {
+                $query->where('teams.id', $data['id']);
             })
             ->get()
             ->map(function ($p) {
-                return ["id" => $p->id];
+                return ['id' => $p->id];
             })
             ->values();
 
-        $data["teachers"] = $teachers->toArray();
+        $data['teachers'] = $teachers->toArray();
 
         return $data;
     }
 
+
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        // Update the main record, excluding specific fields
         $record->update(
             collect($data)
                 ->forget([
-                    "competitor1",
-                    "competitor2",
-                    "competitor3",
-                    "teachers",
+                    'competitor1',
+                    'competitor2',
+                    'competitor3',
+                    'substitute',
+                    'teachers',
                 ])
                 ->toArray()
         );
 
-        // Update teacher associations (many to many)
-        if (isset($data["teachers"])) {
-            $record->teachers()->sync($data["teachers"]);
+        if (isset($data['teachers'])) {
+            $record->teachers()->detach();
+            $record->teachers()->sync(collect($data['teachers'])->map(fn($t) => $t['id'])->toArray());
         }
 
-        // Update competitor1
-        $this->updateCompetitor($record, $data["competitor1"]);
-        $this->updateCompetitor($record, $data["competitor2"]);
-        $this->updateCompetitor($record, $data["competitor3"]);
+        $this->updateCompetitor($record, $data['competitor1']);
+        $this->updateCompetitor($record, $data['competitor2']);
+        $this->updateCompetitor($record, $data['competitor3']);
+        $this->updateCompetitor($record, $data['substitute'], true);
 
         return $record;
     }
 
-    protected function updateCompetitor(
-        Model $record,
-        array $competitorData
-    ): void {
-        // Check if competitor ID is null
-        if ($competitorData["id"] == null) {
-            // Create a new competitor profile
-            $userId = User::where("email", $competitorData["email"])->first()
-                ?->id;
+    protected function updateCompetitor(Model $record, array $competitorData, bool $isSubstitute = false): void
+    {
+        if ($competitorData['id'] == null) {
+            $userId = User::where('email', $competitorData['email'])->first()?->id;
 
             $competitorProfile = CompetitorProfile::create(
                 collect($competitorData)
-                    ->forget(["id", "invite"])
+                    ->forget(['id', 'invite'])
                     ->merge([
-                        "user_id" => $userId,
-                        "type" => CompetitorProfileType::Student,
+                        'user_id' => $userId,
+                        'type' => $isSubstitute ? CompetitorProfileType::SubstituteStudent : CompetitorProfileType::Student,
                     ])
                     ->toArray()
             );
 
-            // Attach the competitor profile to the record
             $competitorProfile->teams()->attach($record->id);
-        } elseif (empty($competitorData["name"])) {
-            CompetitorProfile::where("id", $competitorData["id"])->delete();
+        } elseif (empty($competitorData['name'])) {
+            CompetitorProfile::whereId($competitorData['id'])->delete();
         } else {
-            // Update existing competitor profile
-            CompetitorProfile::where("id", $competitorData["id"])->update(
+            $userId = User::where('email', $competitorData['email'])->first()?->id;
+
+            $competitorProfile = CompetitorProfile::whereId($competitorData['id'])->first();
+
+            $competitorProfile->update(
                 collect($competitorData)
-                    ->forget(["id"])
+                    ->forget(['id'])
+                    ->merge([
+                        'user_id' => $userId
+                    ])
                     ->toArray()
             );
             $competitorProfile->teams()->attach($record->id);

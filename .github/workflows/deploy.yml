@@ -1,0 +1,26 @@
+name: Deploy projekt_neve_itt to production server
+on: "workflow_dispatch"
+jobs:
+  deploy-to-prod:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v3
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: larawhale_linux-x86_64
+      - name: Copy Larawhale to ci directory
+        run: cp dist/larawhale_linux-x86_64 ci/larawhale_linux-x86_64
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          known_hosts: "just-a-placeholder-so-we-dont-get-errors"
+      - name: Adding Known Hosts
+        run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+      - name: Deploy with rsync
+        run: rsync -avz --ignore-errors ./ci ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/dusza/larawhale
+      - name: Run deploy script on server
+        if: success() || failure()
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "bash /opt/larawhale/deploy.sh"

@@ -27,6 +27,7 @@ class CreateTeam extends CreateRecord
         $this->createCompetitorProfile($data['competitor1'], $model);
         $this->createCompetitorProfile($data['competitor2'], $model);
         $this->createCompetitorProfile($data['competitor3'], $model);
+        $this->createCompetitorProfile($data['substitute'], $model, true);
 
         if (!empty($data['teachers'])) {
             foreach ($data['teachers'] as ['id' => $id]) {
@@ -37,7 +38,7 @@ class CreateTeam extends CreateRecord
         return $model;
     }
 
-    private function createCompetitorProfile(array $competitorData, Model $teamModel): void
+    private function createCompetitorProfile(array $competitorData, Model $teamModel, bool $isSubstitute = false): void
     {
         if (!empty($competitorData['name'])) {
             $userId = User::where('email', $competitorData['email'])->first()?->id;
@@ -45,7 +46,7 @@ class CreateTeam extends CreateRecord
             $competitorProfile = CompetitorProfile::create(
                 collect($competitorData)
                     ->forget(['id', 'invite'])
-                    ->merge(['user_id' => $userId, 'type' => CompetitorProfileType::Student])
+                    ->merge(['user_id' => $userId, 'type' => $isSubstitute ? CompetitorProfileType::SubstituteStudent : CompetitorProfileType::Student])
                     ->toArray()
             );
 

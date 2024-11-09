@@ -1,0 +1,25 @@
+name: Build Larawhale for Linux
+on: "workflow_dispatch"
+jobs:
+  build-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v3
+      - name: Copy .env
+        run: cp ci/.env.ci .env
+      - name: Replace secrets in .env
+        run: |
+          sed -i "s@__APP_KEY__.*@${{ secrets.APP_KEY }}@g" .env
+          sed -i "s@__DB_DATABASE__.*@${{ secrets.DB_DATABASE }}@g" .env
+          sed -i "s@__DB_USERNAME__.*@${{ secrets.DB_USERNAME }}@g" .env
+          sed -i "s@__DB_PASSWORD__.*@${{ secrets.DB_PASSWORD }}@g" .env
+          sed -i "s@__REVERB_APP_KEY__.*@${{ secrets.REVERB_APP_KEY }}@g" .env
+          sed -i "s@__REVERB_APP_SECRET__.*@${{ secrets.REVERB_APP_SECRET }}@g" .env
+      - name: Build Larawhale
+        run: bash ./ci/build.sh
+      - name: Upload Release Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: larawhale_linux-x86_64
+          path: dist/larawhale_linux-x86_64

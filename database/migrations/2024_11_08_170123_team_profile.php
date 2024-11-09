@@ -12,11 +12,8 @@ return new class extends Migration {
     {
         Schema::create("team_competitor_profile", function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\Team::class, "team_id");
-            $table->foreignIdFor(
-                \App\Models\CompetitorProfile::class,
-                "competitor_profile_id"
-            );
+            $table->foreignId("team_id");
+            $table->foreignId("competitor_profile_id");
         });
     }
 
