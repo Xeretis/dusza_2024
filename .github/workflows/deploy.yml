@@ -1,10 +1,5 @@
 name: Deploy projekt_neve_itt to production server
-on:
-  workflow_run:
-    workflows: ["Build projekt_neve_itt Docker image"]
-    branches: [main]
-    types:
-      - completed
+on: "workflow_dispatch"
 jobs:
   deploy-to-prod:
     runs-on: ubuntu-latest
