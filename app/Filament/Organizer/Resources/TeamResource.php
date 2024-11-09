@@ -3,12 +3,16 @@
 namespace App\Filament\Organizer\Resources;
 
 use App\Enums\CompetitorProfileType;
+use App\Enums\UserRole;
 use App\Filament\Organizer\Resources\TeamResource\Pages;
 use App\Filament\Organizer\Resources\TeamResource\RelationManagers;
 use App\Livewire\TeamEventsActivitySection;
 use App\Models\CompetitorProfile;
 use App\Models\Team;
 use App\Models\User;
+use App\Models\UserInvite;
+use App\Notifications\UserInviteNotification;
+use DragonCode\Support\Facades\Helpers\Str;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Grid;
@@ -19,8 +23,9 @@ use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\HtmlString;
-use Tapp\FilamentAuditing\RelationManagers\AuditsRelationManager;
 
 class TeamResource extends Resource
 {
@@ -88,7 +93,8 @@ class TeamResource extends Resource
     private static function competitorSection(
         string $label,
         string $competitorKey
-    ) {
+    )
+    {
         return Forms\Components\Fieldset::make($label)->schema([
             Forms\Components\Hidden::make("{$competitorKey}.id")->default(null),
             Forms\Components\TextInput::make("{$competitorKey}.name")
@@ -176,12 +182,29 @@ class TeamResource extends Resource
                                 self::inviteToggleForTeacher(),
                             ])
                             ->createOptionUsing(function (array $data): int {
-                                // TODO: Send invite out
-                                return CompetitorProfile::create([
+                                DB::beginTransaction();
+
+                                $profileKey = CompetitorProfile::create([
                                     'name' => $data['name'],
                                     'email' => $data['email'],
                                     'type' => CompetitorProfileType::Teacher,
                                 ])->getKey();
+
+                                if ($data['invite']) {
+                                    $inv = UserInvite::create([
+                                        'role' => UserRole::Teacher,
+                                        'email' => $data['email'],
+                                        'token' => Str::random(64),
+                                        'competitor_profile_id' => $profileKey
+                                    ]);
+
+                                    Notification::route('mail', $data['email'])
+                                        ->notify(new UserInviteNotification($inv->token));
+                                }
+
+                                DB::commit();
+
+                                return $profileKey;
                             })
                             ->native(false)
                             ->distinct()
