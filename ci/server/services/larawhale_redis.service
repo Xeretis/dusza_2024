@@ -6,7 +6,7 @@ Type=simple
 
 [Service]
 WorkingDirectory=/home/dusza/larawhale
-ExecStart=/home/dusza/larawhale/frankenphp php-cli artisan schedule:work
+ExecStart=/home/dusza/larawhale/valkey/valkey-server /home/dusza/larawhale/redis.conf
 Restart=always
 
 [Install]

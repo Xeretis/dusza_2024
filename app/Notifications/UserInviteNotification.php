@@ -14,7 +14,7 @@ class UserInviteNotification extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(public string $inviteToken)
     {
         //
     }
@@ -34,7 +34,9 @@ class UserInviteNotification extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage())->markdown("mail.user-invite-notification");
+        return (new MailMessage())->greeting('Helló!')
+            ->line('Meghívtak, hogy regisztrálj a Dusza verseny jelentkezési felületére. Kattints az alábbi gombra, hogy elfogadd:')
+            ->action('Meghívó elfogadása', route('accept-invitation', ['token' => $this->inviteToken], absolute: true));
     }
 
     /**
@@ -45,7 +47,7 @@ class UserInviteNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-                //
-            ];
+            //
+        ];
     }
 }
