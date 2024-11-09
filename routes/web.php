@@ -6,7 +6,7 @@ use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/landing', LandingPage::class);
-Route::get('/accept-invitation', AcceptInvitation::class)->middleware('guest');
+Route::get('/accept-invitation', AcceptInvitation::class)->middleware('guest')->name('accept-invitation');
 
 Route::get('/', function () {
     return redirect(Filament::getPanel('common')->getUrl());
