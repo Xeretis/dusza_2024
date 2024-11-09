@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Guava\FilamentKnowledgeBase\Filament\Panels\KnowledgeBasePanel;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Horizon\PhpBinary;
 
 class AppServiceProvider extends ServiceProvider
 {
