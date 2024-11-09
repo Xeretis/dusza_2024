@@ -131,11 +131,16 @@ class EditTeam extends EditRecord
         } elseif (empty($competitorData['name'])) {
             CompetitorProfile::whereId($competitorData['id'])->delete();
         } else {
+            $userId = User::where('email', $competitorData['email'])->first()?->id;
+
             $competitorProfile = CompetitorProfile::whereId($competitorData['id'])->first();
 
             $competitorProfile->update(
                 collect($competitorData)
                     ->forget(['id'])
+                    ->merge([
+                        'user_id' => $userId
+                    ])
                     ->toArray()
             );
             $competitorProfile->teams()->attach($record->id);
