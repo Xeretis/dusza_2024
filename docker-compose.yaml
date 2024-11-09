@@ -32,7 +32,7 @@ services:
       - ./data/mailpit:/data
     ports:
       - 8025:8025
-      - 1025:1025
+      - 8015:1025
     environment:
       MP_MAX_MESSAGES: 5000
       MP_DATABASE: /data/mailpit.db
