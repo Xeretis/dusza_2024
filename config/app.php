@@ -1,5 +1,9 @@
 <?php
 
+use App\Overrides\PhpBinary as OverridesPhpBinary;
+use Illuminate\Support\Facades\Facade;
+use Laravel\Horizon\PhpBinary;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -12,7 +16,7 @@ return [
     |
     */
 
-    "name" => env("APP_NAME", "Laravel"),
+    'name' => env('APP_NAME', 'Laravel'),
 
     /*
     |--------------------------------------------------------------------------
@@ -25,7 +29,7 @@ return [
     |
     */
 
-    "env" => env("APP_ENV", "production"),
+    'env' => env('APP_ENV', 'production'),
 
     /*
     |--------------------------------------------------------------------------
@@ -38,7 +42,7 @@ return [
     |
     */
 
-    "debug" => (bool) env("APP_DEBUG", false),
+    'debug' => (bool) env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -51,7 +55,7 @@ return [
     |
     */
 
-    "url" => env("APP_URL", "http://localhost"),
+    'url' => env('APP_URL', 'http://localhost'),
 
     /*
     |--------------------------------------------------------------------------
@@ -64,7 +68,7 @@ return [
     |
     */
 
-    "timezone" => env("APP_TIMEZONE", "UTC"),
+    'timezone' => env('APP_TIMEZONE', 'UTC'),
 
     /*
     |--------------------------------------------------------------------------
@@ -77,11 +81,11 @@ return [
     |
     */
 
-    "locale" => env("APP_LOCALE", "hu"),
+    'locale' => env('APP_LOCALE', 'hu'),
 
-    "fallback_locale" => env("APP_FALLBACK_LOCALE", "en"),
+    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
-    "faker_locale" => env("APP_FAKER_LOCALE", "en_US"),
+    'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
 
     /*
     |--------------------------------------------------------------------------
@@ -94,13 +98,25 @@ return [
     |
     */
 
-    "cipher" => "AES-256-CBC",
+    'cipher' => 'AES-256-CBC',
 
-    "key" => env("APP_KEY"),
+    'key' => env('APP_KEY'),
 
-    "previous_keys" => [
-        ...array_filter(explode(",", env("APP_PREVIOUS_KEYS", ""))),
+    'previous_keys' => [
+        ...array_filter(explode(',', env('APP_PREVIOUS_KEYS', ''))),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | PHP Binary Path
+    |--------------------------------------------------------------------------
+    |
+    | This value determines the PHP binary that will be used when executing
+    | Horizon's "horizon" Artisan command. You may set this to the PHP CLI
+    | binary of your choice. You should ensure the PHP binary is valid.
+    |
+    */
+    'horizon_binary_override' => env('HORIZON_BINARY_OVERRIDE', null),
 
     /*
     |--------------------------------------------------------------------------
@@ -115,8 +131,14 @@ return [
     |
     */
 
-    "maintenance" => [
-        "driver" => env("APP_MAINTENANCE_DRIVER", "file"),
-        "store" => env("APP_MAINTENANCE_STORE", "database"),
+    'maintenance' => [
+        'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
+        'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
+
+    'aliases' => Facade::defaultAliases()
+        ->merge([
+            Laravel\Horizon\PhpBinary::class => OverridesPhpBinary::class,
+        ])
+        ->toArray(),
 ];

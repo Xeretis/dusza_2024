@@ -5,7 +5,7 @@ mkdir -p /home/dusza/larawhale/storage/framework/{sessions,views,cache}
 mv /home/dusza/larawhale/htaccess /home/dusza/www/.htaccess
 
 mv services/* /home/dusza/.config/systemd/user/
-
+chmod +x franken_wrapper
 mv larawhale_linux-x86_64 frankenphp
 
 ./frankenphp php-cli artisan migrate --force
