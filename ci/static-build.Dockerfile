@@ -8,8 +8,12 @@ COPY . .
 # Alternatively, add these files to a .dockerignore file
 RUN rm -Rf tests/
 
+RUN cp .env .env.prod && cp .env.example .env
+
 # Install the dependencies
 RUN composer install --ignore-platform-reqs --no-dev -a
+
+RUN cp .env.prod .env
 
 RUN apk add --no-cache nodejs npm
 RUN rm -rf node_modules/ package-lock.json
