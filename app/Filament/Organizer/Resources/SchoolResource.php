@@ -65,6 +65,16 @@ class SchoolResource extends Resource
                             ->label("Város")
                             ->required()
                             ->live()
+                            ->afterStateUpdated(function (Get $get, Set $set) {
+                                $city = $get("city");
+                                $station = \App\Models\Station::whereCity(
+                                    $city
+                                )->first();
+                                if ($station) {
+                                    $set("zip", $station->zip);
+                                    $set("state", $station->state);
+                                }
+                            })
                             ->maxLength(255),
                         Forms\Components\TextInput::make("state")
                             ->label("Vármegye")
