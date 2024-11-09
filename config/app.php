@@ -1,6 +1,7 @@
 <?php
 
 use App\Overrides\PhpBinary as OverridesPhpBinary;
+use App\Overrides\PhpExecutableFinder;
 use Illuminate\Support\Facades\Facade;
 use Laravel\Horizon\PhpBinary;
 
@@ -139,6 +140,8 @@ return [
     'aliases' => Facade::defaultAliases()
         ->merge([
             Laravel\Horizon\PhpBinary::class => OverridesPhpBinary::class,
+            Illuminate\Support\Process\PhpExecutableFinder::class =>
+                PhpExecutableFinder::class,
         ])
         ->toArray(),
 ];
