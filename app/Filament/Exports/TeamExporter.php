@@ -34,8 +34,8 @@ class TeamExporter extends Exporter
                         $record->school->state .
                         "), " .
                         $record->school->street;
-                })
-                ->enabledByDefault(false),
+                }),
+            
             ExportColumn::make('competitor1.name')
                 ->label('1. Csapattag neve')
                 ->state(function (Team $record) {
