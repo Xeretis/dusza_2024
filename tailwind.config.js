@@ -26,7 +26,7 @@ export default {
             },
             animation: {
                 bgpan: 'bgpankf 5s linear infinite',
-            }
+            },
         },
     },
 }
