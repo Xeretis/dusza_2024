@@ -9,8 +9,10 @@ mv services/* /home/dusza/.config/systemd/user/
 mv larawhale_linux-x86_64 frankenphp
 
 ./frankenphp php-cli artisan migrate --force
-./frankenphp php-cli artisan db:seed ProductionSeeder --force
 
 systemctl --user daemon-reload
 systemctl --user enable larawhale.target
 systemctl --user start larawhale.target
+
+sleep 1
+./frankenphp php-cli artisan db:seed ProductionSeeder --force
