@@ -34,9 +34,12 @@ class UserInviteNotification extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage())->greeting('Helló!')
+        return (new MailMessage())
+            ->subject('Dusza verseny meghívó')
+            ->greeting('Helló!')
             ->line('Meghívtak, hogy regisztrálj a Dusza verseny jelentkezési felületére. Kattints az alábbi gombra, hogy elfogadd:')
-            ->action('Meghívó elfogadása', route('accept-invitation', ['token' => $this->inviteToken], absolute: true));
+            ->action('Meghívó elfogadása', route('accept-invitation', ['token' => $this->inviteToken], absolute: true))
+            ->salutation('Üdvözlettel,\nA Dusza verseny csapata');
     }
 
     /**
