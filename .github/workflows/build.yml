@@ -13,7 +13,7 @@ jobs:
           sed -i "s@__APP_KEY__.*@${{ secrets.APP_KEY }}@g" .env
           sed -i "s@__DB_DATABASE__.*@${{ secrets.DB_DATABASE }}@g" .env
           sed -i "s@__DB_USERNAME__.*@${{ secrets.DB_USERNAME }}@g" .env
-          sed -i "s@__DB_PASSWORD__.*@${{ secrets.DB_PASSWORD }}@g" .env
+          sed -i "s@__DB_PASSWORD__.*@\"${{ secrets.DB_PASSWORD }}\"@g" .env
           sed -i "s@__REVERB_APP_KEY__.*@${{ secrets.REVERB_APP_KEY }}@g" .env
           sed -i "s@__REVERB_APP_SECRET__.*@${{ secrets.REVERB_APP_SECRET }}@g" .env
       - name: Build Larawhale
