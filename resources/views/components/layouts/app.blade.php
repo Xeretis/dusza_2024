@@ -24,5 +24,7 @@
 
 @filamentScripts
 @vite('resources/js/app.js')
+@stack('scripts')
+@stack('styles')
 </body>
 </html>

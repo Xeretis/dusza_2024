@@ -11,6 +11,7 @@ export default defineConfig({
                 'app/Filament/**',
                 'app/Providers/Filament/**',
                 'resources/css/filament/common/theme.css',
+                'resources/views/**',
             ],
         }),
     ],
