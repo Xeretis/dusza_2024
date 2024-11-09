@@ -18,36 +18,37 @@ class CreateTeam extends CreateRecord
             'name' => $data['name'],
             'category_id' => $data['category_id'],
             'programming_language_id' => $data['programming_language_id'],
-            'school_id' => $data['school_id']
+            'school_id' => $data['school_id'],
         ]);
 
-        //TODO: Send out invites
+        // TODO: Send out invites
 
-        if ($data['competitor1']['name'] != null) {
-            $p1 = CompetitorProfile::create(collect($data['competitor1'])->merge(collect([
-                'user_id' => User::where('email', $data['competitor1']['email'])->first()?->id
-            ]))->toArray());
+        $this->createCompetitorProfile($data['competitor1'], $model);
+        $this->createCompetitorProfile($data['competitor2'], $model);
+        $this->createCompetitorProfile($data['competitor3'], $model);
 
-            $p1->teams()->attach($model);
+        if (!empty($data['teachers'])) {
+            foreach ($data['teachers'] as ['id' => $id]) {
+                $model->competitorProfiles()->attach($id);
+            }
         }
-
-        if ($data['competitor2']['name'] != null) {
-            $p1 = CompetitorProfile::create(collect($data['competitor2'])->merge(collect([
-                'user_id' => User::where('email', $data['competitor2']['email'])->first()?->id
-            ]))->toArray());
-
-            $p1->teams()->attach($model);
-        }
-
-        if ($data['competitor3']['name'] != null) {
-            $p1 = CompetitorProfile::create(collect($data['competitor3'])->merge(collect([
-                'user_id' => User::where('email', $data['competitor3']['email'])->first()?->id
-            ]))->toArray());
-
-            $p1->teams()->attach($model);
-        }
-
 
         return $model;
+    }
+
+    private function createCompetitorProfile(array $competitorData, Model $teamModel): void
+    {
+        if (!empty($competitorData['name'])) {
+            $userId = User::where('email', $competitorData['email'])->first()?->id;
+
+            $competitorProfile = CompetitorProfile::create(
+                collect($competitorData)
+                    ->forget('invite')
+                    ->merge(['user_id' => $userId])
+                    ->toArray()
+            );
+
+            $competitorProfile->teams()->attach($teamModel);
+        }
     }
 }
