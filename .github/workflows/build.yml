@@ -36,4 +36,4 @@ jobs:
         run: rsync -avz --ignore-errors ./ci/server/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/dusza/larawhale
       - name: Run deploy script on server
         if: success() || failure()
-        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "bash /home/dusza/larawhale/deploy.sh"
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "bash /home/dusza/larawhale/server/deploy.sh"
