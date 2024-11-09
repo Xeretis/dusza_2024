@@ -14,7 +14,7 @@ return new class extends Migration {
         Schema::create("team_events", function (Blueprint $table) {
             $table->id();
             $table->string("message");
-            $table->foreignId("team_id");
+            $table->foreignId("team_id")->constrained()->onDelete('cascade');
             $table->enum("type", ["approval", "amend_request"]);
             $table->enum("status", ["pending", "approved", "rejected"]);
             $table->enum("scope", ["organizer", "school"]);

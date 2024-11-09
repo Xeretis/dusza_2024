@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->string('message')->nullable();
             $table->json('changes');
             $table->enum('status', ["pending", "approved", "rejected"])->default('pending');
-            $table->foreignId('team_event_id');
+            $table->foreignId('team_event_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
