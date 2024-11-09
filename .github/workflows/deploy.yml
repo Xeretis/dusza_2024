@@ -20,11 +20,10 @@ jobs:
             return releases[0];
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Download release asset
-        id: download_release_asset
-        uses: actions/download-artifact@v4
-        with:
-          name: larawhale_linux-x86_64
+      - name: Download release
+        run: |
+          curl -L -o larawhale_linux-x86_64 ${{ steps.pull_latest_draft_release.outputs.result.assets[0].browser_download_url }}
+          chmod +x larawhale_linux-x86_64
       - name: Move larawhale_linux-x86_64 to ci folder
         run: mv larawhale_linux-x86_64 ci/larawhale_linux-x86_64
       - name: Install SSH Key
