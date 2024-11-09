@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\CompetitorProfileType;
+use App\Enums\TeamStatus;
 use App\Observers\TeamObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 
@@ -10,6 +11,10 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 class Team extends BaseModel
 {
     protected $guarded = [];
+
+    public $casts = [
+        "status" => TeamStatus::class,
+    ];
 
     public function category()
     {

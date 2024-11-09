@@ -2,10 +2,13 @@
 
 namespace App\Filament\Organizer\Resources;
 
+use App\Enums\CompetitorProfileType;
 use App\Filament\Organizer\Resources\TeamResource\Pages;
 use App\Filament\Organizer\Resources\TeamResource\RelationManagers;
 use App\Livewire\TeamEventsActivitySection;
+use App\Models\CompetitorProfile;
 use App\Models\Team;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Grid;
@@ -34,32 +37,156 @@ class TeamResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->name('Név')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('category_id')
-                    ->label('Kategória')
-                    ->relationship('category', 'name')
-                    ->required()
-                    ->native(false)
-                    ->selectablePlaceholder(false),
-                Forms\Components\Select::make('programming_language_id')
-                    ->label('Programozási nyelv')
-                    ->relationship('programmingLanguage', 'name')
-                    ->required()
-                    ->native(false)
-                    ->selectablePlaceholder(false),
-                Forms\Components\Select::make('school_id')
-                    ->label('Iskola')
-                    ->relationship('school', 'name')
-                    ->required()
-                    ->native(false)
-                    ->selectablePlaceholder(false),
-            ]);
+        return $form->schema([
+            ...self::teamDetailsSection(),
+            Forms\Components\Section::make('Résztvevők és egyéb adatok')
+                ->description('Ezeket az adatokat később is meg lehet adni, nem kötelező a cspata létrehozásakor.')
+                ->collapsible()
+                ->schema([
+                    self::competitorSection('1. Csapattag', 'competitor1'),
+                    self::competitorSection('2. Csapattag', 'competitor2'),
+                    self::competitorSection('3. Csapattag', 'competitor3'),
+                    self::teachersSection(),
+                ]),
+
+        ])->columns(2);
     }
+
+    private static function teamDetailsSection()
+    {
+        return [
+            Forms\Components\TextInput::make('name')
+                ->label('Név')
+                ->required()
+                ->maxLength(255),
+            Forms\Components\Select::make('category_id')
+                ->label('Kategória')
+                ->relationship('category', 'name')
+                ->required()
+                ->native(false)
+                ->selectablePlaceholder(false),
+            Forms\Components\Select::make('programming_language_id')
+                ->label('Programozási nyelv')
+                ->relationship('programmingLanguage', 'name')
+                ->required()
+                ->native(false)
+                ->selectablePlaceholder(false),
+            Forms\Components\Select::make('school_id')
+                ->label('Iskola')
+                ->relationship('school', 'name')
+                ->required()
+                ->native(false)
+                ->selectablePlaceholder(false),
+        ];
+    }
+
+    private static function competitorSection(string $label, string $competitorKey)
+    {
+        return Forms\Components\Fieldset::make($label)->schema([
+            Forms\Components\Hidden::make("{$competitorKey}.id")
+                ->default(null),
+            Forms\Components\TextInput::make("{$competitorKey}.name")
+                ->label('Név')
+                ->requiredWith("{$competitorKey}.grade")
+                ->requiredWith("{$competitorKey}.email"),
+            Forms\Components\TextInput::make("{$competitorKey}.grade")
+                ->label('Évfolyam')
+                ->numeric()
+                ->minValue(0)
+                ->requiredWith("{$competitorKey}.name")
+                ->requiredWith("{$competitorKey}.email"),
+            Forms\Components\TextInput::make("{$competitorKey}.email")
+                ->label('E-mail cím')
+                ->hintIcon('heroicon-m-information-circle')
+                ->hintIconTooltip('Felhasználó meghívásához szükséges megadni')
+                ->email()
+                ->unique('competitor_profiles', 'email', ignorable: function (Forms\Get $get) use ($competitorKey) {
+
+                    if ($get("{$competitorKey}.id") != null) {
+                        return CompetitorProfile::find($get("{$competitorKey}.id"));
+                    }
+
+                    return null;
+                })
+                ->live(onBlur: true),
+            self::inviteToggle($competitorKey),
+        ]);
+    }
+
+    private static function inviteToggle(string $competitorKey)
+    {
+        return Forms\Components\Toggle::make("{$competitorKey}.invite")
+            ->label('Felhasználó meghívása')
+            ->hintIcon('heroicon-m-information-circle')
+            ->hintIconTooltip(function (Forms\Get $get) use ($competitorKey) {
+                $email = $get("{$competitorKey}.email");
+                return $email && User::where('email', $email)->exists()
+                    ? 'Már létezik felhasználó ezzel az e-mail címmel'
+                    : 'E-mail küldése a megadott e-mail címre a regisztrációs linkkel';
+            })
+            ->inline(false)
+            ->visible(fn($operation) => $operation == 'create')
+            ->disabled(fn(Forms\Get $get) => !$get("{$competitorKey}.email") || User::where('email', $get("{$competitorKey}.email"))->exists());
+    }
+
+    private static function teachersSection()
+    {
+        $teachers = CompetitorProfile::where('type', CompetitorProfileType::Teacher)->pluck('name', 'id');
+
+        return Forms\Components\Fieldset::make('Felkészítő tanárok')->schema([
+            Forms\Components\Repeater::make('teachers')
+                ->label('')
+                ->schema([
+                    Forms\Components\Select::make('id')
+                        ->label('Név')
+                        ->options($teachers->toArray())
+                        ->createOptionForm([
+                            Forms\Components\TextInput::make('name')
+                                ->label('Név')
+                                ->required(),
+                            Forms\Components\TextInput::make('email')
+                                ->label('E-mail cím')
+                                ->hintIcon('heroicon-m-information-circle')
+                                ->hintIconTooltip('Felhasználó meghívásához szükséges megadni')
+                                ->email()
+                                ->live(onBlur: true),
+                            self::inviteToggleForTeacher(),
+                        ])
+                        ->createOptionUsing(function (array $data): int {
+                            // TODO: Send invite out
+                            return CompetitorProfile::create([
+                                'name' => $data['name'],
+                                'email' => $data['email'],
+                                'type' => CompetitorProfileType::Teacher,
+                            ])->getKey();
+                        })
+                        ->native(false)
+                        ->distinct()
+                        ->fixIndistinctState(),
+                ])
+                ->columns(1)
+                ->addActionLabel('Új tanár hozzáadása')
+                ->reorderable(false)
+                ->itemLabel('Új felkészítő tanár')
+                ->defaultItems(0)
+        ])->columns(1);
+    }
+
+    private static function inviteToggleForTeacher()
+    {
+        return Forms\Components\Toggle::make('invite')
+            ->label('Felhasználó meghívása')
+            ->hintIcon('heroicon-m-information-circle')
+            ->hintIconTooltip(function (Forms\Get $get) {
+                $email = $get('email');
+                return $email && User::where('email', $email)->exists()
+                    ? 'Már létezik felhasználó ezzel az e-mail címmel'
+                    : 'E-mail küldése a megadott e-mail címre a regisztrációs linkkel';
+            })
+            ->inline(false)
+            ->disabled(fn(Forms\Get $get) => !$get('email') || User::where('email', $get('email'))->exists());
+    }
+
 
     public static function infolist(Infolist $infolist): Infolist
     {

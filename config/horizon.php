@@ -3,7 +3,6 @@
 use Illuminate\Support\Str;
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Horizon Domain
@@ -15,7 +14,7 @@ return [
     |
     */
 
-    'domain' => env('HORIZON_DOMAIN'),
+    "domain" => env("HORIZON_DOMAIN"),
 
     /*
     |--------------------------------------------------------------------------
@@ -28,7 +27,7 @@ return [
     |
     */
 
-    'path' => env('HORIZON_PATH', 'horizon'),
+    "path" => env("HORIZON_PATH", "horizon"),
 
     /*
     |--------------------------------------------------------------------------
@@ -41,7 +40,7 @@ return [
     |
     */
 
-    'use' => 'default',
+    "use" => "default",
 
     /*
     |--------------------------------------------------------------------------
@@ -54,9 +53,9 @@ return [
     |
     */
 
-    'prefix' => env(
-        'HORIZON_PREFIX',
-        Str::slug(env('APP_NAME', 'laravel'), '_').'_horizon:'
+    "prefix" => env(
+        "HORIZON_PREFIX",
+        Str::slug(env("APP_NAME", "laravel"), "_") . "_horizon:"
     ),
 
     /*
@@ -70,7 +69,7 @@ return [
     |
     */
 
-    'middleware' => ['web'],
+    "middleware" => ["web"],
 
     /*
     |--------------------------------------------------------------------------
@@ -83,8 +82,8 @@ return [
     |
     */
 
-    'waits' => [
-        'redis:default' => 60,
+    "waits" => [
+        "redis:default" => 60,
     ],
 
     /*
@@ -98,13 +97,13 @@ return [
     |
     */
 
-    'trim' => [
-        'recent' => 60,
-        'pending' => 60,
-        'completed' => 60,
-        'recent_failed' => 10080,
-        'failed' => 10080,
-        'monitored' => 10080,
+    "trim" => [
+        "recent" => 60,
+        "pending" => 60,
+        "completed" => 60,
+        "recent_failed" => 10080,
+        "failed" => 10080,
+        "monitored" => 10080,
     ],
 
     /*
@@ -118,7 +117,7 @@ return [
     |
     */
 
-    'silenced' => [
+    "silenced" => [
         // App\Jobs\ExampleJob::class,
     ],
 
@@ -133,10 +132,10 @@ return [
     |
     */
 
-    'metrics' => [
-        'trim_snapshots' => [
-            'job' => 24,
-            'queue' => 24,
+    "metrics" => [
+        "trim_snapshots" => [
+            "job" => 24,
+            "queue" => 24,
         ],
     ],
 
@@ -153,7 +152,7 @@ return [
     |
     */
 
-    'fast_termination' => false,
+    "fast_termination" => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -166,7 +165,7 @@ return [
     |
     */
 
-    'memory_limit' => 64,
+    "memory_limit" => 64,
 
     /*
     |--------------------------------------------------------------------------
@@ -179,34 +178,34 @@ return [
     |
     */
 
-    'defaults' => [
-        'supervisor-1' => [
-            'connection' => 'redis',
-            'queue' => ['default'],
-            'balance' => 'auto',
-            'autoScalingStrategy' => 'time',
-            'maxProcesses' => 1,
-            'maxTime' => 0,
-            'maxJobs' => 0,
-            'memory' => 128,
-            'tries' => 1,
-            'timeout' => 60,
-            'nice' => 0,
+    "defaults" => [
+        "supervisor-1" => [
+            "connection" => "redis",
+            "queue" => ["default"],
+            "balance" => "auto",
+            "autoScalingStrategy" => "time",
+            "maxProcesses" => 10,
+            "maxTime" => 0,
+            "maxJobs" => 0,
+            "memory" => 256,
+            "tries" => 1,
+            "timeout" => 60,
+            "nice" => 0,
         ],
     ],
 
-    'environments' => [
-        'production' => [
-            'supervisor-1' => [
-                'maxProcesses' => 10,
-                'balanceMaxShift' => 1,
-                'balanceCooldown' => 3,
+    "environments" => [
+        "production" => [
+            "supervisor-1" => [
+                "maxProcesses" => 10,
+                "balanceMaxShift" => 1,
+                "balanceCooldown" => 3,
             ],
         ],
 
-        'local' => [
-            'supervisor-1' => [
-                'maxProcesses' => 3,
+        "local" => [
+            "supervisor-1" => [
+                "maxProcesses" => 3,
             ],
         ],
     ],

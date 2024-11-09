@@ -75,7 +75,8 @@ class EventsRelationManager extends RelationManager
             Grid::make(1)->schema([
                 TextEntry::make('message')
                     ->label('Üzenet')
-            ])
+            ]),
+
         ])->columns();
     }
 
@@ -134,6 +135,7 @@ class EventsRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-            ]);
+            ])
+            ->poll('5s');
     }
 }
