@@ -15,6 +15,7 @@ class AppServiceProvider extends ServiceProvider
         KnowledgeBasePanel::configureUsing(
             fn(KnowledgeBasePanel $panel) => $panel
                 ->viteTheme('resources/css/filament/common/theme.css')
+                ->pages([])
                 ->guestAccess()
         );
     }

@@ -14,17 +14,18 @@ return new class extends Migration {
     {
         Schema::create("user_invites", function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table
                 ->enum("role", UserRole::values())
                 ->default(UserRole::Competitor->value);
             $table->string("email")->unique();
             $table->string("token")->unique();
-            $table->timestamp("expires_at");
+            $table->timestamp("expires_at")->nullable();
             $table
                 ->foreignIdFor(School::class, "school_id")
                 ->nullable()
                 ->constrained();
+            $table->timestamps();
+
         });
     }
 

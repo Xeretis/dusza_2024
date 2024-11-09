@@ -89,7 +89,12 @@ class TeamResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('category')
+                    ->label('Kategória')
+                    ->relationship('category', 'name'),
+                Tables\Filters\SelectFilter::make('programmingLanguage')
+                    ->label('Programozási nyelv')
+                    ->relationship('programmingLanguage', 'name'),
             ])
             ->actions([Tables\Actions\ViewAction::make()])
             ->modifyQueryUsing(function (Builder $query) {
