@@ -20,4 +20,4 @@ RUN composer install --ignore-platform-reqs --no-dev -a
 
 # Build the static binary
 WORKDIR /go/src/app/
-RUN EMBED=dist/app/ ./build-static.sh
+RUN EMBED=dist/app/ NO_COMPRESS=1 ./build-static.sh
