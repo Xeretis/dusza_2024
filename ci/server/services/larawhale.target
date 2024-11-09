@@ -4,3 +4,6 @@ Requires=multi-user.target default.target
 Conflicts=rescue.service rescue.target
 After=multi-user.target default.target
 AllowIsolate=yes
+
+[Install]
+WantedBy=default.target
