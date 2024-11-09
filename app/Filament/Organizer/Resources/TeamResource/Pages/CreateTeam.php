@@ -24,7 +24,7 @@ class CreateTeam extends CreateRecord
         //TODO: Send out invites
 
         if ($data['competitor1']['name'] != null) {
-            $p1 = CompetitorProfile::create(collect($data['competitor1'])->merge(collect([
+            $p1 = CompetitorProfile::create(collect($data['competitor1'])->forget('invite')->merge(collect([
                 'user_id' => User::where('email', $data['competitor1']['email'])->first()?->id
             ]))->toArray());
 
@@ -32,7 +32,7 @@ class CreateTeam extends CreateRecord
         }
 
         if ($data['competitor2']['name'] != null) {
-            $p1 = CompetitorProfile::create(collect($data['competitor2'])->merge(collect([
+            $p1 = CompetitorProfile::create(collect($data['competitor2'])->forget('invite')->merge(collect([
                 'user_id' => User::where('email', $data['competitor2']['email'])->first()?->id
             ]))->toArray());
 
@@ -40,14 +40,19 @@ class CreateTeam extends CreateRecord
         }
 
         if ($data['competitor3']['name'] != null) {
-            $p1 = CompetitorProfile::create(collect($data['competitor3'])->merge(collect([
+            $p1 = CompetitorProfile::create(collect($data['competitor3'])->forget('invite')->merge(collect([
                 'user_id' => User::where('email', $data['competitor3']['email'])->first()?->id
             ]))->toArray());
 
             $p1->teams()->attach($model);
         }
 
-
+        if (count($data['teachers']) > 0) {
+            foreach ($data['teachers'] as ['id' => $id]) {
+                $model->competitorProfiles()->attach($id);
+            }
+        }
+        
         return $model;
     }
 }
