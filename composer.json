@@ -17,6 +17,7 @@
         "laravel/reverb": "^1.0",
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.5",
+        "owen-it/laravel-auditing": "^13.6",
         "predis/predis": "^2.2",
         "pusher/pusher-php-server": "^7.2",
         "sakanjo/laravel-easy-metrics": "^1.0",
@@ -24,7 +25,8 @@
         "spatie/laravel-settings": "^3.4",
         "spiritix/lada-cache": "^5.4",
         "staudenmeir/eloquent-has-many-deep": "^1.7",
-        "stechstudio/filament-impersonate": "^3.14"
+        "stechstudio/filament-impersonate": "^3.14",
+        "tapp/filament-auditing": "^3.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.14",

@@ -32,11 +32,18 @@ class User extends Authenticatable implements FilamentUser, HasName
      *
      * @var array<int, string>
      */
-    protected $hidden = ["password", "remember_token"];
+    protected $hidden = ['password', 'remember_token'];
 
     public function school()
     {
         return $this->belongsTo(School::class);
+    }
+
+    protected $appends = ['name'];
+
+    public function getNameAttribute(): string
+    {
+        return $this->username;
     }
 
     public function competitorProfile()
@@ -60,15 +67,20 @@ class User extends Authenticatable implements FilamentUser, HasName
     public function canAccessPanel(Panel $panel): bool
     {
         return match ($panel->getId()) {
-            "competitor" => $this->role == UserRole::Competitor,
-            "organizer" => $this->role == UserRole::Organizer,
-            "school-manager" => $this->role == UserRole::SchoolManager,
-            "teacher" => $this->role == UserRole::Teacher,
+            'competitor' => $this->role == UserRole::Competitor,
+            'organizer' => $this->role == UserRole::Organizer,
+            'school-manager' => $this->role == UserRole::SchoolManager,
+            'teacher' => $this->role == UserRole::Teacher,
             default => true,
         };
     }
 
     public function canImpersonate(): bool
+    {
+        return $this->role === UserRole::Organizer;
+    }
+
+    public function canAudit(): bool
     {
         return $this->role === UserRole::Organizer;
     }
