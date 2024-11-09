@@ -19,6 +19,7 @@
         "sakanjo/laravel-easy-metrics": "^1.0",
         "spatie/laravel-data": "^4.11",
         "spatie/laravel-settings": "^3.4",
+        "spiritix/lada-cache": "^5.4",
         "staudenmeir/eloquent-has-many-deep": "^1.7",
         "stechstudio/filament-impersonate": "^3.14"
     },
