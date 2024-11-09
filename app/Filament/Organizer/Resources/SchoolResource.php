@@ -5,8 +5,9 @@ namespace App\Filament\Organizer\Resources;
 use App\Filament\Organizer\Resources\SchoolResource\Pages;
 use App\Filament\Organizer\Resources\SchoolResource\RelationManagers;
 use App\Models\School;
+use App\Models\Station;
+use App\Models\Street;
 use Filament\Forms;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -53,18 +54,13 @@ class SchoolResource extends Resource
                             ->live()
                             ->afterStateUpdated(function (Get $get, Set $set) {
                                 $zip = $get("zip");
-                                $station = \App\Models\Station::whereZip(
+                                $station = Station::whereZip(
                                     $zip
                                 )->first();
                                 if ($station) {
                                     $set("city", $station->city);
                                     $set("state", $station->state);
                                 }
-                            })
-                            ->datalist(function () {
-                                return \App\Models\Station::all()
-                                    ->pluck("zip")
-                                    ->unique();
                             }),
                         Forms\Components\TextInput::make("city")
                             ->label("Város")
@@ -72,7 +68,7 @@ class SchoolResource extends Resource
                             ->live()
                             ->afterStateUpdated(function (Get $get, Set $set) {
                                 $city = $get("city");
-                                $station = \App\Models\Station::whereCity(
+                                $station = Station::whereCity(
                                     $city
                                 )->first();
                                 if ($station) {
@@ -81,8 +77,9 @@ class SchoolResource extends Resource
                                 }
                             })
                             ->live()
-                            ->datalist(function () {
-                                return \App\Models\Station::all()
+                            ->datalist(function (Get $get) {
+                                return Station::whereLike('city', '%' . $get('city') . '%')
+                                    ->take(10)
                                     ->pluck("city")
                                     ->unique();
                             })
@@ -95,14 +92,16 @@ class SchoolResource extends Resource
                         Forms\Components\TextInput::make("street")
                             ->label("Utca, házszám")
                             ->required()
-                            // datalist using state
                             ->datalist(function (Get $get) {
                                 $zip = $get("zip");
-                                return \App\Models\Street::whereZip($zip)
+                                return Street::whereZip($zip)
                                     ->whereNotIn("zip", [""])
+                                    ->whereLike('name', '%' . $get('street') . '%')
+                                    ->take(10)
                                     ->pluck("name")
                                     ->unique();
                             })
+                            ->live()
                             ->maxLength(255),
                     ])
                     ->columns(),
