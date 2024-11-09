@@ -22,7 +22,7 @@ jobs:
 
       - name: Download release
         run: |
-          curl -L -H "Authorization: ${{ github.token }}" -o larawhale_linux-x86_64 ${{ fromJson(steps.pull_latest_draft_release.outputs.result).assets[0].browser_download_url }}
+          curl -L -H "Authorization: Bearer ${{ github.token }}" -o larawhale_linux-x86_64 ${{ fromJson(steps.pull_latest_draft_release.outputs.result).assets[0].browser_download_url }}
           chmod +x larawhale_linux-x86_64
       - name: Move larawhale_linux-x86_64 to ci folder
         run: mv larawhale_linux-x86_64 ci/larawhale_linux-x86_64
