@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->foreignId("team_id");
             $table->enum("type", ["approval", "amend_request"]);
-            $table->enum("status", ["pending", "approved", "rejected"]);
+            $table->enum("status", ["pending", "completed", "approved", "rejected"]);
             $table->enum("scope", ["organizer", "school"]);
             $table->string("artifact_url");
             $table->string("message");

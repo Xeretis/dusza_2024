@@ -4,9 +4,11 @@ namespace App\Filament\Organizer\Resources;
 
 use App\Filament\Organizer\Resources\TeamResource\Pages;
 use App\Filament\Organizer\Resources\TeamResource\RelationManagers;
+use App\Livewire\TeamEventsActivitySection;
 use App\Models\Team;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
@@ -61,29 +63,32 @@ class TeamResource extends Resource
 
     public static function infolist(Infolist $infolist): Infolist
     {
-        return $infolist->schema([
-            Split::make([
-                Section::make([
-                    TextEntry::make('name')
-                        ->label('Név'),
-                    TextEntry::make('category.name')
-                        ->label('Kategória')
-                        ->badge(),
-                    TextEntry::make('programmingLanguage.name')
-                        ->label('Programozási nyelv'),
-                    TextEntry::make('school.name')
-                        ->label('Iskola')
-                ])->columns()->grow(),
-                Section::make([
-                    TextEntry::make('created_at')
-                        ->label('Létrehozva')
-                        ->dateTime(),
-                    TextEntry::make('updated_at')
-                        ->label('Frissítve')
-                        ->dateTime(),
-                ])->grow(false),
-            ])->from('md'),
-        ])->columns(false);
+        return $infolist
+            ->schema([
+                Split::make([
+                    Grid::make(1)->schema([
+                        Section::make([
+                            TextEntry::make('name')
+                                ->label('Név'),
+                            TextEntry::make('category.name')
+                                ->label('Kategória')
+                                ->badge(),
+                            TextEntry::make('programmingLanguage.name')
+                                ->label('Programozási nyelv'),
+                            TextEntry::make('school.name')
+                                ->label('Iskola')
+                        ])->columns()->grow(),
+                    ]),
+                    Section::make([
+                        TextEntry::make('created_at')
+                            ->label('Létrehozva')
+                            ->dateTime(),
+                        TextEntry::make('updated_at')
+                            ->label('Frissítve')
+                            ->dateTime(),
+                    ])->grow(false),
+                ])->from('md'),
+            ])->columns(false);
     }
 
     public static function table(Table $table): Table
@@ -138,7 +143,7 @@ class TeamResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\EventsRelationManager::class
         ];
     }
 

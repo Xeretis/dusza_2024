@@ -62,4 +62,9 @@ class Team extends Model
             CompetitorProfileType::Teacher
         );
     }
+
+    public function teamEvents()
+    {
+        return $this->hasMany(TeamEvent::class);
+    }
 }

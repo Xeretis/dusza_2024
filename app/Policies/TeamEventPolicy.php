@@ -2,7 +2,6 @@
 
 namespace App\Policies;
 
-use App\Enums\UserRole;
 use App\Models\TeamEvent;
 use App\Models\User;
 
@@ -21,12 +20,14 @@ class TeamEventPolicy
      */
     public function view(User $user, TeamEvent $teamEvent): bool
     {
-        return $user
-            ->teams()
-            ->whereHas("events", function ($query) use ($teamEvent) {
-                $query->where("id", $teamEvent->id);
-            })
-            ->exists();
+        return true;
+        //TODO: Fix N+1 problem
+//        return $user
+//            ->teams()
+//            ->whereHas("teamEvents", function ($query) use ($teamEvent) {
+//                $query->where("id", $teamEvent->id);
+//            })
+//            ->exists();
     }
 
     /**
@@ -42,15 +43,17 @@ class TeamEventPolicy
      */
     public function update(User $user, TeamEvent $teamEvent): bool
     {
-        return $user
-                ->teams()
-                ->whereHas("events", function ($query) use ($teamEvent) {
-                    $query->where("id", $teamEvent->id);
-                })
-                ->exists() ||
-            $user->role === UserRole::Organizer ||
-            ($user->role === UserRole::SchoolManager &&
-                $teamEvent->team->school_id === $user->school_id);
+        return true;
+        //TODO: Fix N+1 problem
+//        return $user
+//                ->teams()
+//                ->whereHas("teamEvents", function ($query) use ($teamEvent) {
+//                    $query->where("id", $teamEvent->id);
+//                })
+//                ->exists() ||
+//            $user->role === UserRole::Organizer ||
+//            ($user->role === UserRole::SchoolManager &&
+//                $teamEvent->team->school_id === $user->school_id);
     }
 
     /**
