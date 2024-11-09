@@ -45,7 +45,10 @@ class User extends Authenticatable implements FilamentUser, HasName
 
     public function teams()
     {
-        return $this->hasManyDeep(Team::class, [CompetitorProfile::class, 'team_competitor_profile']);
+        return $this->hasManyDeep(Team::class, [
+            CompetitorProfile::class,
+            "team_competitor_profile",
+        ]);
     }
 
     public function getFilamentName(): string
@@ -56,12 +59,17 @@ class User extends Authenticatable implements FilamentUser, HasName
     public function canAccessPanel(Panel $panel): bool
     {
         return match ($panel->getId()) {
-            'competitor' => $this->role == UserRole::Competitor,
-            'organizer' => $this->role == UserRole::Organizer,
-            'school-manager' => $this->role == UserRole::SchoolManager,
-            'teacher' => $this->role == UserRole::Teacher,
-            default => true
+            "competitor" => $this->role == UserRole::Competitor,
+            "organizer" => $this->role == UserRole::Organizer,
+            "school-manager" => $this->role == UserRole::SchoolManager,
+            "teacher" => $this->role == UserRole::Teacher,
+            default => true,
         };
+    }
+
+    public function canImpersonate(): bool
+    {
+        return $this->role === UserRole::Organizer;
     }
 
     /**

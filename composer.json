@@ -19,7 +19,8 @@
         "sakanjo/laravel-easy-metrics": "^1.0",
         "spatie/laravel-data": "^4.11",
         "spatie/laravel-settings": "^3.4",
-        "staudenmeir/eloquent-has-many-deep": "^1.7"
+        "staudenmeir/eloquent-has-many-deep": "^1.7",
+        "stechstudio/filament-impersonate": "^3.14"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.14",
