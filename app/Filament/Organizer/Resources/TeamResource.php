@@ -92,6 +92,7 @@ class TeamResource extends Resource
             Forms\Components\TextInput::make("{$competitorKey}.grade")
                 ->label('Évfolyam')
                 ->numeric()
+                ->minValue(0)
                 ->requiredWith("{$competitorKey}.name")
                 ->requiredWith("{$competitorKey}.email"),
             Forms\Components\TextInput::make("{$competitorKey}.email")
