@@ -1,0 +1,8 @@
+ci
+.git
+.gitignore
+cron-emu.sh
+dev.sh
+supervisord.conf
+docker-compose.yaml
+dusza_2024.code-workspace
