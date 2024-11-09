@@ -23,6 +23,9 @@ devDependencies:
   concurrently:
     specifier: ^9.1.0
     version: 9.1.0
+  laravel-echo:
+    specifier: ^1.16.1
+    version: 1.16.1
   laravel-vite-plugin:
     specifier: ^1.0.5
     version: 1.0.5(vite@5.4.10)
@@ -32,6 +35,9 @@ devDependencies:
   postcss-nesting:
     specifier: ^13.0.1
     version: 13.0.1(postcss@8.4.47)
+  pusher-js:
+    specifier: 8.4.0-rc2
+    version: 8.4.0-rc2
   tailwindcss:
     specifier: ^3.4.14
     version: 3.4.14
@@ -939,6 +945,11 @@ packages:
     hasBin: true
     dev: true
 
+  /laravel-echo@1.16.1:
+    resolution: {integrity: sha512-++Ylb6M3ariC9Rk5WE5gZjj6wcEV5kvLF8b+geJ5/rRIfdoOA+eG6b9qJPrarMD9rY28Apx+l3eelIrCc2skVg==}
+    engines: {node: '>=10'}
+    dev: true
+
   /laravel-vite-plugin@1.0.5(vite@5.4.10):
     resolution: {integrity: sha512-Zv+to82YLBknDCZ6g3iwOv9wZ7f6EWStb9pjSm7MGe9Mfoy5ynT2ssZbGsMr1udU6rDg9HOoYEVGw5Qf+p9zbw==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -1207,6 +1218,12 @@ packages:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
     dev: true
 
+  /pusher-js@8.4.0-rc2:
+    resolution: {integrity: sha512-d87GjOEEl9QgO5BWmViSqW0LOzPvybvX6WA9zLUstNdB57jVJuR27zHkRnrav2a3+zAMlHbP2Og8wug+rG8T+g==}
+    dependencies:
+      tweetnacl: 1.0.3
+    dev: true
+
   /queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
     dev: true
@@ -1441,6 +1458,10 @@ packages:
 
   /tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
+    dev: true
+
+  /tweetnacl@1.0.3:
+    resolution: {integrity: sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==}
     dev: true
 
   /update-browserslist-db@1.1.1(browserslist@4.24.2):
