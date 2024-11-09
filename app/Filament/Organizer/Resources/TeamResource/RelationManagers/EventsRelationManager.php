@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EventsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'teamEvents';
+    protected static string $relationship = 'events';
 
     protected static ?string $title = 'Események';
 
@@ -57,7 +57,6 @@ class EventsRelationManager extends RelationManager
                 ->formatStateUsing(function ($state) {
                     return match ($state) {
                         TeamEventStatus::Pending => 'Folyamatban',
-                        TeamEventStatus::Completed => 'Befejezve',
                         TeamEventStatus::Approved => 'Elfogadva',
                         TeamEventStatus::Rejected => 'Elutasítva',
                     };
@@ -65,7 +64,6 @@ class EventsRelationManager extends RelationManager
                 ->color(function ($state) {
                     return match ($state) {
                         TeamEventStatus::Pending => 'warning',
-                        TeamEventStatus::Completed => 'primary',
                         TeamEventStatus::Approved => 'success',
                         TeamEventStatus::Rejected => 'danger',
                     };
@@ -116,7 +114,6 @@ class EventsRelationManager extends RelationManager
                     ->formatStateUsing(function ($state) {
                         return match ($state) {
                             TeamEventStatus::Pending => 'Folyamatban',
-                            TeamEventStatus::Completed => 'Befejezve',
                             TeamEventStatus::Approved => 'Elfogadva',
                             TeamEventStatus::Rejected => 'Elutasítva',
                         };
@@ -124,7 +121,6 @@ class EventsRelationManager extends RelationManager
                     ->color(function ($state) {
                         return match ($state) {
                             TeamEventStatus::Pending => 'warning',
-                            TeamEventStatus::Completed => 'primary',
                             TeamEventStatus::Approved => 'success',
                             TeamEventStatus::Rejected => 'danger',
                         };

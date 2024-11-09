@@ -63,7 +63,7 @@ class Team extends Model
         );
     }
 
-    public function teamEvents()
+    public function events()
     {
         return $this->hasMany(TeamEvent::class);
     }

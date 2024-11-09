@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum TeamEventStatus: string
+enum TeamEventResponseStatus: string
 {
     case Pending = "pending";
     case Approved = "approved";

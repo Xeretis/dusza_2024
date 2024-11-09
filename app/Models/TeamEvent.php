@@ -14,17 +14,17 @@ class TeamEvent extends Model
         "status" => TeamEventStatus::class,
         "scope" => TeamEventScope::class,
     ];
-    protected $fillable = [
-        "team_id",
-        "type",
-        "status",
-        "scope",
-        "artifact_url",
-        "message",
-    ];
+    
+    protected $guarded = [];
+
 
     public function team()
     {
         return $this->belongsTo(Team::class);
+    }
+
+    public function response()
+    {
+        return $this->hasMany(TeamEventResponse::class);
     }
 }

@@ -12,7 +12,6 @@ return new class extends Migration {
     {
         Schema::create("schools", function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->string("name");
             $table->string("street");
             $table->string("city");
@@ -20,6 +19,7 @@ return new class extends Migration {
             $table->string("zip");
             $table->string("contact_name");
             $table->string("contact_email");
+            $table->timestamps();
         });
     }
 
