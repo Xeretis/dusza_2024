@@ -21,7 +21,6 @@ class ProductionSeeder extends Seeder
         }
 
         $adminUser = new User([
-            "name" => "Administrator (Built-in)",
             "email" => "admin@example.com",
             "password" => Hash::make("password"),
             "role" => UserRole::Organizer->value,
