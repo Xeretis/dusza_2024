@@ -1,14 +1,14 @@
-<div class="overflow-x-hidden overflow-y-hidden m-0 light:bg-white dark:bg-black h-screen w-screen flex justify-center items-center">
+<div class="overflow-x-hidden overflow-y-hidden m-0 light:bg-white dark:bg-black max-w-screen max-h-screen h-screen w-screen flex justify-center items-center">
     {{--    TODO: fix theme switcher--}}
     <div name="theme-switcher" class="fixed top-2 left-5 place-content-center">
         <x-theme-switcher size="lg"/>
     </div>
     <div >
         <div name="center" class="text-center translate-y-[-50px]">
-            <p id="1" name="star" class="-z-10 absolute bottom-30 left-30 h-6 w-6 text-red-600"><x-heroicon-m-star /></p>
+            <p id="1" name="star" class="-z-10 absolute bottom-30 left-30 h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
 
             <h1 class="light:text-black dark:text-white text-center px-4 sm:px-8 md:px-16 lg:px-32 xl:px-42 text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-bold mb-20">
-                Jelentkezés a <span class="font-bold align-center whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-red-500 via-purple via-violet via-pink to-red-500 bg-200% animate-bgpan">Dusza</span> Versenyre
+                Jelentkezés a <span class="font-bold align-center whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-red-500 via-purple via-violet via-pink to-red-500 bg-200% animate-bgpan">Dusza Versenyre</span>
             </h1>
             <div name="Links">
                 <x-filament::button href="/" tag="a" color="gray">Bejelentkezés</x-filament::button>
@@ -17,10 +17,10 @@
             </div>
         </div>
     {{--        TODO: make stars rotate and maybe stars could also rotate around another point --}}
-        <p id="2" name="star" class="-z-10 absolute bottom-40 right-50 h-6 w-6 text-red-600"><x-heroicon-m-star /></p>
-        <p id="3" name="star" class="-z-10 absolute top-32 right-32 h-6 w-6 text-red-600"><x-heroicon-m-star /></p>
-        <p id="4" name="star" class="-z-10 absolute right-96 top-44 h-6 w-6 text-red-600"><x-heroicon-m-star /></p>
-        <p id="5" name="star" class="-z-10 absolute right-80 bottom-60 h-6 w-6 text-red-600"><x-heroicon-m-star /></p>
+        <p id="2" name="star" class="-z-10 absolute top-60 left-50 h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
+        <p id="3" name="star" class="-z-10 absolute top-32 left-68 h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
+        <p id="4" name="star" class="-z-10 absolute left-4 top-44 h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
+        <p id="5" name="star" class="-z-10 absolute left-20 top-40 h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
         <div class="fixed bottom-10 left-1/2 translate-x-[-50%]">
     {{--            TODO: add a route for an about us and actually make an about us page--}}
             <x-filament::button color="gray">A csapatról</x-filament::button>
@@ -86,8 +86,8 @@
          const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
          const animate = star => {
-            star.style.left = `${rand(-10, 100)}%`;
-            star.style.top = `${rand(-20, 80)}%`;
+            star.style.left = `${rand(20, 80)}%`;
+            star.style.top = `${rand(20, 70)}%`;
             star.style.animation = "none";
             star.offsetHeight;
             star.style.animation = "";
