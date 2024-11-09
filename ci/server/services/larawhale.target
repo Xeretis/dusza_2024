@@ -1,0 +1,8 @@
+[Unit]
+Description=Larawhale's Services
+Requires=default.target
+After=default.target
+AllowIsolate=yes
+
+[Install]
+WantedBy=default.target

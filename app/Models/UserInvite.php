@@ -2,9 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Enums\UserRole;
 
 class UserInvite extends BaseModel
 {
     protected $guarded = [];
+
+    protected function casts(): array
+    {
+        return [
+            "role" => UserRole::class,
+        ];
+    }
 }

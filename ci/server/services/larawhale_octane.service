@@ -1,0 +1,13 @@
+[Unit]
+Description=Larawhale's Octane Instance
+PartOf=larawhale.target
+After=network.target
+Type=simple
+
+[Service]
+WorkingDirectory=/home/dusza/larawhale
+ExecStart=/home/dusza/larawhale/frankenphp php-cli artisan octane:start --port 8055
+Restart=always
+
+[Install]
+WantedBy=larawhale.target
