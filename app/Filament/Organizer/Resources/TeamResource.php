@@ -20,6 +20,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
+use Tapp\FilamentAuditing\RelationManagers\AuditsRelationManager;
 
 class TeamResource extends Resource
 {
@@ -37,20 +38,23 @@ class TeamResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form->schema([
-            ...self::teamDetailsSection(),
-            Forms\Components\Section::make('Résztvevők és egyéb adatok')
-                ->description('Ezeket az adatokat később is meg lehet adni, nem kötelező a cspata létrehozásakor.')
-                ->collapsible()
-                ->schema([
-                    self::competitorSection('1. Csapattag', 'competitor1'),
-                    self::competitorSection('2. Csapattag', 'competitor2'),
-                    self::competitorSection('3. Csapattag', 'competitor3'),
-                    self::competitorSection('Póttag', 'substitute'),
-                    self::teachersSection(),
-                ]),
-
-        ])->columns();
+        return $form
+            ->schema([
+                ...self::teamDetailsSection(),
+                Forms\Components\Section::make('Résztvevők és egyéb adatok')
+                    ->description(
+                        'Ezeket az adatokat később is meg lehet adni, nem kötelező a cspata létrehozásakor.'
+                    )
+                    ->collapsible()
+                    ->schema([
+                        self::competitorSection('1. Csapattag', 'competitor1'),
+                        self::competitorSection('2. Csapattag', 'competitor2'),
+                        self::competitorSection('3. Csapattag', 'competitor3'),
+                        self::competitorSection('Póttag', 'substitute'),
+                        self::teachersSection(),
+                    ]),
+            ])
+            ->columns();
     }
 
     private static function teamDetailsSection()
@@ -81,11 +85,12 @@ class TeamResource extends Resource
         ];
     }
 
-    private static function competitorSection(string $label, string $competitorKey)
-    {
+    private static function competitorSection(
+        string $label,
+        string $competitorKey
+    ) {
         return Forms\Components\Fieldset::make($label)->schema([
-            Forms\Components\Hidden::make("{$competitorKey}.id")
-                ->default(null),
+            Forms\Components\Hidden::make("{$competitorKey}.id")->default(null),
             Forms\Components\TextInput::make("{$competitorKey}.name")
                 ->label('Név')
                 ->requiredWith("{$competitorKey}.grade")
@@ -101,14 +106,19 @@ class TeamResource extends Resource
                 ->hintIcon('heroicon-m-information-circle')
                 ->hintIconTooltip('Felhasználó meghívásához szükséges megadni')
                 ->email()
-                ->unique('competitor_profiles', 'email', ignorable: function (Forms\Get $get) use ($competitorKey) {
+                ->unique(
+                    'competitor_profiles',
+                    'email',
+                    ignorable: function (Forms\Get $get) use ($competitorKey) {
+                        if ($get("{$competitorKey}.id") != null) {
+                            return CompetitorProfile::find(
+                                $get("{$competitorKey}.id")
+                            );
+                        }
 
-                    if ($get("{$competitorKey}.id") != null) {
-                        return CompetitorProfile::find($get("{$competitorKey}.id"));
+                        return null;
                     }
-
-                    return null;
-                })
+                )
                 ->live(onBlur: true),
             self::inviteToggle($competitorKey),
         ]);
@@ -127,50 +137,63 @@ class TeamResource extends Resource
             })
             ->inline(false)
             ->visible(fn($operation) => $operation == 'create')
-            ->disabled(fn(Forms\Get $get) => !$get("{$competitorKey}.email") || User::where('email', $get("{$competitorKey}.email"))->exists());
+            ->disabled(
+                fn(Forms\Get $get) => !$get("{$competitorKey}.email") ||
+                    User::where(
+                        'email',
+                        $get("{$competitorKey}.email")
+                    )->exists()
+            );
     }
 
     private static function teachersSection()
     {
-        $teachers = CompetitorProfile::where('type', CompetitorProfileType::Teacher)->pluck('name', 'id');
+        $teachers = CompetitorProfile::where(
+            'type',
+            CompetitorProfileType::Teacher
+        )->pluck('name', 'id');
 
-        return Forms\Components\Fieldset::make('Felkészítő tanárok')->schema([
-            Forms\Components\Repeater::make('teachers')
-                ->label('')
-                ->schema([
-                    Forms\Components\Select::make('id')
-                        ->label('Név')
-                        ->options($teachers->toArray())
-                        ->createOptionForm([
-                            Forms\Components\TextInput::make('name')
-                                ->label('Név')
-                                ->required(),
-                            Forms\Components\TextInput::make('email')
-                                ->label('E-mail cím')
-                                ->hintIcon('heroicon-m-information-circle')
-                                ->hintIconTooltip('Felhasználó meghívásához szükséges megadni')
-                                ->email()
-                                ->live(onBlur: true),
-                            self::inviteToggleForTeacher(),
-                        ])
-                        ->createOptionUsing(function (array $data): int {
-                            // TODO: Send invite out
-                            return CompetitorProfile::create([
-                                'name' => $data['name'],
-                                'email' => $data['email'],
-                                'type' => CompetitorProfileType::Teacher,
-                            ])->getKey();
-                        })
-                        ->native(false)
-                        ->distinct()
-                        ->fixIndistinctState(),
-                ])
-                ->columns(1)
-                ->addActionLabel('Új tanár hozzáadása')
-                ->reorderable(false)
-                ->itemLabel('Új felkészítő tanár')
-                ->defaultItems(0)
-        ])->columns(1);
+        return Forms\Components\Fieldset::make('Felkészítő tanárok')
+            ->schema([
+                Forms\Components\Repeater::make('teachers')
+                    ->label('')
+                    ->schema([
+                        Forms\Components\Select::make('id')
+                            ->label('Név')
+                            ->options($teachers->toArray())
+                            ->createOptionForm([
+                                Forms\Components\TextInput::make('name')
+                                    ->label('Név')
+                                    ->required(),
+                                Forms\Components\TextInput::make('email')
+                                    ->label('E-mail cím')
+                                    ->hintIcon('heroicon-m-information-circle')
+                                    ->hintIconTooltip(
+                                        'Felhasználó meghívásához szükséges megadni'
+                                    )
+                                    ->email()
+                                    ->live(onBlur: true),
+                                self::inviteToggleForTeacher(),
+                            ])
+                            ->createOptionUsing(function (array $data): int {
+                                // TODO: Send invite out
+                                return CompetitorProfile::create([
+                                    'name' => $data['name'],
+                                    'email' => $data['email'],
+                                    'type' => CompetitorProfileType::Teacher,
+                                ])->getKey();
+                            })
+                            ->native(false)
+                            ->distinct()
+                            ->fixIndistinctState(),
+                    ])
+                    ->columns(1)
+                    ->addActionLabel('Új tanár hozzáadása')
+                    ->reorderable(false)
+                    ->itemLabel('Új felkészítő tanár')
+                    ->defaultItems(0),
+            ])
+            ->columns(1);
     }
 
     private static function inviteToggleForTeacher()
@@ -185,9 +208,11 @@ class TeamResource extends Resource
                     : 'E-mail küldése a megadott e-mail címre a regisztrációs linkkel';
             })
             ->inline(false)
-            ->disabled(fn(Forms\Get $get) => !$get('email') || User::where('email', $get('email'))->exists());
+            ->disabled(
+                fn(Forms\Get $get) => !$get('email') ||
+                    User::where('email', $get('email'))->exists()
+            );
     }
-
 
     public static function infolist(Infolist $infolist): Infolist
     {
@@ -196,16 +221,17 @@ class TeamResource extends Resource
                 Split::make([
                     Grid::make(1)->schema([
                         Section::make([
-                            TextEntry::make('name')
-                                ->label('Név'),
+                            TextEntry::make('name')->label('Név'),
                             TextEntry::make('category.name')
                                 ->label('Kategória')
                                 ->badge(),
-                            TextEntry::make('programmingLanguage.name')
-                                ->label('Programozási nyelv'),
-                            TextEntry::make('school.name')
-                                ->label('Iskola')
-                        ])->columns()->grow(),
+                            TextEntry::make('programmingLanguage.name')->label(
+                                'Programozási nyelv'
+                            ),
+                            TextEntry::make('school.name')->label('Iskola'),
+                        ])
+                            ->columns()
+                            ->grow(),
                     ]),
                     Section::make([
                         TextEntry::make('created_at')
@@ -216,15 +242,15 @@ class TeamResource extends Resource
                             ->dateTime(),
                     ])->grow(false),
                 ])->from('md'),
-            ])->columns(false);
+            ])
+            ->columns(false);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('category.name')
                     ->label('Kategória')
                     ->badge()
@@ -263,7 +289,7 @@ class TeamResource extends Resource
                     ->relationship('programmingLanguage', 'name'),
                 Tables\Filters\SelectFilter::make('school')
                     ->label('Iskola')
-                    ->relationship('school', 'name')
+                    ->relationship('school', 'name'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -280,7 +306,8 @@ class TeamResource extends Resource
     {
         return [
             RelationManagers\CompetitorProfilesRelationManager::class,
-            RelationManagers\EventsRelationManager::class
+            RelationManagers\EventsRelationManager::class,
+            RelationManagers\AuditRelationManager::class,
         ];
     }
 

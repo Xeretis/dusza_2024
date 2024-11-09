@@ -20,7 +20,7 @@ class ProgrammingLanguageResource extends Resource
 {
     protected static ?string $model = ProgrammingLanguage::class;
 
-    protected static ?string $navigationIcon = "heroicon-o-code-bracket";
+    protected static ?string $navigationIcon = 'heroicon-o-code-bracket';
 
     protected static ?string $label = 'programozási nyelv';
 
@@ -30,38 +30,39 @@ class ProgrammingLanguageResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-
     public static function form(Form $form): Form
     {
-        return $form->schema([TextInput::make("name")->label('Név')])->columns(1);
+        return $form
+            ->schema([TextInput::make('name')->label('Név')])
+            ->columns(1);
     }
-
 
     public static function infolist(Infolist $infolist): Infolist
     {
-        return $infolist->schema([
-            Split::make([
-                Section::make([
-                    TextEntry::make('name')
-                        ->label('Név'),
-                ])->columns()->grow(),
-                Section::make([
-                    TextEntry::make('created_at')
-                        ->label('Létrehozva')
-                        ->dateTime(),
-                    TextEntry::make('updated_at')
-                        ->label('Frissítve')
-                        ->dateTime(),
-                ])->grow(false),
-            ])->from('md'),
-        ])->columns(false);
+        return $infolist
+            ->schema([
+                Split::make([
+                    Section::make([TextEntry::make('name')->label('Név')])
+                        ->columns()
+                        ->grow(),
+                    Section::make([
+                        TextEntry::make('created_at')
+                            ->label('Létrehozva')
+                            ->dateTime(),
+                        TextEntry::make('updated_at')
+                            ->label('Frissítve')
+                            ->dateTime(),
+                    ])->grow(false),
+                ])->from('md'),
+            ])
+            ->columns(false);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make("name")
+                TextColumn::make('name')
                     ->label('Név')
                     ->searchable()
                     ->sortable(),
@@ -89,16 +90,19 @@ class ProgrammingLanguageResource extends Resource
 
     public static function getRelations(): array
     {
-        return [RelationManagers\TeamsRelationManager::class];
+        return [
+            RelationManagers\TeamsRelationManager::class,
+            RelationManagers\AuditRelationManager::class,
+        ];
     }
 
     public static function getPages(): array
     {
         return [
-            "index" => Pages\ListProgrammingLanguages::route("/"),
-            "create" => Pages\CreateProgrammingLanguage::route("/create"),
+            'index' => Pages\ListProgrammingLanguages::route('/'),
+            'create' => Pages\CreateProgrammingLanguage::route('/create'),
             'view' => Pages\ViewProgrammingLanguage::route('/{record}'),
-            "edit" => Pages\EditProgrammingLanguage::route("/{record}/edit"),
+            'edit' => Pages\EditProgrammingLanguage::route('/{record}/edit'),
         ];
     }
 }

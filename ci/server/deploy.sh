@@ -11,6 +11,13 @@ mv larawhale_linux-x86_64 frankenphp
 ./frankenphp php-cli artisan migrate --force
 
 systemctl --user daemon-reload
+
+systemctl --user enable larawhale_octane
+systemctl --user enable larawhale_queue
+systemctl --user enable larawhale_redis
+systemctl --user enable larawhale_reverb
+systemctl --user enable larawhale_cron
+
 systemctl --user enable larawhale.target
 systemctl --user start larawhale.target
 

@@ -12,31 +12,45 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use OwenIt\Auditing\Auditable as AuditingAuditable;
+use OwenIt\Auditing\Contracts\Audit;
+use OwenIt\Auditing\Contracts\Auditable;
 use Spiritix\LadaCache\Database\LadaCacheTrait;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
-class User extends Authenticatable implements FilamentUser, HasName
+class User extends Authenticatable implements FilamentUser, HasName, Auditable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasRelationships, LadaCacheTrait;
+    use HasFactory,
+        Notifiable,
+        HasRelationships,
+        LadaCacheTrait,
+        AuditingAuditable;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-    protected $fillable = ["name", "email", "password", "username"];
+    protected $fillable = ['name', 'email', 'password', 'username'];
 
     /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
      */
-    protected $hidden = ["password", "remember_token"];
+    protected $hidden = ['password', 'remember_token'];
 
     public function school()
     {
         return $this->belongsTo(School::class);
+    }
+
+    protected $appends = ['name'];
+
+    public function getNameAttribute(): string
+    {
+        return $this->username;
     }
 
     public function competitorProfile()
@@ -48,7 +62,7 @@ class User extends Authenticatable implements FilamentUser, HasName
     {
         return $this->hasManyDeep(Team::class, [
             CompetitorProfile::class,
-            "team_competitor_profile",
+            'team_competitor_profile',
         ]);
     }
 
@@ -60,15 +74,20 @@ class User extends Authenticatable implements FilamentUser, HasName
     public function canAccessPanel(Panel $panel): bool
     {
         return match ($panel->getId()) {
-            "competitor" => $this->role == UserRole::Competitor,
-            "organizer" => $this->role == UserRole::Organizer,
-            "school-manager" => $this->role == UserRole::SchoolManager,
-            "teacher" => $this->role == UserRole::Teacher,
+            'competitor' => $this->role == UserRole::Competitor,
+            'organizer' => $this->role == UserRole::Organizer,
+            'school-manager' => $this->role == UserRole::SchoolManager,
+            'teacher' => $this->role == UserRole::Teacher,
             default => true,
         };
     }
 
     public function canImpersonate(): bool
+    {
+        return $this->role === UserRole::Organizer;
+    }
+
+    public function canAudit(): bool
     {
         return $this->role === UserRole::Organizer;
     }
@@ -81,9 +100,9 @@ class User extends Authenticatable implements FilamentUser, HasName
     protected function casts(): array
     {
         return [
-            "email_verified_at" => "datetime",
-            "password" => "hashed",
-            "role" => UserRole::class,
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'role' => UserRole::class,
         ];
     }
 }

@@ -14,8 +14,10 @@ class CompetitorProfilesRelationManager extends RelationManager
 
     protected static ?string $title = 'Részletek';
 
-    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
-    {
+    public static function canViewForRecord(
+        Model $ownerRecord,
+        string $pageClass
+    ): bool {
         return $pageClass == ViewTeam::class;
     }
 
@@ -32,8 +34,7 @@ class CompetitorProfilesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('type')
                     ->label('Szerep')
                     ->badge(),
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Név'),
+                Tables\Columns\TextColumn::make('name')->label('Név'),
                 Tables\Columns\TextColumn::make('grade')
                     ->label('Évfolyam')
                     ->placeholder('Nem értelmezhető'),

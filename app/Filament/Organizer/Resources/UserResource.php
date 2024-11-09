@@ -5,6 +5,7 @@ namespace App\Filament\Organizer\Resources;
 use App\Enums\UserRole;
 use App\Filament\Organizer\Resources\UserResource\Pages;
 use App\Filament\Organizer\Resources\UserResource\RelationManagers;
+use App\Filament\Organizer\Resources\UserResource\RelationManagers\AuditRelationManager;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -33,79 +34,86 @@ class UserResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('username')
-                    ->label('Felhasználónév')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->label('E-mail cím')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at')
-                    ->label('E-mail cím megerősítve')
-                    ->native(false),
-                Forms\Components\TextInput::make('password')
-                    ->label('Jelszó')
-                    ->password()
-                    ->required(fn(string $operation) => $operation === 'create')
-                    ->dehydrated(fn($state) => filled($state))
-                    ->maxLength(255),
-                Forms\Components\Select::make('role')
-                    ->label('Szerepkör')
-                    ->native(false)
-                    ->options(UserRole::class)
-                    ->selectablePlaceholder(false)
-                    ->required()
-                    ->afterStateUpdated(function ($state, Forms\Set $set) {
-                        if ($state == UserRole::Organizer->value) {
-                            $set('school_id', null);
-                        }
-                    })
-                    ->live(),
-                Forms\Components\Select::make('school_id')
-                    ->label('Iskola')
-                    ->relationship('school', 'name')
-                    ->disabled(fn(Forms\Get $get) => $get('role') == UserRole::Organizer->value)
-                    ->native(false)
-                    ->selectablePlaceholder(false)
-                    ->required(fn(Forms\Get $get) => $get('role') != UserRole::Organizer->value),
-            ]);
+        return $form->schema([
+            Forms\Components\TextInput::make('username')
+                ->label('Felhasználónév')
+                ->required()
+                ->maxLength(255),
+            Forms\Components\TextInput::make('email')
+                ->label('E-mail cím')
+                ->email()
+                ->required()
+                ->maxLength(255),
+            Forms\Components\DateTimePicker::make('email_verified_at')
+                ->label('E-mail cím megerősítve')
+                ->native(false),
+            Forms\Components\TextInput::make('password')
+                ->label('Jelszó')
+                ->password()
+                ->required(fn(string $operation) => $operation === 'create')
+                ->dehydrated(fn($state) => filled($state))
+                ->maxLength(255),
+            Forms\Components\Select::make('role')
+                ->label('Szerepkör')
+                ->native(false)
+                ->options(UserRole::class)
+                ->selectablePlaceholder(false)
+                ->required()
+                ->afterStateUpdated(function ($state, Forms\Set $set) {
+                    if ($state == UserRole::Organizer->value) {
+                        $set('school_id', null);
+                    }
+                })
+                ->live(),
+            Forms\Components\Select::make('school_id')
+                ->label('Iskola')
+                ->relationship('school', 'name')
+                ->disabled(
+                    fn(Forms\Get $get) => $get('role') ==
+                        UserRole::Organizer->value
+                )
+                ->native(false)
+                ->selectablePlaceholder(false)
+                ->required(
+                    fn(Forms\Get $get) => $get('role') !=
+                        UserRole::Organizer->value
+                ),
+        ]);
     }
 
     public static function infolist(Infolist $infolist): Infolist
     {
-        return $infolist->schema([
-            Split::make([
-                Section::make([
-                    TextEntry::make('username')
-                        ->label('Felhasználónév'),
-                    TextEntry::make('email')
-                        ->label('E-mail cím'),
-                    TextEntry::make('email_verified_at')
-                        ->label('E-mail cím megerősítve')
-                        ->placeholder('Nincs megerősítve')
-                        ->dateTime()
-                        ->placeholder('Not verified'),
-                    TextEntry::make('role')
-                        ->label('Szerepkör')
-                        ->badge(),
-                    TextEntry::make('school.name')
-                        ->label('Iskola')
-                        ->placeholder('Nem értelmezhető')
-                ])->columns()->grow(),
-                Section::make([
-                    TextEntry::make('created_at')
-                        ->label('Létrehozva')
-                        ->dateTime(),
-                    TextEntry::make('updated_at')
-                        ->label('Frissítve')
-                        ->dateTime(),
-                ])->grow(false),
-            ])->from('md'),
-        ])->columns(false);
+        return $infolist
+            ->schema([
+                Split::make([
+                    Section::make([
+                        TextEntry::make('username')->label('Felhasználónév'),
+                        TextEntry::make('email')->label('E-mail cím'),
+                        TextEntry::make('email_verified_at')
+                            ->label('E-mail cím megerősítve')
+                            ->placeholder('Nincs megerősítve')
+                            ->dateTime()
+                            ->placeholder('Not verified'),
+                        TextEntry::make('role')
+                            ->label('Szerepkör')
+                            ->badge(),
+                        TextEntry::make('school.name')
+                            ->label('Iskola')
+                            ->placeholder('Nem értelmezhető'),
+                    ])
+                        ->columns()
+                        ->grow(),
+                    Section::make([
+                        TextEntry::make('created_at')
+                            ->label('Létrehozva')
+                            ->dateTime(),
+                        TextEntry::make('updated_at')
+                            ->label('Frissítve')
+                            ->dateTime(),
+                    ])->grow(false),
+                ])->from('md'),
+            ])
+            ->columns(false);
     }
 
     public static function table(Table $table): Table
@@ -154,10 +162,14 @@ class UserResource extends Resource
                 Tables\Filters\TernaryFilter::make('email_verified_at')
                     ->label('E-mail megerősítve')
                     ->queries(
-                        true: fn(Builder $query) => $query->whereNotNull('email_verified_at'),
-                        false: fn(Builder $query) => $query->whereNull('email_verified_at'),
-                        blank: fn(Builder $query) => $query, // In this example, we do not want to filter the query when it is blank.
-                    )
+                        true: fn(Builder $query) => $query->whereNotNull(
+                            'email_verified_at'
+                        ),
+                        false: fn(Builder $query) => $query->whereNull(
+                            'email_verified_at'
+                        ),
+                        blank: fn(Builder $query) => $query // In this example, we do not want to filter the query when it is blank.
+                    ),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -172,9 +184,7 @@ class UserResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [AuditRelationManager::class];
     }
 
     public static function getPages(): array
