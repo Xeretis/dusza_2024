@@ -17,5 +17,5 @@
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ http://3.70.133.87:8055/%{REQUEST_URI} [L]
+    RewriteRule ^ http://3.70.133.87:8055%{REQUEST_URI} [L]
 </IfModule>
