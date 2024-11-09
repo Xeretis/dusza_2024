@@ -4,7 +4,9 @@ namespace Database\Seeders;
 
 use App\Enums\UserRole;
 use App\Models\Category;
+use App\Models\ProgrammingLanguage;
 use App\Models\User;
+use App\Models\School;
 use Illuminate\Database\Seeder;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -26,8 +28,11 @@ class DatabaseSeeder extends Seeder
             "email" => "test2@example.com",
             "role" => UserRole::SchoolManager,
         ]);
-        Category::factory()->create([
-            "name" => "Test category",
-        ]);
+
+        Category::factory(10)->create();
+
+        ProgrammingLanguage::factory(10)->create();
+
+        School::factory(10)->create();
     }
 }
