@@ -13,6 +13,13 @@ RUN cp .env.example .env
 # Change APP_ENV and APP_DEBUG to be production ready
 RUN sed -i'' -e 's/^APP_ENV=.*/APP_ENV=production/' -e 's/^APP_DEBUG=.*/APP_DEBUG=false/' .env
 
+RUN apk add --no-cache nodejs npm
+RUN rm -rf node_modules/ package-lock.json
+RUN npm install -g pnpm
+RUN pnpm install && \
+    pnpm run build
+RUN rm -rf node_modules/ .pnpm-store/
+
 # Make other changes to your .env file if needed
 
 # Install the dependencies
