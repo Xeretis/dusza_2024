@@ -46,10 +46,11 @@ class TeamResource extends Resource
                     self::competitorSection('1. Csapattag', 'competitor1'),
                     self::competitorSection('2. Csapattag', 'competitor2'),
                     self::competitorSection('3. Csapattag', 'competitor3'),
+                    self::competitorSection('Póttag', 'substitute'),
                     self::teachersSection(),
                 ]),
 
-        ])->columns(2);
+        ])->columns();
     }
 
     private static function teamDetailsSection()
