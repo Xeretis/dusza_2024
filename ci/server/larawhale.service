@@ -8,9 +8,7 @@ Type=simple
 WorkingDirectory=/home/dusza/larawhale
 ExecStart=/home/dusza/.local/bin/supervisord -c /home/dusza/larawhale/supervisord.conf
 Restart=always
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=valkey
+
 
 [Install]
 WantedBy=default.target
