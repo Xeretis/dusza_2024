@@ -12,12 +12,13 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spiritix\LadaCache\Database\LadaCacheTrait;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 class User extends Authenticatable implements FilamentUser, HasName
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasRelationships;
+    use HasFactory, Notifiable, HasRelationships, LadaCacheTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -45,7 +46,10 @@ class User extends Authenticatable implements FilamentUser, HasName
 
     public function teams()
     {
-        return $this->hasManyDeep(Team::class, [CompetitorProfile::class, 'team_competitor_profile']);
+        return $this->hasManyDeep(Team::class, [
+            CompetitorProfile::class,
+            "team_competitor_profile",
+        ]);
     }
 
     public function getFilamentName(): string
@@ -56,12 +60,17 @@ class User extends Authenticatable implements FilamentUser, HasName
     public function canAccessPanel(Panel $panel): bool
     {
         return match ($panel->getId()) {
-            'competitor' => $this->role == UserRole::Competitor,
-            'organizer' => $this->role == UserRole::Organizer,
-            'school-manager' => $this->role == UserRole::SchoolManager,
-            'teacher' => $this->role == UserRole::Teacher,
-            default => true
+            "competitor" => $this->role == UserRole::Competitor,
+            "organizer" => $this->role == UserRole::Organizer,
+            "school-manager" => $this->role == UserRole::SchoolManager,
+            "teacher" => $this->role == UserRole::Teacher,
+            default => true,
         };
+    }
+
+    public function canImpersonate(): bool
+    {
+        return $this->role === UserRole::Organizer;
     }
 
     /**

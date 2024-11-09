@@ -10,10 +10,16 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create("programming_languages", function (Blueprint $table) {
+        Schema::create("schools", function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->string("name");
+            $table->string("street");
+            $table->string("city");
+            $table->string("state");
+            $table->string("zip");
+            $table->string("contact_name");
+            $table->string("contact_email");
+            $table->timestamps();
         });
     }
 
@@ -22,6 +28,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists("programming_languages");
+        Schema::dropIfExists("schools");
     }
 };

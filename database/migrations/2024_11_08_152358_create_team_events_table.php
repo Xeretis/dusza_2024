@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,13 +13,14 @@ return new class extends Migration {
     {
         Schema::create("team_events", function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-            $table->foreignId("team_id");
-            $table->enum("type", ["approval", "amend_request"]);
-            $table->enum("status", ["pending", "completed", "approved", "rejected"]);
-            $table->enum("scope", ["organizer", "school"]);
-            $table->string("artifact_url");
             $table->string("message");
+            $table->foreignId("team_id")->constrained()->onDelete('cascade');
+            $table->enum("type", ["approval", "amend_request"]);
+            $table->enum("status", ["pending", "approved", "rejected"]);
+            $table->enum("scope", ["organizer", "school"]);
+            $table->foreignIdFor(User::class, 'user_id');
+            $table->timestamps();
+
         });
     }
 

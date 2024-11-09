@@ -3,9 +3,8 @@
 namespace App\Models;
 
 use App\Enums\CompetitorProfileType;
-use Illuminate\Database\Eloquent\Model;
 
-class CompetitorProfile extends Model
+class CompetitorProfile extends BaseModel
 {
     protected $guarded = [];
 

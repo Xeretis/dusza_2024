@@ -7,6 +7,7 @@ use App\Enums\TeamEventStatus;
 use App\Enums\TeamEventType;
 use App\Filament\Organizer\Resources\TeamResource\Pages\ViewTeam;
 use App\Models\TeamEvent;
+use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -17,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EventsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'teamEvents';
+    protected static string $relationship = 'events';
 
     protected static ?string $title = 'Események';
 
@@ -56,7 +57,6 @@ class EventsRelationManager extends RelationManager
                 ->formatStateUsing(function ($state) {
                     return match ($state) {
                         TeamEventStatus::Pending => 'Folyamatban',
-                        TeamEventStatus::Completed => 'Befejezve',
                         TeamEventStatus::Approved => 'Elfogadva',
                         TeamEventStatus::Rejected => 'Elutasítva',
                     };
@@ -64,14 +64,18 @@ class EventsRelationManager extends RelationManager
                 ->color(function ($state) {
                     return match ($state) {
                         TeamEventStatus::Pending => 'warning',
-                        TeamEventStatus::Completed => 'primary',
                         TeamEventStatus::Approved => 'success',
                         TeamEventStatus::Rejected => 'danger',
                     };
                 })
                 ->badge(),
-            TextEntry::make('message')
-                ->label('Üzenet')
+            TextEntry::make('created_at')
+                ->label('Létrehozva')
+                ->dateTime(),
+            Grid::make(1)->schema([
+                TextEntry::make('message')
+                    ->label('Üzenet')
+            ])
         ])->columns();
     }
 
@@ -110,7 +114,6 @@ class EventsRelationManager extends RelationManager
                     ->formatStateUsing(function ($state) {
                         return match ($state) {
                             TeamEventStatus::Pending => 'Folyamatban',
-                            TeamEventStatus::Completed => 'Befejezve',
                             TeamEventStatus::Approved => 'Elfogadva',
                             TeamEventStatus::Rejected => 'Elutasítva',
                         };
@@ -118,12 +121,16 @@ class EventsRelationManager extends RelationManager
                     ->color(function ($state) {
                         return match ($state) {
                             TeamEventStatus::Pending => 'warning',
-                            TeamEventStatus::Completed => 'primary',
                             TeamEventStatus::Approved => 'success',
                             TeamEventStatus::Rejected => 'danger',
                         };
                     })
                     ->badge(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Létrehozva')
+                    ->date()
+                    ->since()
+                    ->sortable()
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

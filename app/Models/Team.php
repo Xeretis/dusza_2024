@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Enums\CompetitorProfileType;
-use Illuminate\Database\Eloquent\Model;
+use App\Observers\TeamObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 
-class Team extends Model
+#[ObservedBy([TeamObserver::class])]
+class Team extends BaseModel
 {
     protected $guarded = [];
 
@@ -63,7 +65,7 @@ class Team extends Model
         );
     }
 
-    public function teamEvents()
+    public function events()
     {
         return $this->hasMany(TeamEvent::class);
     }

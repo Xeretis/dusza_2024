@@ -16,12 +16,12 @@ return new class extends Migration {
         Schema::create("teams", function (Blueprint $table) {
             $table->id();
             $table->string("name");
-            $table->foreignIdFor(Category::class, "category_id");
+            $table->foreignIdFor(Category::class, "category_id")->constrained()->onDelete('restrict');
             $table->foreignIdFor(
                 ProgrammingLanguage::class,
                 "programming_language_id"
-            );
-            $table->foreignIdFor(School::class, "school_id");
+            )->constrained()->onDelete('restrict');
+            $table->foreignIdFor(School::class, "school_id")->constrained()->onDelete('restrict');
 
             $table->timestamps();
         });
