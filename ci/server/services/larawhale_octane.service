@@ -8,6 +8,7 @@ Type=simple
 WorkingDirectory=/home/dusza/larawhale
 ExecStart=/home/dusza/larawhale/frankenphp php-cli artisan octane:start --port 8055
 Restart=always
+RestartSec=1s
 
 [Install]
 WantedBy=larawhale.target

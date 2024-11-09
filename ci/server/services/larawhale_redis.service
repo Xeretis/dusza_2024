@@ -8,6 +8,7 @@ Type=simple
 WorkingDirectory=/home/dusza/larawhale
 ExecStart=/home/dusza/larawhale/valkey/valkey-server /home/dusza/larawhale/redis.conf
 Restart=always
+RestartSec=1s
 
 [Install]
 WantedBy=larawhale.target
