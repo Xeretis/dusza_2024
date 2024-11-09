@@ -19,9 +19,10 @@ jobs:
             });
             console.log(releases[0]);
             return releases[0];
+
       - name: Download release
         run: |
-          curl -L -o larawhale_linux-x86_64 ${{ steps.pull_latest_draft_release.outputs.result.assets[0].browser_download_url }}
+          curl -L -o larawhale_linux-x86_64 ${{ fromJson(steps.pull_latest_draft_release.outputs.result).assets[0].browser_download_url }}
           chmod +x larawhale_linux-x86_64
       - name: Move larawhale_linux-x86_64 to ci folder
         run: mv larawhale_linux-x86_64 ci/larawhale_linux-x86_64
