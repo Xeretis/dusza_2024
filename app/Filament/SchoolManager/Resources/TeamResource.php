@@ -5,8 +5,11 @@ namespace App\Filament\SchoolManager\Resources;
 use App\Filament\SchoolManager\Resources\TeamResource\Pages;
 use App\Filament\SchoolManager\Resources\TeamResource\RelationManagers;
 use App\Models\Team;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Form;
+use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\Split;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -23,11 +26,34 @@ class TeamResource extends Resource
 
     protected static ?string $pluralLabel = "Csapatok";
 
-    public static function form(Form $form): Form
+    public static function infolist(Infolist $infolist): Infolist
     {
-        return $form->schema([
-            //
-        ]);
+        return $infolist
+            ->schema([
+                Split::make([
+                    Grid::make(1)->schema([
+                        Section::make([
+                            TextEntry::make('name')
+                                ->label('Név'),
+                            TextEntry::make('category.name')
+                                ->label('Kategória')
+                                ->badge(),
+                            TextEntry::make('programmingLanguage.name')
+                                ->label('Programozási nyelv'),
+                            TextEntry::make('school.name')
+                                ->label('Iskola')
+                        ])->columns()->grow(),
+                    ]),
+                    Section::make([
+                        TextEntry::make('created_at')
+                            ->label('Létrehozva')
+                            ->dateTime(),
+                        TextEntry::make('updated_at')
+                            ->label('Frissítve')
+                            ->dateTime(),
+                    ])->grow(false),
+                ])->from('md'),
+            ])->columns(false);
     }
 
     public static function table(Table $table): Table
@@ -65,12 +91,7 @@ class TeamResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([Tables\Actions\EditAction::make()])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])
+            ->actions([Tables\Actions\ViewAction::make()])
             ->modifyQueryUsing(function (Builder $query) {
                 $query->whereSchoolId(auth()->user()->school_id);
             });
@@ -79,8 +100,8 @@ class TeamResource extends Resource
     public static function getRelations(): array
     {
         return [
-                //
-            ];
+            RelationManagers\CompetitorProfilesRelationManager::class
+        ];
     }
 
     public static function getPages(): array

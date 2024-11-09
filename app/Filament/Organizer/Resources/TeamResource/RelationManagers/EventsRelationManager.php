@@ -5,7 +5,7 @@ namespace App\Filament\Organizer\Resources\TeamResource\RelationManagers;
 use App\Enums\TeamEventScope;
 use App\Enums\TeamEventStatus;
 use App\Enums\TeamEventType;
-use App\Filament\Organizer\Resources\TeamResource\Pages\ViewTeam;
+use App\Filament\SchoolManager\Resources\TeamResource\Pages\ViewTeam;
 use App\Models\TeamEvent;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\TextEntry;

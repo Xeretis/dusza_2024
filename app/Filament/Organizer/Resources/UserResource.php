@@ -15,6 +15,7 @@ use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class UserResource extends Resource
 {
@@ -144,7 +145,19 @@ class UserResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('role')
+                    ->label('Szerepkör')
+                    ->options(UserRole::class),
+                Tables\Filters\SelectFilter::make('school')
+                    ->label('Iskola')
+                    ->relationship('school', 'name'),
+                Tables\Filters\TernaryFilter::make('email_verified_at')
+                    ->label('E-mail megerősítve')
+                    ->queries(
+                        true: fn(Builder $query) => $query->whereNotNull('email_verified_at'),
+                        false: fn(Builder $query) => $query->whereNull('email_verified_at'),
+                        blank: fn(Builder $query) => $query, // In this example, we do not want to filter the query when it is blank.
+                    )
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
