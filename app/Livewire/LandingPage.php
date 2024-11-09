@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 // abcdefghijklmnopqrstuvwxyz1234567890
-// AB
+// ABCDEFGHIJKLMONPQRSTUV
 use Livewire\Component;
 
 class LandingPage extends Component

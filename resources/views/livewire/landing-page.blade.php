@@ -1,38 +1,37 @@
-<div class="overflow-x-hidden overflow-y-hidden m-0 max-w-screen max-h-screen h-screen w-screen flex justify-center items-center">
-    {{--    TODO: fix theme switcher--}}
-    <div name="theme-switcher" class="fixed top-2 left-5 place-content-center">
-        <x-theme-switcher size="lg"/>
+<div class="bg-white dark:bg-gray-950 max-w-screen max-h-screen h-screen w-screen flex justify-center items-center relative">
+    <div name="theme-switcher" class="fixed top-2 left-5 place-content-center z-20">
+        <x-theme-switcher />
     </div>
-    <div >
-        <div name="center" class="text-center translate-y-[-50px]">
-
-            <h1 class="light:text-black dark:text-white text-center px-4 sm:px-8 md:px-16 lg:px-32 xl:px-42 text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-bold mb-20">
-                Jelentkezés a <span class="font-bold align-center whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-red-500 via-purple via-violet via-pink to-red-500 bg-200% animate-bgpan">Dusza Versenyre</span>
+    <div class="constellations absolute inset-0">
+        <p id="1" name="star" class="absolute h-6 w-6 dark:text-blue-900 text-red-600"><x-heroicon-m-star /></p>
+        <p id="2" name="star" class="absolute h-6 w-6 dark:text-blue-900 text-red-600"><x-heroicon-m-star /></p>
+        <p id="3" name="star" class="absolute h-6 w-6 dark:text-blue-900 text-red-600"><x-heroicon-m-star /></p>
+        <p id="4" name="star" class="absolute h-6 w-6 dark:text-blue-900 text-red-600"><x-heroicon-m-star /></p>
+        <p id="5" name="star" class="absolute h-6 w-6 dark:text-blue-900 text-red-600"><x-heroicon-m-star /></p>
+        <p id="6" name="star" class="absolute h-6 w-6 dark:text-blue-900 text-red-600"><x-heroicon-m-star /></p>
+        <p id="7" name="star" class="absolute h-6 w-6 dark:text-blue-900 text-red-600"><x-heroicon-m-star /></p>
+        <p id="8" name="star" class="absolute h-6 w-6 dark:text-blue-900 text-red-600"><x-heroicon-m-star /></p>
+        <svg id="lines" class="absolute top-0 left-0 w-full h-full z-10"></svg>
+    </div>
+    <div>
+        <div name="center" class="text-center z-20">
+            <h1 class="z-20 text-black dark:text-white sm:px-8 md:px-16 lg:px-32 xl:px-42 text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-bold mb-20">
+                Jelentkezés a <span class="z-20 font-bold whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r dark:from-blue-800 dark:via-purple dark:via-violet dark:via-pink dark:to-blue-800 from-red-500 via-purple via-violet via-pink to-red-500 bg-200% animate-bgpan">Dusza Versenyre</span>
             </h1>
             <div name="Links">
-                <x-filament::button href="/" tag="a" color="gray">Bejelentkezés</x-filament::button>
-    {{--                TODO: add a route and a documentation --}}
-                <x-filament::button color="gray">Dokumentáció </x-filament::button>
+                <x-filament::button class="z-20" href="/" tag="a" color="gray">Bejelentkezés</x-filament::button>
+                <x-filament::button class="z-20" color="gray">Dokumentáció</x-filament::button>
             </div>
         </div>
-        <p id="1" name="star" class="-z-10 absolute h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
-        <p id="2" name="star" class="-z-10 absolute h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
-        <p id="3" name="star" class="-z-10 absolute h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
-        <p id="4" name="star" class="-z-10 absolute h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
-        <p id="5" name="star" class="-z-10 absolute h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
-        <p id="6" name="star" class="-z-10 absolute h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
-        <p id="7" name="star" class="-z-10 absolute h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
-        <p id="8" name="star" class="-z-10 absolute h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
     </div>
-    <svg id="lines" class="absolute top-0 left-0 w-full h-full -z-20"></svg>
 </div>
+
 @push('styles')
     <style>
         @keyframes background-pan {
             from {
                 background-position: 0 center;
             }
-
             to {
                 background-position: -200% center;
             }
@@ -62,13 +61,12 @@
             from {
                 transform: rotate(0deg);
             }
-
             to {
                 transform: rotate(270deg);
             }
         }
         p[name="star"] {
-           animation: scale 2800ms ease infinite;
+            animation: scale 2800ms ease infinite;
         }
         p > svg {
             animation: rotate 2000ms ease infinite;
@@ -140,6 +138,9 @@
                  }
              }
 
+             const isDarkMode = document.documentElement.classList.contains('dark');
+             const lineColor = isDarkMode ? 'blue' : 'red';
+
              connections.forEach((connectedStars, i) => {
                  connectedStars.forEach(j => {
                      const x1 = stars[i].offsetLeft + stars[i].offsetWidth / 2;
@@ -152,7 +153,7 @@
                      line.setAttribute('y1', y1);
                      line.setAttribute('x2', x2);
                      line.setAttribute('y2', y2);
-                     line.setAttribute('stroke', 'red');
+                     line.setAttribute('stroke', lineColor);
                      line.setAttribute('stroke-opacity', '0.2');
                      line.setAttribute('stroke-width', '2');
                      lines.appendChild(line);
