@@ -1,11 +1,11 @@
 [Unit]
-Description=Start Valkey
+Description=Start Larawhale
 After=syslog.target
 After=network.target
 Type=simple
 
 [Service]
-WorkingDirectory=/home/dusza/larawhale/valkey
+WorkingDirectory=/home/dusza/larawhale
 ExecStart=/home/dusza/.local/bin/supervisord /home/dusza/larawhale/supervisord.conf
 Restart=always
 StandardOutput=syslog
