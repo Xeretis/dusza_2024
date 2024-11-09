@@ -1,11 +1,10 @@
-<div class="overflow-x-hidden overflow-y-hidden m-0 light:bg-white dark:bg-black max-w-screen max-h-screen h-screen w-screen flex justify-center items-center">
+<div class="overflow-x-hidden overflow-y-hidden m-0 max-w-screen max-h-screen h-screen w-screen flex justify-center items-center">
     {{--    TODO: fix theme switcher--}}
     <div name="theme-switcher" class="fixed top-2 left-5 place-content-center">
         <x-theme-switcher size="lg"/>
     </div>
     <div >
         <div name="center" class="text-center translate-y-[-50px]">
-            <p id="1" name="star" class="-z-10 absolute bottom-30 left-30 h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
 
             <h1 class="light:text-black dark:text-white text-center px-4 sm:px-8 md:px-16 lg:px-32 xl:px-42 text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-bold mb-20">
                 Jelentkezés a <span class="font-bold align-center whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-red-500 via-purple via-violet via-pink to-red-500 bg-200% animate-bgpan">Dusza Versenyre</span>
@@ -16,22 +15,22 @@
                 <x-filament::button color="gray">Dokumentáció </x-filament::button>
             </div>
         </div>
-    {{--        TODO: make stars rotate and maybe stars could also rotate around another point --}}
-        <p id="2" name="star" class="-z-10 absolute top-60 left-50 h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
-        <p id="3" name="star" class="-z-10 absolute top-32 left-68 h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
-        <p id="4" name="star" class="-z-10 absolute left-4 top-44 h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
-        <p id="5" name="star" class="-z-10 absolute left-20 top-40 h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
-        <div class="fixed bottom-10 left-1/2 translate-x-[-50%]">
-    {{--            TODO: add a route for an about us and actually make an about us page--}}
-            <x-filament::button color="gray">A csapatról</x-filament::button>
-        </div>
+        <p id="1" name="star" class="-z-10 absolute h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
+        <p id="2" name="star" class="-z-10 absolute h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
+        <p id="3" name="star" class="-z-10 absolute h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
+        <p id="4" name="star" class="-z-10 absolute h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
+        <p id="5" name="star" class="-z-10 absolute h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
+        <p id="6" name="star" class="-z-10 absolute h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
+        <p id="7" name="star" class="-z-10 absolute h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
+        <p id="8" name="star" class="-z-10 absolute h-6 w-6 dark:blue-500 text-red-600"><x-heroicon-m-star /></p>
     </div>
+    <svg id="lines" class="absolute top-0 left-0 w-full h-full -z-20"></svg>
 </div>
 @push('styles')
     <style>
         @keyframes background-pan {
             from {
-                background-position: 0% center;
+                background-position: 0 center;
             }
 
             to {
@@ -52,7 +51,7 @@
             }
             50% {
                 transform: scale(1);
-                opacity: 1;
+                opacity: 0.7;
             }
             to {
                 transform: scale(0);
@@ -65,44 +64,139 @@
             }
 
             to {
-                transform: rotate(180deg);
+                transform: rotate(270deg);
             }
         }
         p[name="star"] {
-           animation: scale 1400ms ease infinite;
+           animation: scale 2800ms ease infinite;
         }
         p > svg {
-            animation: rotate 1000ms ease infinite;
+            animation: rotate 2000ms ease infinite;
+        }
+        line {
+            animation: fade-out 2200ms ease-in infinite;
         }
     </style>
 @endpush
 @push('scripts')
      <script>
-
          function Sleep(milliseconds) {
              return new Promise(resolve => setTimeout(resolve, milliseconds));
          }
 
          const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
+         const getDistance = (star1, star2) => {
+             const x1 = star1.offsetLeft + star1.offsetWidth / 2;
+             const y1 = star1.offsetTop + star1.offsetHeight / 2;
+             const x2 = star2.offsetLeft + star2.offsetWidth / 2;
+             const y2 = star2.offsetTop + star2.offsetHeight / 2;
+             return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+         };
+
          const animate = star => {
-            star.style.left = `${rand(20, 80)}%`;
-            star.style.top = `${rand(20, 70)}%`;
-            star.style.animation = "none";
-            star.offsetHeight;
-            star.style.animation = "";
-         }
+             star.style.left = `${rand(20, 80)}%`;
+             star.style.top = `${rand(20, 70)}%`;
+             star.style.animation = "none";
+             star.offsetHeight;
+             star.style.animation = "";
+         };
+
+         const updateLines = () => {
+             const stars = document.getElementsByName('star');
+             const lines = document.getElementById('lines');
+             lines.innerHTML = '';
+
+             const connections = new Map();
+
+             for (let i = 0; i < stars.length; i++) {
+                 connections.set(i, new Set());
+             }
+
+             for (let i = 0; i < stars.length; i++) {
+                 if (i === 7) continue;
+
+                 const distances = [];
+
+                 for (let j = 0; j < stars.length; j++) {
+                     if (i !== j) {
+                         const distance = getDistance(stars[i], stars[j]);
+                         distances.push({ index: j, distance });
+                     }
+                 }
+
+                 distances.sort((a, b) => a.distance - b.distance);
+
+                 let maxConnections = 2;
+                 if (i === 0) maxConnections = 1;
+                 if (i === 3) maxConnections = 3;
+
+                 for (let k = 0; k < maxConnections; k++) {
+                     const closestStarIndex = distances[k].index;
+                     if (connections.get(i).size < maxConnections && connections.get(closestStarIndex).size < 2) {
+                         connections.get(i).add(closestStarIndex);
+                         connections.get(closestStarIndex).add(i);
+                     }
+                 }
+             }
+
+             connections.forEach((connectedStars, i) => {
+                 connectedStars.forEach(j => {
+                     const x1 = stars[i].offsetLeft + stars[i].offsetWidth / 2;
+                     const y1 = stars[i].offsetTop + stars[i].offsetHeight / 2;
+                     const x2 = stars[j].offsetLeft + stars[j].offsetWidth / 2;
+                     const y2 = stars[j].offsetTop + stars[j].offsetHeight / 2;
+
+                     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                     line.setAttribute('x1', x1);
+                     line.setAttribute('y1', y1);
+                     line.setAttribute('x2', x2);
+                     line.setAttribute('y2', y2);
+                     line.setAttribute('stroke', 'red');
+                     line.setAttribute('stroke-opacity', '0.2');
+                     line.setAttribute('stroke-width', '2');
+                     lines.appendChild(line);
+                 });
+             });
+         };
 
          const stars = document.getElementsByName('star');
-         const interval = 2000;
+         const interval = 4000;
 
-         setInterval(() => {
+         setInterval(async () => {
              for (const star of stars) {
-                    animate(star);
+                 animate(star);
              }
-             Sleep(interval);
-             Sleep(interval);
-         }, interval/2);
+             await Sleep(100);
+             updateLines();
+             await Sleep(interval * 2);
+         }, interval / 2);
+
+         const bigDipperCoordinates = [
+             { left: '6%', top: '40%' }, // Star 1
+             { left: '26%', top: '25%' }, // Star 2
+             { left: '42%', top: '367px' }, // Star 3
+             { left: '61%', top: '39%' }, // Star 4
+             { left: '91%', top: '32%' }, // Star 5
+             { left: '92%', top: '69%' }, // Star 6
+             { left: '68%', top: '73%' },  // Star 7
+             { left: '21%', top: '94%' }  // Star 8
+
+         ];
+
+         const setBigDipper = () => {
+             const stars = document.getElementsByName('star');
+             bigDipperCoordinates.forEach((coord, index) => {
+                 stars[index].style.left = coord.left;
+                 stars[index].style.top = coord.top;
+             });
+         };
+
+         window.onload = () => {
+             setBigDipper();
+             updateLines();
+         };
+
      </script>
 @endpush
 

@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Livewire;
-// abcdefghijklmnopqrstuvwxyz12345
+// abcdefghijklmnopqrstuvwxyz1234567890
+// AB
 use Livewire\Component;
 
 class LandingPage extends Component
