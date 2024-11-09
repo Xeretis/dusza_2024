@@ -7,6 +7,8 @@ use Filament\Support\Contracts\HasLabel;
 
 enum UserRole: string implements HasLabel, HasColor
 {
+    use ValueTrait;
+
     case Competitor = "competitor";
     case Organizer = "organizer";
     case SchoolManager = "school-manager";
@@ -15,20 +17,20 @@ enum UserRole: string implements HasLabel, HasColor
     public function getLabel(): ?string
     {
         return match ($this) {
-            self::Competitor => 'Versenyző',
-            self::Organizer => 'Szervező',
-            self::SchoolManager => 'Iskola menedzser',
-            self::Teacher => 'Tanár',
+            self::Competitor => "Versenyző",
+            self::Organizer => "Szervező",
+            self::SchoolManager => "Iskola menedzser",
+            self::Teacher => "Tanár",
         };
     }
 
     public function getColor(): string|array|null
     {
         return match ($this) {
-            self::Competitor => 'primary',
-            self::Organizer => 'danger',
-            self::SchoolManager => 'warning',
-            self::Teacher => 'info',
+            self::Competitor => "primary",
+            self::Organizer => "danger",
+            self::SchoolManager => "warning",
+            self::Teacher => "info",
         };
     }
 }
