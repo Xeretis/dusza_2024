@@ -8,6 +8,9 @@ COPY . .
 # Alternatively, add these files to a .dockerignore file
 RUN rm -Rf tests/
 
+# Install the dependencies
+RUN composer install --ignore-platform-reqs --no-dev -a
+
 RUN apk add --no-cache nodejs npm
 RUN rm -rf node_modules/ package-lock.json
 RUN npm install -g pnpm
@@ -15,10 +18,6 @@ RUN pnpm install && \
     pnpm run build
 RUN rm -rf node_modules/ .pnpm-store/
 
-# Make other changes to your .env file if needed
-
-# Install the dependencies
-RUN composer install --ignore-platform-reqs --no-dev -a
 
 # Build the static binary
 WORKDIR /go/src/app/
