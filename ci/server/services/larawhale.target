@@ -1,8 +1,7 @@
 [Unit]
 Description=Larawhale's Services
-Requires=multi-user.target default.target
-Conflicts=rescue.service rescue.target
-After=multi-user.target default.target
+Requires=default.target
+After=default.target
 AllowIsolate=yes
 
 [Install]
