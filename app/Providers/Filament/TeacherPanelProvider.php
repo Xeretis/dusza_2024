@@ -33,7 +33,7 @@ class TeacherPanelProvider extends PanelProvider
             ->databaseNotifications()
             ->viteTheme('resources/css/filament/teacher/theme.css')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Teal,
             ])
             ->discoverResources(
                 in: app_path('Filament/Teacher/Resources'),
