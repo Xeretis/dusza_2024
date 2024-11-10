@@ -53,7 +53,9 @@ class TeamEventResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ViewTeamEvents::route('/'),
+            'index' => Pages\ListTeamEvents::route('/'),
+            'create' => Pages\CreateTeamEvent::route('/create'),
+            'edit' => Pages\EditTeamEvent::route('/{record}/edit'),
         ];
     }
 }

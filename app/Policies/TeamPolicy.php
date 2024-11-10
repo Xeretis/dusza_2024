@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Enums\UserRole;
 use App\Models\Team;
 use App\Models\User;
+use App\Settings\CompetitionSettings;
 
 class TeamPolicy
 {
@@ -23,12 +24,12 @@ class TeamPolicy
     {
         return true;
         // TODO: Fix N+1 issue within the code below
-//        return $user->teams()
-//                ->where('teams.id', $team->id)
-//                ->exists() ||
-//            $user->role === UserRole::Organizer ||
-//            ($user->role === UserRole::SchoolManager &&
-//                $team->school_id === $user->school_id);
+        //        return $user->teams()
+        //                ->where('teams.id', $team->id)
+        //                ->exists() ||
+        //            $user->role === UserRole::Organizer ||
+        //            ($user->role === UserRole::SchoolManager &&
+        //                $team->school_id === $user->school_id);
     }
 
     /**
@@ -36,7 +37,13 @@ class TeamPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->role === UserRole::Organizer ||
+            (app(
+                CompetitionSettings::class
+            )->registration_deadline->isFuture() &&
+                is_null(
+                    app(CompetitionSettings::class)->registration_cancelled_at
+                ));
     }
 
     /**
@@ -46,13 +53,13 @@ class TeamPolicy
     {
         return true;
         // TODO: Fix N+1 issue within the code below
-//        return $user
-//                ->teams()
-//                ->where("teams.id", $team->id)
-//                ->exists() ||
-//            $user->role === UserRole::Organizer ||
-//            ($user->role === UserRole::SchoolManager &&
-//                $team->school->id === $user->school->id);
+        //        return $user
+        //                ->teams()
+        //                ->where("teams.id", $team->id)
+        //                ->exists() ||
+        //            $user->role === UserRole::Organizer ||
+        //            ($user->role === UserRole::SchoolManager &&
+        //                $team->school->id === $user->school->id);
     }
 
     /**
