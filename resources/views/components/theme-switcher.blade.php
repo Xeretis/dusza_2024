@@ -1,4 +1,4 @@
-<div class="absolute top-2 left-2 z-40">
+<div class="absolute top-2 right-2 z-40">
     <x-filament::button
         color="gray"
         id="themeSwitcher"
