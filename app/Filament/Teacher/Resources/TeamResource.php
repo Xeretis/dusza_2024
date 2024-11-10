@@ -37,6 +37,8 @@ class TeamResource extends Resource
     protected static ?string $label = 'csapat';
     protected static ?string $pluralLabel = 'Csapatok';
 
+    protected static ?string $navigationGroup = 'Jelentkezés';
+
     public static function form(Form $form): Form
     {
         return $form
