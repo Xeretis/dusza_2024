@@ -2,6 +2,8 @@
 
 namespace App\Filament\Organizer\Resources;
 
+use App\Enums\UserRole;
+use App\Enums\UserRoleInvite;
 use App\Filament\Organizer\Resources\UserInviteResource\Pages;
 use App\Filament\Organizer\Resources\UserInviteResource\RelationManagers;
 use App\Models\UserInvite;
@@ -30,7 +32,36 @@ class UserInviteResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            //
+            Forms\Components\Select::make('role')
+                ->label('Szerepkör')
+                ->native(false)
+                ->options(UserRoleInvite::class)
+                ->selectablePlaceholder(false)
+                ->required()
+                ->afterStateUpdated(function ($state, Forms\Set $set) {
+                    if ($state == UserRole::Organizer->value) {
+                        $set('school_id', null);
+                    }
+                })
+                ->live(),
+            Forms\Components\Select::make('school_id')
+                ->label('Iskola')
+                ->relationship('school', 'name')
+                ->disabled(
+                    fn(Forms\Get $get) => $get('role') ==
+                        UserRole::Organizer->value
+                )
+                ->native(false)
+                ->selectablePlaceholder(false)
+                ->required(
+                    fn(Forms\Get $get) => $get('role') !=
+                        UserRole::Organizer->value
+                ),
+            Forms\Components\TextInput::make('email')
+                ->label('E-mail cím')
+                ->email()
+                ->required()
+                ->maxLength(255),
         ]);
     }
 
@@ -72,7 +103,11 @@ class UserInviteResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([])
+            ->filters([
+                Tables\Filters\SelectFilter::make('role')
+                    ->label('Szerepkör')
+                    ->options(UserRole::class),
+            ])
             ->actions([Tables\Actions\DeleteAction::make()])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -92,6 +127,7 @@ class UserInviteResource extends Resource
     {
         return [
             'index' => Pages\ListUserInvites::route('/'),
+            'create' => Pages\CreateUserInvite::route('/create'),
         ];
     }
 }
