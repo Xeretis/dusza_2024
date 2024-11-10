@@ -33,10 +33,17 @@ class PersonalInfo extends BaseComponent
             ->statePath('data');
     }
 
-    protected function getUsernameComponent()
+    protected function getUsernameComponent(): TextInput
     {
         return TextInput::make('username')
             ->label('Felhasználónév')
+            ->required();
+    }
+
+    protected function getEmailComponent(): TextInput
+    {
+        return TextInput::make('email')
+            ->label('E-mail')
             ->required();
     }
 }

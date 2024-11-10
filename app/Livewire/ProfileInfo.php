@@ -29,33 +29,37 @@ class ProfileInfo extends MyProfileComponent
         }
     }
 
-
     public function form(Form $form): Form
     {
         return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Név')
-                    ->hintIcon('heroicon-m-information-circle')
-                    ->hintIconTooltip('Kérjük, hogy a valódi neved add meg!')
-                    ->required(),
-                TextInput::make('grade')
-                    ->label('Évfolyam')
-                    ->visible($this->competitorProfile->type == CompetitorProfileType::Student)
-                    ->numeric()
-                    ->required(),
-                Select::make('school_ids')
-                    ->label('Iskolák')
-                    ->options(School::all()->pluck('name', 'id'))
-                    ->multiple()
-                    ->searchable()
-                    ->native(false)
-                    ->minItems(1)
-                    ->required()
-                    ->visible($this->competitorProfile->type == CompetitorProfileType::Teacher)
-                    ->dehydrateStateUsing(fn($state) => collect($state)->map(fn($e) => intval($e))->toArray())
-            ])
+            ->schema($this->getFormSchema())
             ->statePath('data');
+    }
+
+    protected function getFormSchema(): array
+    {
+        return [
+            TextInput::make('name')
+                ->label('Név')
+                ->hintIcon('heroicon-m-information-circle')
+                ->hintIconTooltip('Kérjük, hogy a valódi neved add meg!')
+                ->required(),
+            TextInput::make('grade')
+                ->label('Évfolyam')
+                ->visible($this->competitorProfile->type == CompetitorProfileType::Student)
+                ->numeric()
+                ->required(),
+            Select::make('school_ids')
+                ->label('Iskolák')
+                ->options(School::all()->pluck('name', 'id'))
+                ->multiple()
+                ->searchable()
+                ->native(false)
+                ->minItems(1)
+                ->required()
+                ->visible($this->competitorProfile->type == CompetitorProfileType::Teacher)
+                ->dehydrateStateUsing(fn($state) => collect($state)->map(fn($e) => intval($e))->toArray())
+        ];
     }
 
     public function submit(): void

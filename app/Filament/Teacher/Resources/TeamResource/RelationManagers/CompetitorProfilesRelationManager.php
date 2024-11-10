@@ -11,13 +11,9 @@ use Illuminate\Database\Eloquent\Model;
 class CompetitorProfilesRelationManager extends RelationManager
 {
     protected static string $relationship = 'competitorProfiles';
-
     protected static ?string $title = 'Részletek';
 
-    public static function canViewForRecord(
-        Model  $ownerRecord,
-        string $pageClass
-    ): bool
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
         return $pageClass == ViewTeam::class;
     }
@@ -31,23 +27,29 @@ class CompetitorProfilesRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('name')
-            ->columns([
-                Tables\Columns\TextColumn::make('type')
-                    ->label('Szerep')
-                    ->badge(),
-                Tables\Columns\TextColumn::make('name')->label('Név'),
-                Tables\Columns\TextColumn::make('grade')
-                    ->label('Évfolyam')
-                    ->placeholder('Nem értelmezhető'),
-                Tables\Columns\TextColumn::make('email')
-                    ->label('E-mail cím')
-                    ->copyable()
-                    ->placeholder('Nincs megadva'),
-                Tables\Columns\TextColumn::make('user.username')
-                    ->label('Felhasználónév')
-                    ->copyable()
-                    ->placeholder('Nem létezik a felhasználó'),
-            ])
+            ->columns($this->getColumns())
             ->defaultSort('type');
+    }
+
+    protected function getColumns(): array
+    {
+        return [
+            Tables\Columns\TextColumn::make('type')
+                ->label('Szerep')
+                ->badge(),
+            Tables\Columns\TextColumn::make('name')
+                ->label('Név'),
+            Tables\Columns\TextColumn::make('grade')
+                ->label('Évfolyam')
+                ->placeholder('Nem értelmezhető'),
+            Tables\Columns\TextColumn::make('email')
+                ->label('E-mail cím')
+                ->copyable()
+                ->placeholder('Nincs megadva'),
+            Tables\Columns\TextColumn::make('user.username')
+                ->label('Felhasználónév')
+                ->copyable()
+                ->placeholder('Nem létezik a felhasználó'),
+        ];
     }
 }
