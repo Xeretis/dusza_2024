@@ -12,7 +12,7 @@ use App\Models\School;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\UserInvite;
-use App\Notifications\TeamDataUpdated;
+use App\Notifications\TeamDataUpdatedNotification;
 use App\Notifications\UserInviteNotification;
 use DragonCode\Support\Facades\Helpers\Str;
 use Filament\Actions\Action;
@@ -343,7 +343,7 @@ class EditTeam extends Page
 
         Notification::send(
             User::whereRole(UserRole::Organizer)->get(),
-            new TeamDataUpdated($record)
+            new TeamDataUpdatedNotification($record)
         );
 
         \Filament\Notifications\Notification::make()

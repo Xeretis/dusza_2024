@@ -2,8 +2,8 @@
 
 namespace App\Notifications;
 
-use App\Models\Team;
-use App\Models\User;
+use App\Models\CompetitorProfile;
+use App\Models\TeamEvent;
 use Filament\Notifications\Notification as NotificationsNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,14 +11,15 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TeamDataUpdated extends Notification implements ShouldQueue
+class AmendRequestRejectedNotification extends Notification implements
+    ShouldQueue
 {
     use Queueable;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(public readonly Team $team)
+    public function __construct(public readonly TeamEvent $event)
     {
         //
     }
@@ -30,14 +31,17 @@ class TeamDataUpdated extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
+        if ($notifiable instanceof CompetitorProfile) {
+            return ['mail'];
+        }
         return ['mail', 'broadcast', 'database'];
     }
 
     private function renderText(): string
     {
         return 'A "' .
-            $this->team->name .
-            '" csapat adatai frissültek. Kérjük, hogy ellenőrizd ezeket.';
+            $this->event->team->name .
+            '" csapat hiánypótlási kérelme elutasításra került. Kérjük, hogy a csapatod tagjai ellenőrizzék az adatokat és szükség esetén módosítsák azokat.';
     }
 
     /**
@@ -46,30 +50,24 @@ class TeamDataUpdated extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage())
-            ->subject('Dusza verseny - Adatváltozás')
+            ->subject('Dusza verseny - Hiánypótlási kérelem elutasítva')
             ->greeting('Helló!')
             ->line($this->renderText())
-            ->action(
-                'Csapat megnyitása',
-                route(
-                    'filament.organizer.resources.teams.view',
-                    $this->team->id
-                )
-            );
+            ->action('Tovább az oldalra', route('filament.common.home'));
     }
 
     public function toBroadcast(): BroadcastMessage
     {
         return NotificationsNotification::make()
-            ->title('Adatváltozás')
+            ->title('Hiánypótlási kérelem elutasítva')
             ->body($this->renderText())
             ->getBroadcastMessage();
     }
 
-    public function toDatabase(User $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
         return NotificationsNotification::make()
-            ->title('Adatváltozás')
+            ->title('Hiánypótlási kérelem elutasítva')
             ->body($this->renderText())
             ->getDatabaseMessage();
     }

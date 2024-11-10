@@ -4,16 +4,15 @@ namespace App\Notifications;
 
 use App\Models\CompetitorProfile;
 use App\Models\TeamEvent;
-use App\Models\User;
 use Filament\Notifications\Notification as NotificationsNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Broadcast;
 
-class AmendRequestNotification extends Notification implements ShouldQueue
+class AmendRequestAcceptedNotification extends Notification implements
+    ShouldQueue
 {
     use Queueable;
 
@@ -42,7 +41,7 @@ class AmendRequestNotification extends Notification implements ShouldQueue
     {
         return 'A "' .
             $this->event->team->name .
-            '" csapat részére hiánypótlási kérelem érkezett. Kérjük, hogy a csapatod tagjai ellenőrizzék a kérelmet.';
+            '" csapat hiánypótlási kérelme elfogadásra került. Jó versenyzést kívánunk!';
     }
 
     /**
@@ -51,7 +50,7 @@ class AmendRequestNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage())
-            ->subject('Dusza verseny - Hiánypótlási kérelem')
+            ->subject('Dusza verseny - Hiánypótlási kérelem elfogadva')
             ->greeting('Helló!')
             ->line($this->renderText())
             ->action('Tovább az oldalra', route('filament.common.home'));
@@ -60,7 +59,7 @@ class AmendRequestNotification extends Notification implements ShouldQueue
     public function toBroadcast(): BroadcastMessage
     {
         return NotificationsNotification::make()
-            ->title('Hiánypótlási kérelem')
+            ->title('Hiánypótlási kérelem elfogadva')
             ->body($this->renderText())
             ->getBroadcastMessage();
     }
@@ -68,7 +67,7 @@ class AmendRequestNotification extends Notification implements ShouldQueue
     public function toDatabase(object $notifiable): array
     {
         return NotificationsNotification::make()
-            ->title('Hiánypótlási kérelem')
+            ->title('Hiánypótlási kérelem elfogadva')
             ->body($this->renderText())
             ->getDatabaseMessage();
     }

@@ -9,6 +9,8 @@ use App\Enums\TeamEventType;
 use App\Enums\TeamStatus;
 use App\Filament\Organizer\Resources\TeamResource\Pages\ViewTeam;
 use App\Models\TeamEvent;
+use App\Notifications\AmendRequestAcceptedNotification;
+use App\Notifications\AmendRequestRejectedNotification;
 use Filament\Forms\Components\Livewire;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\TextEntry;
@@ -19,6 +21,7 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Notification as FacadesNotification;
 
 class EventsRelationManager extends RelationManager
 {
@@ -195,7 +198,22 @@ class EventsRelationManager extends RelationManager
                                     TeamStatus::OrganizerApproved;
                                 $event->team->save();
 
-                                // Send notification
+                                $event_send = new AmendRequestAcceptedNotification(
+                                    $event
+                                );
+
+                                FacadesNotification::send(
+                                    $event->team->competitorProfiles,
+                                    $event_send
+                                );
+
+                                FacadesNotification::send(
+                                    $event->team->competitorProfiles
+                                        ->map(fn($profile) => $profile->user)
+                                        ->unique()
+                                        ->filter(),
+                                    $event_send
+                                );
 
                                 Notification::make()
                                     ->title('A változtatás elfogadva.')
@@ -216,7 +234,22 @@ class EventsRelationManager extends RelationManager
                                     TeamEventResponseStatus::Rejected;
                                 $event->response->save();
 
-                                // Send notification
+                                $event_send = new AmendRequestRejectedNotification(
+                                    $event
+                                );
+
+                                FacadesNotification::send(
+                                    $event->team->competitorProfiles,
+                                    $event_send
+                                );
+
+                                FacadesNotification::send(
+                                    $event->team->competitorProfiles
+                                        ->map(fn($profile) => $profile->user)
+                                        ->unique()
+                                        ->filter(),
+                                    $event_send
+                                );
 
                                 Notification::make()
                                     ->title('A változtatás elutasítva.')

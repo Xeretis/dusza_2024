@@ -9,6 +9,7 @@ use App\Enums\TeamStatus;
 use App\Filament\Organizer\Resources\TeamResource;
 use App\Models\Team;
 use App\Models\TeamEvent;
+use App\Notifications\AmendRequestAcceptedNotification;
 use App\Notifications\AmendRequestNotification;
 use Filament\Actions;
 use Filament\Forms\Components\MarkdownEditor;
@@ -44,17 +45,27 @@ class ViewTeam extends ViewRecord
                 ])
                 ->modalSubmitAction(false),
             Actions\Action::make('forceActive')
-                ->label(fn(Team $record) => $record->status == TeamStatus::SchoolApproved ? 'Elfogadás' : 'Elfogadás kényszerítése')
+                ->label(
+                    fn(Team $record) => $record->status ==
+                    TeamStatus::SchoolApproved
+                        ? 'Elfogadás'
+                        : 'Elfogadás kényszerítése'
+                )
                 ->tooltip(
                     'A csapat elfogadásának kényszerítése. Minden korábbi kérvényt figyelmen kívül hagy.'
                 )
-                ->color(fn(Team $record) => $record->status == TeamStatus::SchoolApproved ? 'gray' : 'danger')
+                ->color(
+                    fn(Team $record) => $record->status ==
+                    TeamStatus::SchoolApproved
+                        ? 'gray'
+                        : 'danger'
+                )
                 ->requiresConfirmation()
                 ->action(function (array $data, Team $record, $livewire) {
                     $record->status = TeamStatus::OrganizerApproved;
                     $record->save();
 
-                    TeamEvent::create([
+                    $event = TeamEvent::create([
                         'message' => 'A csapat elfogadása kényszerítve lett.',
                         'team_id' => $record->id,
                         'scope' => TeamEventScope::Organizer,
@@ -68,6 +79,21 @@ class ViewTeam extends ViewRecord
                         'status' => TeamEventStatus::Approved,
                         'closed_at' => now(),
                     ]);
+
+                    $event_send = new AmendRequestAcceptedNotification($event);
+
+                    FacadesNotification::send(
+                        $event->team->competitorProfiles,
+                        $event_send
+                    );
+
+                    FacadesNotification::send(
+                        $event->team->competitorProfiles
+                            ->map(fn($profile) => $profile->user)
+                            ->unique()
+                            ->filter(),
+                        $event_send
+                    );
 
                     Notification::make()
                         ->title('Csapat aktiválva')
@@ -122,8 +148,6 @@ class ViewTeam extends ViewRecord
                             ->filter(),
                         $event
                     );
-
-                    //TODO: Send out an email notification about this
 
                     Notification::make()
                         ->title('Kérvény elküldve')
