@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Livewire\PersonalInfo;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -17,6 +18,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Jeffgreco13\FilamentBreezy\BreezyCore;
 
 class SchoolManagerPanelProvider extends PanelProvider
 {
@@ -44,7 +46,9 @@ class SchoolManagerPanelProvider extends PanelProvider
                 in: app_path('Filament/SchoolManager/Widgets'),
                 for: 'App\\Filament\\SchoolManager\\Widgets'
             )
-            ->plugins([KnowledgeBasePlugin::make()])
+            ->plugins([KnowledgeBasePlugin::make(), BreezyCore::make()->myProfile()->myProfileComponents([
+                'personal_info' => PersonalInfo::class
+            ])->enableTwoFactorAuthentication(),])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
