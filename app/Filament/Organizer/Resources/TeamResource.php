@@ -94,8 +94,7 @@ class TeamResource extends Resource
     private static function competitorSection(
         string $label,
         string $competitorKey
-    )
-    {
+    ) {
         return Forms\Components\Fieldset::make($label)->schema([
             Forms\Components\Hidden::make("{$competitorKey}.id")->default(null),
             Forms\Components\TextInput::make("{$competitorKey}.name")
@@ -189,7 +188,8 @@ class TeamResource extends Resource
                                     $profileKey = CompetitorProfile::create([
                                         'name' => $data['name'],
                                         'email' => $data['email'],
-                                        'type' => CompetitorProfileType::Teacher,
+                                        'type' =>
+                                            CompetitorProfileType::Teacher,
                                     ])->getKey();
 
                                     if ($data['invite']) {
@@ -197,11 +197,17 @@ class TeamResource extends Resource
                                             'role' => UserRole::Teacher,
                                             'email' => $data['email'],
                                             'token' => Str::random(64),
-                                            'competitor_profile_id' => $profileKey
+                                            'competitor_profile_id' => $profileKey,
                                         ]);
 
-                                        Notification::route('mail', $data['email'])
-                                            ->notify(new UserInviteNotification($inv->token));
+                                        Notification::route(
+                                            'mail',
+                                            $data['email']
+                                        )->notify(
+                                            new UserInviteNotification(
+                                                $inv->token
+                                            )
+                                        );
                                     }
 
                                     DB::commit();
@@ -258,8 +264,11 @@ class TeamResource extends Resource
                                 'Programozási nyelv'
                             ),
                             TextEntry::make('school.name')->label('Iskola'),
+                            TextEntry::make('status')
+                                ->label('Státusz')
+                                ->badge(),
                         ])
-                            ->columns()
+                            ->columns(3)
                             ->grow(),
                     ]),
                     Section::make([
@@ -280,6 +289,10 @@ class TeamResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')->searchable(),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Státusz')
+                    ->badge()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('category.name')
                     ->label('Kategória')
                     ->badge()
