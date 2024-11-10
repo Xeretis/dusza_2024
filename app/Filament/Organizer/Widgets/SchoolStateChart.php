@@ -9,6 +9,8 @@ class SchoolStateChart extends ChartWidget
 {
     protected static ?string $heading = 'Iskolák eloszlása vármegyék szerint';
 
+    protected static ?int $sort = 3;
+
     protected function getData(): array
     {
         $schoolCounts = School::selectRaw("state, COUNT(*) as count")
