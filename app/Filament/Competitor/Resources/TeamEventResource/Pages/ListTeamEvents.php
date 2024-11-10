@@ -10,10 +10,10 @@ class ListTeamEvents extends ListRecords
 {
     protected static string $resource = TeamEventResource::class;
 
+    protected ?string $subheading = 'Hiánypótlás és egyéb események';
+
     protected function getHeaderActions(): array
     {
-        return [
-            Actions\CreateAction::make(),
-        ];
+        return [];
     }
 }
