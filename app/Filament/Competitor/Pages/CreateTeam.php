@@ -24,6 +24,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\HasMaxWidth;
 use Filament\Pages\Concerns\HasTopbar;
@@ -92,7 +93,8 @@ class CreateTeam extends Page
                 ->options(School::all()->pluck('name', 'id'))
                 ->required()
                 ->native(false)
-                ->selectablePlaceholder(false),
+                ->selectablePlaceholder(false)
+                ->live(),
         ];
     }
 
@@ -160,7 +162,19 @@ class CreateTeam extends Page
                     ->schema([
                         Select::make('id')
                             ->label('Név')
-                            ->options($teachers->toArray())
+                            ->options(function (Get $get) {
+                                if ($get('school_only')) {
+                                    return CompetitorProfile::where(
+                                        'type',
+                                        CompetitorProfileType::Teacher
+                                    )->whereJsonContains('school_ids', $get('../../school_id'))->pluck('name', 'id');
+                                }
+
+                                return CompetitorProfile::where(
+                                    'type',
+                                    CompetitorProfileType::Teacher
+                                )->pluck('name', 'id');
+                            })
                             ->createOptionForm([
                                 TextInput::make('name')
                                     ->label('Név')
@@ -190,6 +204,12 @@ class CreateTeam extends Page
                             ->required()
                             ->selectablePlaceholder(false)
                             ->fixIndistinctState(),
+                        Toggle::make('school_only')
+                            ->label('Csak a megadott iskolai tanárainak megjelenítése')
+                            ->dehydrated(false)
+                            ->disabled(fn(Get $get) => $get('../../school_id') == null)
+                            ->afterStateUpdated(fn(Set $set) => $set('id', null))
+                            ->live()
                     ])
                     ->columns(1)
                     ->addActionLabel('Új tanár hozzáadása')
