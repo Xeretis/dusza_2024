@@ -184,6 +184,10 @@ class TeamResource extends Resource
                             ])
                             ->createOptionUsing(function (array $data) {
                                 try {
+                                    $userId = User::where('email', $data['email'])->first()
+                                        ?->id;
+
+
                                     DB::beginTransaction();
 
                                     $profileKey = CompetitorProfile::create([
@@ -191,9 +195,10 @@ class TeamResource extends Resource
                                         'email' => $data['email'],
                                         'type' =>
                                             CompetitorProfileType::Teacher,
+                                        'user_id' => $userId
                                     ])->getKey();
 
-                                    if ($data['invite']) {
+                                    if (isset($data['invite']) && $data['invite']) {
                                         $inv = UserInvite::create([
                                             'role' => UserRole::Teacher,
                                             'email' => $data['email'],
