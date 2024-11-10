@@ -2,6 +2,7 @@
 
 namespace App\Filament\Competitor\Resources;
 
+use App\Enums\TeamEventResponseStatus;
 use App\Enums\TeamEventScope;
 use App\Enums\TeamEventStatus;
 use App\Enums\TeamEventType;
@@ -88,6 +89,26 @@ class TeamEventResource extends Resource
                         };
                     })
                     ->badge(),
+                Tables\Columns\TextColumn::make('response.status')
+                    ->label('Válasz állapota')
+                    ->formatStateUsing(function ($state) {
+                        return match ($state) {
+                            TeamEventResponseStatus::Pending => 'Folyamatban',
+                            TeamEventResponseStatus::Approved => 'Elfogadva',
+                            TeamEventResponseStatus::Rejected => 'Elutasítva',
+                            'invalid' => 'Nem értelmezhető',
+                        };
+                    })
+                    ->color(function ($state) {
+                        return match ($state) {
+                            TeamEventResponseStatus::Pending => 'warning',
+                            TeamEventResponseStatus::Approved => 'success',
+                            TeamEventResponseStatus::Rejected => 'danger',
+                            'invalid' => 'primary',
+                        };
+                    })
+                    ->default('invalid')
+                    ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Létrehozva')
                     ->date()
@@ -153,17 +174,19 @@ class TeamEventResource extends Resource
                         })
                         ->label('Üzenet'),
                 ]),
-                Grid::make(1)->schema([
-                    TextEntry::make('response.message')
-                        ->html(true)
-                        ->formatStateUsing(function ($state) {
-                            return str($state)
-                                ->markdown()
-                                ->sanitizeHtml()
-                                ->toHtmlString();
-                        })
-                        ->label('Válasz'),
-                ]),
+                Grid::make(1)
+                    ->schema([
+                        TextEntry::make('response.message')
+                            ->html(true)
+                            ->formatStateUsing(function ($state) {
+                                return str($state)
+                                    ->markdown()
+                                    ->sanitizeHtml()
+                                    ->toHtmlString();
+                            })
+                            ->label('Válasz'),
+                    ])
+                    ->hidden(fn(TeamEvent $record) => !$record->response),
             ])
             ->columns();
     }
