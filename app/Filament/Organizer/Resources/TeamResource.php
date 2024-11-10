@@ -8,12 +8,14 @@ use App\Filament\Organizer\Resources\TeamResource\Pages;
 use App\Filament\Organizer\Resources\TeamResource\RelationManagers;
 use App\Livewire\TeamEventsActivitySection;
 use App\Models\CompetitorProfile;
+use App\Models\School;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\UserInvite;
 use App\Notifications\UserInviteNotification;
 use DragonCode\Support\Facades\Helpers\Str;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Section;
@@ -180,6 +182,15 @@ class TeamResource extends Resource
                                     )
                                     ->email()
                                     ->live(onBlur: true),
+                                Select::make('school_ids')
+                                    ->label('Iskolák')
+                                    ->options(School::all()->pluck('name', 'id'))
+                                    ->multiple()
+                                    ->searchable()
+                                    ->native(false)
+                                    ->minItems(1)
+                                    ->required()
+                                    ->dehydrateStateUsing(fn($state) => collect($state)->map(fn($e) => intval($e))->toArray()),
                                 self::inviteToggleForTeacher(),
                             ])
                             ->createOptionUsing(function (array $data) {
@@ -193,6 +204,7 @@ class TeamResource extends Resource
                                     $profileKey = CompetitorProfile::create([
                                         'name' => $data['name'],
                                         'email' => $data['email'],
+                                        'school_ids' => $data['school_ids'],
                                         'type' =>
                                             CompetitorProfileType::Teacher,
                                         'user_id' => $userId
@@ -263,6 +275,9 @@ class TeamResource extends Resource
                     Grid::make(1)->schema([
                         Section::make([
                             TextEntry::make('name')->label('Név'),
+                            TextEntry::make('status')
+                                ->label('Státusz')
+                                ->badge(),
                             TextEntry::make('category.name')
                                 ->label('Kategória')
                                 ->badge(),
@@ -270,9 +285,6 @@ class TeamResource extends Resource
                                 'Programozási nyelv'
                             ),
                             TextEntry::make('school.name')->label('Iskola'),
-                            TextEntry::make('status')
-                                ->label('Státusz')
-                                ->badge(),
                         ])
                             ->columns(3)
                             ->grow(),
