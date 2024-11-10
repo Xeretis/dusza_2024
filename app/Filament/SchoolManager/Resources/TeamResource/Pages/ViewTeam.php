@@ -42,7 +42,8 @@ class ViewTeam extends ViewRecord
                             )
                         )
                         ->disabled(),
-                ]),
+                ])
+                ->modalSubmitAction(false),
 
             Actions\Action::make('approve')
                 ->label(
@@ -90,6 +91,9 @@ class ViewTeam extends ViewRecord
                         $imagick->setImageFormat('pdf');
                         $path = 'applications-pdf/' . Str::random() . '.pdf';
                         $filaname = Storage::disk('public')->path($path);
+                        Storage::disk('public')->makeDirectory(
+                            'applications-pdf'
+                        );
                         $imagick->writeImage($filaname);
                         $file_path = $path;
                     } else {
