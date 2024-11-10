@@ -42,32 +42,43 @@ class CreateTeam extends CreateRecord
         return $model;
     }
 
-    private function createCompetitorProfile(array $competitorData, Model $teamModel, bool $isSubstitute = false): void
-    {
+    private function createCompetitorProfile(
+        array $competitorData,
+        Model $teamModel,
+        bool $isSubstitute = false
+    ): void {
         if (!empty($competitorData['name'])) {
-            $userId = User::where('email', $competitorData['email'])->first()?->id;
+            $userId = User::where('email', $competitorData['email'])->first()
+                ?->id;
 
             DB::beginTransaction();
 
             $competitorProfile = CompetitorProfile::create(
                 collect($competitorData)
                     ->forget(['id', 'invite'])
-                    ->merge(['user_id' => $userId, 'type' => $isSubstitute ? CompetitorProfileType::SubstituteStudent : CompetitorProfileType::Student])
+                    ->merge([
+                        'user_id' => $userId,
+                        'type' => $isSubstitute
+                            ? CompetitorProfileType::SubstituteStudent
+                            : CompetitorProfileType::Student,
+                    ])
                     ->toArray()
             );
 
             $competitorProfile->teams()->attach($teamModel);
 
-            if ($competitorData['invite']) {
+            if ($competitorData['invite'] ?? false) {
                 $inv = UserInvite::create([
                     'role' => UserRole::Teacher,
                     'email' => $competitorProfile['email'],
                     'token' => Str::random(64),
-                    'competitor_profile_id' => $competitorProfile->id
+                    'competitor_profile_id' => $competitorProfile->id,
                 ]);
 
-                Notification::route('mail', $competitorProfile['email'])
-                    ->notify(new UserInviteNotification($inv->token));
+                Notification::route(
+                    'mail',
+                    $competitorProfile['email']
+                )->notify(new UserInviteNotification($inv->token));
             }
 
             DB::commit();
