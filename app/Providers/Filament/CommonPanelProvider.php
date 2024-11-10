@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Common\Pages\Auth\Login;
+use App\Filament\Common\Pages\Auth\Register;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -28,7 +29,7 @@ class CommonPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/common/theme.css')
             ->login(Login::class)
             ->spa()
-            ->registration()
+            ->registration(Register::class)
             ->passwordReset()
             ->colors([
                 'primary' => Color::Amber,
