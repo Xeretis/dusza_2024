@@ -8,7 +8,7 @@ use App\Enums\UserRole;
 use App\Filament\Teacher\Resources\TeamResource;
 use App\Models\CompetitorProfile;
 use App\Models\User;
-use App\Notifications\TeamDataUpdated;
+use App\Notifications\TeamDataUpdatedNotification;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -148,7 +148,7 @@ class EditTeam extends EditRecord
 
         Notification::send(
             User::whereRole(UserRole::Organizer)->get(),
-            new TeamDataUpdated($record)
+            new TeamDataUpdatedNotification($record)
         );
 
         return $record;

@@ -3,15 +3,15 @@
 namespace App\Notifications;
 
 use App\Models\Team;
-use App\Models\User;
-use Filament\Notifications\Notification as NotificationsNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Filament\Notifications\Notification as NotificationsNotification;
 
-class TeamDataUpdated extends Notification implements ShouldQueue
+class AmendRequestUpdatedNotification extends Notification implements
+    ShouldQueue
 {
     use Queueable;
 
@@ -37,7 +37,7 @@ class TeamDataUpdated extends Notification implements ShouldQueue
     {
         return 'A "' .
             $this->team->name .
-            '" csapat adatai frissültek. Kérjük, hogy ellenőrizd ezeket.';
+            '" csapat válaszolt a hiánypótlási kérelemre. Kérjük, hogy ellenőrizd az adatokat.';
     }
 
     /**
@@ -46,7 +46,7 @@ class TeamDataUpdated extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage())
-            ->subject('Dusza verseny - Adatváltozás')
+            ->subject('Dusza verseny - Hiánypótlási kérelem válasz')
             ->greeting('Helló!')
             ->line($this->renderText())
             ->action(
@@ -66,7 +66,7 @@ class TeamDataUpdated extends Notification implements ShouldQueue
             ->getBroadcastMessage();
     }
 
-    public function toDatabase(User $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
         return NotificationsNotification::make()
             ->title('Adatváltozás')
