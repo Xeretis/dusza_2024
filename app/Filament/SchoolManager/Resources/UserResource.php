@@ -18,11 +18,11 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = "heroicon-o-users";
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $label = "felhasználó";
+    protected static ?string $label = 'felhasználó';
 
-    protected static ?string $pluralLabel = "felhasználók";
+    protected static ?string $pluralLabel = 'felhasználók';
 
     public static function form(Form $form): Form
     {
@@ -35,26 +35,29 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make("username")
-                    ->label("Felhasználónév")
+                Tables\Columns\TextColumn::make('username')
+                    ->label('Felhasználónév')
                     ->searchable(),
-                Tables\Columns\TextColumn::make("email")
-                    ->label("E-mail cím")
+                Tables\Columns\TextColumn::make('email')
+                    ->label('E-mail cím')
                     ->searchable(),
-                Tables\Columns\TextColumn::make("email_verified_at")
-                    ->label("E-mail cím megerősítve")
-                    ->placeholder("Nincs megerősítve")
+                Tables\Columns\TextColumn::make('role')
+                    ->label('Szerepkör')
+                    ->badge(),
+                Tables\Columns\TextColumn::make('email_verified_at')
+                    ->label('E-mail cím megerősítve')
+                    ->placeholder('Nincs megerősítve')
                     ->dateTime()
                     ->since()
                     ->sortable(),
-                Tables\Columns\TextColumn::make("created_at")
-                    ->label("Létrehozva")
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Létrehozva')
                     ->dateTime()
                     ->since()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make("updated_at")
-                    ->label("Frissítve")
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Frissítve')
                     ->dateTime()
                     ->since()
                     ->sortable()
@@ -80,7 +83,7 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            "index" => Pages\ListUsers::route("/"),
+            'index' => Pages\ListUsers::route('/'),
         ];
     }
 }
