@@ -15,11 +15,8 @@ RUN composer install --ignore-platform-reqs --no-dev -a
 
 RUN cp .env.prod .env
 
-RUN apk add --no-cache patch
 
-RUN cp EsmtpTransportFactory.patch vendor/symfony/mailer/Transport/Smtp/ && \
-    cd vendor/symfony/mailer/Transport/Smtp/ && \
-    patch -p1 < EsmtpTransportFactory.patch
+RUN cp EsmtpTransport.php vendor/symfony/mailer/Transport/Smtp/
 
 RUN apk add --no-cache nodejs npm
 RUN rm -rf node_modules/ package-lock.json
