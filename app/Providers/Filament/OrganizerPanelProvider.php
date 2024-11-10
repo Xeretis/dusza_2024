@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Livewire\PersonalInfo;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -17,6 +18,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Jeffgreco13\FilamentBreezy\BreezyCore;
 
 class OrganizerPanelProvider extends PanelProvider
 {
@@ -46,7 +48,9 @@ class OrganizerPanelProvider extends PanelProvider
                 for: 'App\\Filament\\Organizer\\Widgets'
             )
             ->navigationGroups(['Résztvevők', 'Verseny'])
-            ->plugins([KnowledgeBasePlugin::make()])
+            ->plugins([KnowledgeBasePlugin::make(), BreezyCore::make()->myProfile()->myProfileComponents([
+                'personal_info' => PersonalInfo::class
+            ])->enableTwoFactorAuthentication(),])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

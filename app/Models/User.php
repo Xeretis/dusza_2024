@@ -11,6 +11,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable;
 use OwenIt\Auditing\Auditable as AuditingAuditable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spiritix\LadaCache\Database\LadaCacheTrait;
@@ -23,7 +24,8 @@ class User extends Authenticatable implements FilamentUser, HasName, Auditable, 
         Notifiable,
         HasRelationships,
         LadaCacheTrait,
-        AuditingAuditable;
+        AuditingAuditable,
+        TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.

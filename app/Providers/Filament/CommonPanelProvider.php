@@ -17,6 +17,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Jeffgreco13\FilamentBreezy\BreezyCore;
 
 class CommonPanelProvider extends PanelProvider
 {
@@ -47,6 +48,9 @@ class CommonPanelProvider extends PanelProvider
                 in: app_path('Filament/Common/Widgets'),
                 for: 'App\\Filament\\Common\\Widgets'
             )
+            ->plugins([
+                BreezyCore::make()->myProfile(shouldRegisterUserMenu: false)->enableTwoFactorAuthentication()
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
