@@ -1,6 +1,6 @@
 <div
     class="bg-gray-50 dark:bg-gray-950 max-w-screen max-h-screen h-screen w-screen relative">
-    <div name="theme-switcher" class="fixed top-2 left-5 place-content-center z-20">
+    <div name="theme-switcher" class="fixed top-2 left-5 place-content-center z-50">
         <x-theme-switcher/>
     </div>
     <div class="constellations absolute inset-0 *:z-10">
@@ -37,7 +37,7 @@
                     class="z-20 font-bold whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r dark:from-blue-800 dark:via-purple dark:to-blue-800 from-red-500 via-purple to-red-500 bg-200% animate-bgpan">Dusza Versenyre</span>
             </h1>
             <div name="Links">
-                <x-filament::button class="z-20" href="/login" tag="a" color="gray">Bejelentkezés</x-filament::button>
+                <x-filament::button class="z-20 mr-1" href="/login" tag="a" color="gray">Bejelentkezés</x-filament::button>
                 <x-filament::button class="z-20" href="/kb/prologue/getting-started" tag="a" color="gray">Dokumentáció
                 </x-filament::button>
             </div>
