@@ -2,14 +2,18 @@
 
 namespace App\Filament\Organizer\Resources\TeamResource\RelationManagers;
 
+use App\Enums\TeamEventResponseStatus;
 use App\Enums\TeamEventScope;
 use App\Enums\TeamEventStatus;
 use App\Enums\TeamEventType;
+use App\Enums\TeamStatus;
 use App\Filament\Organizer\Resources\TeamResource\Pages\ViewTeam;
 use App\Models\TeamEvent;
+use Filament\Forms\Components\Livewire;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
@@ -85,6 +89,11 @@ class EventsRelationManager extends RelationManager
                         })
                         ->label('Üzenet'),
                 ]),
+                Grid::make(1)
+                    ->schema([
+                        TextEntry::make('response.message')->label('Válasz'),
+                    ])
+                    ->hidden(fn(TeamEvent $record) => !$record->response),
             ])
             ->columns();
     }
@@ -136,6 +145,27 @@ class EventsRelationManager extends RelationManager
                         };
                     })
                     ->badge(),
+                Tables\Columns\TextColumn::make('response.status')
+                    ->label('Válasz állapota')
+                    ->formatStateUsing(function ($state) {
+                        return match ($state) {
+                            TeamEventResponseStatus::Pending
+                                => 'Válasz elérhető',
+                            TeamEventResponseStatus::Approved => 'Elfogadva',
+                            TeamEventResponseStatus::Rejected => 'Elutasítva',
+                            'invalid' => 'Nem értelmezhető',
+                        };
+                    })
+                    ->color(function ($state) {
+                        return match ($state) {
+                            TeamEventResponseStatus::Pending => 'warning',
+                            TeamEventResponseStatus::Approved => 'success',
+                            TeamEventResponseStatus::Rejected => 'danger',
+                            'invalid' => 'primary',
+                        };
+                    })
+                    ->default('invalid')
+                    ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Létrehozva')
                     ->date()
@@ -143,7 +173,59 @@ class EventsRelationManager extends RelationManager
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
-            ->actions([Tables\Actions\ViewAction::make()])
+            ->actions([
+                Tables\Actions\ViewAction::make()->modalFooterActions(
+                    fn(TeamEvent $event) => [
+                        Tables\Actions\Action::make('approve')
+                            ->label('Elfogadás')
+                            ->disabled(
+                                $event->status !== TeamEventStatus::Pending ||
+                                    !$event->response
+                            )
+                            ->modal('send-response')
+                            ->requiresConfirmation()
+                            ->action(function (TeamEvent $event) {
+                                $event->status = TeamEventStatus::Approved;
+                                $event->save();
+                                $event->response->status =
+                                    TeamEventResponseStatus::Approved;
+                                $event->response->save();
+
+                                $event->team->status =
+                                    TeamStatus::OrganizerApproved;
+                                $event->team->save();
+
+                                // Send notification
+
+                                Notification::make()
+                                    ->title('A változtatás elfogadva.')
+                                    ->send($event->team->organizer);
+                            })
+                            ->color('danger'),
+                        Tables\Actions\Action::make('decline')
+                            ->label('Visszautasítás')
+                            ->requiresConfirmation()
+                            ->disabled(
+                                $event->status !== TeamEventStatus::Pending ||
+                                    !$event->response
+                            )
+                            ->action(function (TeamEvent $event) {
+                                $event->status = TeamEventStatus::Rejected;
+                                $event->save();
+                                $event->response->status =
+                                    TeamEventResponseStatus::Rejected;
+                                $event->response->save();
+
+                                // Send notification
+
+                                Notification::make()
+                                    ->title('A változtatás elutasítva.')
+                                    ->send($event->team->organizer);
+                            })
+                            ->modal('send-response'),
+                    ]
+                ),
+            ])
             ->poll('5s');
     }
 }
