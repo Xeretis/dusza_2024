@@ -6,6 +6,7 @@ use App\Enums\CompetitorProfileType;
 use App\Models\CompetitorProfile;
 use App\Models\School;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -62,6 +63,8 @@ class CreateCompetitorProfile extends Page
             ->success()
             ->title('Profil sikeresen létrehozva!')
             ->send();
+
+        $this->redirect(Filament::getPanel('teacher')->getUrl());
     }
 
     public function form(Form $form): Form

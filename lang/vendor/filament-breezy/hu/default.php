@@ -63,7 +63,7 @@ return [
             'heading' => 'Fiók információk',
             'subheading' => 'Kérjük, add meg a fiókod adatait',
             'submit' => [
-                'label' => 'Frissítés',
+                'label' => 'Mentés',
             ],
             'notify' => 'A fiók sikeresen frissítve!',
         ],
@@ -71,7 +71,7 @@ return [
             'heading' => 'Jelszó',
             'subheading' => 'A jelszónak legalább 8 karakterből kell állnia.',
             'submit' => [
-                'label' => 'Frissítés',
+                'label' => 'Mentés',
             ],
             'notify' => 'A jelszó sikeresen frissítve!',
         ],

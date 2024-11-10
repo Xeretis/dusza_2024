@@ -121,6 +121,7 @@ class SchoolResource extends Resource
                         Forms\Components\Toggle::make('invite')
                             ->label('Felhasználó meghívása')
                             ->default(true)
+                            ->visible(fn($operation) => $operation == 'create')
                             ->required(),
                     ])
                     ->columns(),
