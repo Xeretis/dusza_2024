@@ -30,7 +30,6 @@ class TeacherPanelProvider extends PanelProvider
             ->path('teacher')
             ->spa()
             ->emailVerification()
-            ->topNavigation(true)
             ->databaseNotifications()
             ->viteTheme('resources/css/filament/teacher/theme.css')
             ->colors([

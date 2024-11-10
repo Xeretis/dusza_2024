@@ -29,7 +29,6 @@ class CompetitorPanelProvider extends PanelProvider
             ->id('competitor')
             ->path('competitor')
             ->databaseNotifications()
-            ->topNavigation(true)
             ->spa()
             ->emailVerification()
             ->viteTheme('resources/css/filament/competitor/theme.css')

@@ -47,6 +47,9 @@ class EditTeam extends Page
     protected static ?string $title = 'Csapat szerkesztése';
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
     protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationGroup = 'Jelentkezés';
+
     public array $data;
 
     public function form(Form $form): Form
