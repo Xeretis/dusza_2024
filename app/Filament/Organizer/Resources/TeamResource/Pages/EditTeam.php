@@ -114,7 +114,9 @@ class EditTeam extends EditRecord
 
     protected function updateCompetitor(Model $record, array $competitorData, bool $isSubstitute = false): void
     {
-        if ($competitorData['id'] == null) {
+
+
+        if ($competitorData['id'] == null && !empty($competitorData['name'])) {
             $userId = User::where('email', $competitorData['email'])->first()?->id;
 
             $competitorProfile = CompetitorProfile::create(
