@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\UserRole;
+use App\Models\CompetitorProfile;
 use App\Settings\CompetitionSettings;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Infolists\Components\Grid;
@@ -24,6 +26,15 @@ class Competition extends Page
     protected static ?string $title = 'Aktuális versenykiírás';
 
     protected static ?int $navigationSort = -1;
+
+    public static function canAccess(): bool
+    {
+        if (auth()->user()->role == UserRole::Teacher) {
+            return CompetitorProfile::where('user_id', auth()->user()->id)->exists();
+        }
+
+        return auth()->user()->teams()->count() == 1;
+    }
 
     public function infolist(Infolist $infolist)
     {
