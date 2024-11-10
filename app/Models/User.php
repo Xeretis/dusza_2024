@@ -2,13 +2,12 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
 use App\Enums\UserRole;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -17,7 +16,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Spiritix\LadaCache\Database\LadaCacheTrait;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
-class User extends Authenticatable implements FilamentUser, HasName, Auditable
+class User extends Authenticatable implements FilamentUser, HasName, Auditable, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory,
@@ -46,13 +45,12 @@ class User extends Authenticatable implements FilamentUser, HasName, Auditable
      * @var array<int, string>
      */
     protected $hidden = ['password', 'remember_token'];
+    protected $appends = ['name'];
 
     public function school()
     {
         return $this->belongsTo(School::class);
     }
-
-    protected $appends = ['name'];
 
     public function getNameAttribute(): string
     {
@@ -91,6 +89,12 @@ class User extends Authenticatable implements FilamentUser, HasName, Auditable
     public function canImpersonate(): bool
     {
         return $this->role === UserRole::Organizer;
+    }
+
+    public function canBeImpersonated(): bool
+    {
+        // Let's prevent impersonating other users at our own company
+        return $this->role !== UserRole::Organizer;
     }
 
     public function canAudit(): bool

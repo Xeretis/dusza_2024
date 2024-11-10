@@ -26,6 +26,7 @@ class TeacherPanelProvider extends PanelProvider
             ->id('teacher')
             ->path('teacher')
             ->spa()
+            ->emailVerification()
             ->viteTheme('resources/css/filament/teacher/theme.css')
             ->colors([
                 'primary' => Color::Amber,
