@@ -34,7 +34,11 @@ class TeamResource extends Resource
 {
     protected static ?string $model = Team::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+
+    protected static ?string $label = 'csapat';
+
+    protected static ?string $pluralLabel = 'Csapatok';
 
     public static function form(Form $form): Form
     {
@@ -170,7 +174,8 @@ class TeamResource extends Resource
                             ->label('Név')
                             ->options($teachers->toArray())
                             ->suffixAction(
-                                Forms\Components\Actions\Action::make('test')
+                                Forms\Components\Actions\Action::make('edit')
+                                    ->label('Szerkesztés')
                                     ->icon('heroicon-c-pencil')
                                     ->color('gray')
                                     ->visible(fn ($state) => $state == auth()->user()->competitorProfile->id)

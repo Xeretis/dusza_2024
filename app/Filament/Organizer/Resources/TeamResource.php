@@ -16,6 +16,7 @@ use App\Notifications\UserInviteNotification;
 use DragonCode\Support\Facades\Helpers\Str;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Section;
@@ -193,6 +194,43 @@ class TeamResource extends Resource
                                     ->dehydrateStateUsing(fn($state) => collect($state)->map(fn($e) => intval($e))->toArray()),
                                 self::inviteToggleForTeacher(),
                             ])
+                            ->suffixAction(function ($state) {
+                                return Forms\Components\Actions\Action::make('edit')
+                                    ->label('Szerkesztés')
+                                    ->icon('heroicon-c-pencil')
+                                    ->color('gray')
+                                    ->fillForm(function () use ($state) {
+                                        $profile = CompetitorProfile::find($state);
+
+                                        return [
+                                            'name' => $profile->name,
+                                            'email' => $profile->email,
+                                            'school_ids' => $profile->school_ids
+                                        ];
+                                    })
+                                    ->form([
+                                        TextInput::make('name')
+                                            ->label('Név')
+                                            ->hintIcon('heroicon-m-information-circle')
+                                            ->hintIconTooltip('Kérjük, hogy a valódi neved add meg!')
+                                            ->required(),
+                                        TextInput::make('email')
+                                            ->label('E-mail cím')
+                                            ->email(),
+                                        Select::make('school_ids')
+                                            ->label('Iskolák')
+                                            ->options(School::all()->pluck('name', 'id'))
+                                            ->multiple()
+                                            ->searchable()
+                                            ->native(false)
+                                            ->minItems(1)
+                                            ->required()
+                                            ->dehydrateStateUsing(fn($state) => collect($state)->map(fn($e) => intval($e))->toArray())
+                                    ])
+                                    ->action(function (array $data) use ($state) {
+                                        CompetitorProfile::find($state)->update($data);
+                                    });
+                            })
                             ->createOptionUsing(function (array $data) {
                                 try {
                                     $userId = User::where('email', $data['email'])->first()
