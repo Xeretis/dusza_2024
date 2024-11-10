@@ -3,11 +3,17 @@
 namespace App\Filament\Organizer\Resources\TeamResource\Pages;
 
 use App\Enums\CompetitorProfileType;
+use App\Enums\UserRole;
 use App\Filament\Organizer\Resources\TeamResource;
 use App\Models\CompetitorProfile;
 use App\Models\User;
+use App\Models\UserInvite;
+use App\Notifications\UserInviteNotification;
+use DragonCode\Support\Facades\Helpers\Str;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class CreateTeam extends CreateRecord
 {
@@ -21,8 +27,6 @@ class CreateTeam extends CreateRecord
             'programming_language_id' => $data['programming_language_id'],
             'school_id' => $data['school_id'],
         ]);
-
-        // TODO: Send out invites
 
         $this->createCompetitorProfile($data['competitor1'], $model);
         $this->createCompetitorProfile($data['competitor2'], $model);
@@ -43,6 +47,8 @@ class CreateTeam extends CreateRecord
         if (!empty($competitorData['name'])) {
             $userId = User::where('email', $competitorData['email'])->first()?->id;
 
+            DB::beginTransaction();
+
             $competitorProfile = CompetitorProfile::create(
                 collect($competitorData)
                     ->forget(['id', 'invite'])
@@ -51,6 +57,20 @@ class CreateTeam extends CreateRecord
             );
 
             $competitorProfile->teams()->attach($teamModel);
+
+            if ($competitorData['invite']) {
+                $inv = UserInvite::create([
+                    'role' => UserRole::Teacher,
+                    'email' => $competitorProfile['email'],
+                    'token' => Str::random(64),
+                    'competitor_profile_id' => $competitorProfile->id
+                ]);
+
+                Notification::route('mail', $competitorProfile['email'])
+                    ->notify(new UserInviteNotification($inv->token));
+            }
+
+            DB::commit();
         }
     }
 }
