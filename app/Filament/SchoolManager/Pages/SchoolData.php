@@ -33,7 +33,7 @@ class SchoolData extends Page implements HasForms
 
     protected static ?string $navigationLabel = 'Iskola adatai';
 
-    protected static ?string $pageTitle = 'Iskola adatai';
+    protected static ?string $title = 'Iskola adatai';
 
     public array $data = [];
 
@@ -111,7 +111,10 @@ class SchoolData extends Page implements HasForms
 
     public function form(Form $form): Form
     {
-        return $form->schema($this->getFormSchema())->statePath('data')->columns(1);
+        return $form
+            ->schema($this->getFormSchema())
+            ->statePath('data')
+            ->columns(1);
     }
 
     protected function getFormSchema(): array
