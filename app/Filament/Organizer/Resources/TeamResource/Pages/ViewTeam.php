@@ -44,11 +44,21 @@ class ViewTeam extends ViewRecord
                 ])
                 ->modalSubmitAction(false),
             Actions\Action::make('forceActive')
-                ->label(fn(Team $record) => $record->status == TeamStatus::SchoolApproved ? 'Elfogadás' : 'Elfogadás kényszerítése')
+                ->label(
+                    fn(Team $record) => $record->status ==
+                    TeamStatus::SchoolApproved
+                        ? 'Elfogadás'
+                        : 'Elfogadás kényszerítése'
+                )
                 ->tooltip(
                     'A csapat elfogadásának kényszerítése. Minden korábbi kérvényt figyelmen kívül hagy.'
                 )
-                ->color(fn(Team $record) => $record->status == TeamStatus::SchoolApproved ? 'gray' : 'danger')
+                ->color(
+                    fn(Team $record) => $record->status ==
+                    TeamStatus::SchoolApproved
+                        ? 'gray'
+                        : 'danger'
+                )
                 ->requiresConfirmation()
                 ->action(function (array $data, Team $record, $livewire) {
                     $record->status = TeamStatus::OrganizerApproved;
@@ -122,8 +132,6 @@ class ViewTeam extends ViewRecord
                             ->filter(),
                         $event
                     );
-
-                    //TODO: Send out an email notification about this
 
                     Notification::make()
                         ->title('Kérvény elküldve')
