@@ -10,6 +10,13 @@ class ViewTeam extends ViewRecord
 {
     protected static string $resource = TeamResource::class;
 
+    public static function canAccess(array $parameters = []): bool
+    {
+        return auth()->user()->teams()
+            ->where('teams.id', $parameters['record']->id)
+            ->exists();
+    }
+
     protected function getHeaderActions(): array
     {
         return [

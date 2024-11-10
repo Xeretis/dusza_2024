@@ -14,6 +14,13 @@ class EditTeam extends EditRecord
 {
     protected static string $resource = TeamResource::class;
 
+    public static function canAccess(array $parameters = []): bool
+    {
+        return auth()->user()->teams()
+                ->where('teams.id', $parameters['record']->id)
+                ->exists();
+    }
+
     protected function getRedirectUrl(): ?string
     {
         $partOfTeam = $this->getRecord()->refresh()->competitorProfiles()->where('user_id', auth()->id())->exists();
