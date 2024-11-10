@@ -39,7 +39,7 @@ class UserInviteNotification extends Notification implements ShouldQueue
             ->greeting('Helló!')
             ->line('Meghívtak, hogy regisztrálj a Dusza verseny jelentkezési felületére. Kattints az alábbi gombra, hogy elfogadd:')
             ->action('Meghívó elfogadása', route('accept-invitation', ['token' => $this->inviteToken], absolute: true))
-            ->salutation('Üdvözlettel,\nA Dusza verseny csapata');
+            ->salutation("Üdvözlettel:\n\nA Dusza verseny csapata");
     }
 
     /**
