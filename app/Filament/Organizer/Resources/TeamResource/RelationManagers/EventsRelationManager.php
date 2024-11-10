@@ -23,9 +23,10 @@ class EventsRelationManager extends RelationManager
     protected static ?string $title = 'Események';
 
     public static function canViewForRecord(
-        Model $ownerRecord,
+        Model  $ownerRecord,
         string $pageClass
-    ): bool {
+    ): bool
+    {
         return $pageClass == ViewTeam::class;
     }
 
@@ -142,6 +143,7 @@ class EventsRelationManager extends RelationManager
                     ->since()
                     ->sortable(),
             ])
+            ->defaultSort('created_at', 'desc')
             ->actions([Tables\Actions\ViewAction::make()])
             ->poll('5s');
     }

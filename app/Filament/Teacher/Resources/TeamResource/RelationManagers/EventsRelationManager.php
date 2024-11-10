@@ -136,6 +136,7 @@ class EventsRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\ViewAction::make(),
             ])
+            ->defaultSort('created_at', 'desc')
             ->poll('5s');
     }
 }

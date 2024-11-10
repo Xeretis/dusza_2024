@@ -276,6 +276,8 @@ class TeamResource extends Resource
                             })
                             ->native(false)
                             ->distinct()
+                            ->required()
+                            ->selectablePlaceholder(false)
                             ->fixIndistinctState(),
                     ])
                     ->columns(1)
