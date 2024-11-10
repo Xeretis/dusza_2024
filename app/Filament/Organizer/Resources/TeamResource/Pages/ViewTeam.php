@@ -9,6 +9,7 @@ use App\Filament\Organizer\Resources\TeamResource;
 use App\Models\Team;
 use App\Models\TeamEvent;
 use Filament\Actions;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
@@ -24,7 +25,9 @@ class ViewTeam extends ViewRecord
                 ->label('Módosítás kérvényezése')
                 ->color('gray')
                 ->form([
-                    Textarea::make('message')->label('Üzenet')->required()
+                    MarkdownEditor::make('message')
+                        ->label('Üzenet')
+                        ->required(),
                 ])
                 ->action(function (array $data, Team $record, $livewire) {
                     TeamEvent::create([
@@ -33,14 +36,17 @@ class ViewTeam extends ViewRecord
                         'scope' => TeamEventScope::Organizer,
                         'type' => TeamEventType::AmendRequest,
                         'status' => TeamEventStatus::Pending,
-                        'user_id' => auth()->id()
+                        'user_id' => auth()->id(),
                     ]);
-                    
+
                     //TODO: Send out an email notification about this
 
-                    Notification::make()->title('Kérvény elküldve')->success()->send();
+                    Notification::make()
+                        ->title('Kérvény elküldve')
+                        ->success()
+                        ->send();
                 }),
-            Actions\EditAction::make()
+            Actions\EditAction::make(),
         ];
     }
 }
