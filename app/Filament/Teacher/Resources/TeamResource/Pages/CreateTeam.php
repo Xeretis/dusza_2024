@@ -22,6 +22,16 @@ class CreateTeam extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
+        $filteredTeachers = array_filter($data['teachers'], function($item) {
+            return isset($item['id']) && $item['id'] === auth()->user()->competitorProfile->id;
+        });
+
+        if (count($filteredTeachers) !== 1) {
+            $data['teachers'][] = [
+                'id' => auth()->user()->competitorProfile->id
+            ];
+        }
+
         $model = static::getModel()::create([
             'name' => $data['name'],
             'category_id' => $data['category_id'],

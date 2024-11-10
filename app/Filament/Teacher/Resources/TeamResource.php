@@ -15,6 +15,7 @@ use App\Notifications\UserInviteNotification;
 use DragonCode\Support\Facades\Helpers\Str;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Section;
@@ -160,7 +161,7 @@ class TeamResource extends Resource
             CompetitorProfileType::Teacher
         )->pluck('name', 'id');
 
-        return Forms\Components\Fieldset::make('Felkészítő tanárok')
+        return Forms\Components\Fieldset::make(fn ($operation) => $operation == 'edit' ? 'Felkészítő tanárok' : 'További felkészítő tanárok')
             ->schema([
                 Forms\Components\Repeater::make('teachers')
                     ->label('')
@@ -168,6 +169,39 @@ class TeamResource extends Resource
                         Forms\Components\Select::make('id')
                             ->label('Név')
                             ->options($teachers->toArray())
+                            ->suffixAction(
+                                Forms\Components\Actions\Action::make('test')
+                                    ->icon('heroicon-c-pencil')
+                                    ->color('gray')
+                                    ->visible(fn ($state) => $state == auth()->user()->competitorProfile->id)
+                                    ->fillForm(function () {
+                                        $profile = auth()->user()->competitorProfile;
+
+                                        return [
+                                            'name' => $profile->name,
+                                            'school_ids' => $profile->school_ids
+                                        ];
+                                    })
+                                    ->form([
+                                        TextInput::make('name')
+                                            ->label('Név')
+                                            ->hintIcon('heroicon-m-information-circle')
+                                            ->hintIconTooltip('Kérjük, hogy a valódi neved add meg!')
+                                            ->required(),
+                                        Select::make('school_ids')
+                                            ->label('Iskolák')
+                                            ->options(School::all()->pluck('name', 'id'))
+                                            ->multiple()
+                                            ->searchable()
+                                            ->native(false)
+                                            ->minItems(1)
+                                            ->required()
+                                            ->dehydrateStateUsing(fn($state) => collect($state)->map(fn($e) => intval($e))->toArray())
+                                    ])
+                                    ->action(function (array $data) {
+                                        CompetitorProfile::find(auth()->user()->competitorProfile->id)->update($data);
+                                    })
+                            )
                             ->createOptionForm([
                                 Forms\Components\TextInput::make('name')
                                     ->label('Név')
@@ -242,7 +276,8 @@ class TeamResource extends Resource
                     ->addActionLabel('Új tanár hozzáadása')
                     ->reorderable(false)
                     ->itemLabel('Új felkészítő tanár')
-                    ->defaultItems(0),
+                    ->defaultItems(0)
+                    ->minItems(fn ($operation) => $operation == 'edit' ? 1 : 0),
             ])
             ->columns(1);
     }
