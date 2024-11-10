@@ -23,10 +23,9 @@ class EventsRelationManager extends RelationManager
     protected static ?string $title = 'Események';
 
     public static function canViewForRecord(
-        Model  $ownerRecord,
+        Model $ownerRecord,
         string $pageClass
-    ): bool
-    {
+    ): bool {
         return $pageClass == ViewTeam::class;
     }
 
