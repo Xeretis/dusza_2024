@@ -2,7 +2,7 @@
 group: Tanár
 title: Csapatok felkészítő tanárként
 icon: heroicon-o-user-group
-order: 4
+order: 3
 ---
 
 ## Csapatok részleg
@@ -18,6 +18,5 @@ A csapatok táblázatban megtekinthetőek a csapatok amiknek felkészítő taná
 A csapatok megtekintése oldalon a kiválasztott csapatról több adatot is megtudhatunk, például a létrehozás és frissítés dátumát és a csapat tagjait is.
 
 ## Csapatok szerkesztése
-
 A szükséges információk megadása után a **Mentés** gombra kattintva felülírhatjuk a csapat a adatait.
 
