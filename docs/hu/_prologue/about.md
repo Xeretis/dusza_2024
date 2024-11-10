@@ -33,7 +33,7 @@ A rendszer 4 különböző felülettel (továbbiakban: panelek) rendelkezik, mel
 
 ### Regisztrációs módok
 
--   **Felhasználónév és jelszó**: A felhasználók ezzel a módszerrel tudnak bejelentkezni a rendszerbe.
+-   **Felhasználónév és jelszó**: A regisztráció hagyományos módja, csak versenyzők és tanárok számár elérhető. A felhasználók ezen adatokkal tudnak bejelentkezni a rendszerbe a későbbiekben.
 -   **Meghívás E-mailben**: A rendszer automatikusan küld egy meghívót a felhasználóknak, amelyben egy link található, amelyre kattintva a felhasználó be tud regisztrálni a rendszerbe.
     > Megjegyzés: Ez a meghívókód minden esetben kiküldődik, amikor egy csapatot létrehoznak, melynek a résztvevőihez tartoznak E-mail címek.
     >

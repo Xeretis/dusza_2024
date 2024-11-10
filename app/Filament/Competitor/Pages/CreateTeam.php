@@ -36,10 +36,7 @@ use Throwable;
 
 class CreateTeam extends Page
 {
-    use HasMaxWidth;
-    use HasTopbar;
-    use InteractsWithFormActions;
-    use CanUseDatabaseTransactions;
+    use HasMaxWidth, HasTopbar, InteractsWithFormActions, CanUseDatabaseTransactions;
 
     protected static string $layout = 'filament-panels::components.layout.simple';
     protected static string $view = 'filament.competitor.pages.create-team';
@@ -57,9 +54,7 @@ class CreateTeam extends Page
             ->schema([
                 ...self::teamDetailsSection(),
                 Section::make('Résztvevők és egyéb adatok')
-                    ->description(
-                        'Ezeket az adatokat később is meg lehet adni, nem kötelező a cspata létrehozásakor.'
-                    )
+                    ->description('Ezeket az adatokat később is meg lehet adni, nem kötelező a cspata létrehozásakor.')
                     ->collapsible()
                     ->schema([
                         self::competitorSection('1. Csapattag - Saját adataid', 'competitor1', self: true),
@@ -82,7 +77,8 @@ class CreateTeam extends Page
                 ->maxLength(255),
             Select::make('category_id')
                 ->label('Kategória')
-                ->options(Category::all()->pluck('name', 'id'))->required()
+                ->options(Category::all()->pluck('name', 'id'))
+                ->required()
                 ->native(false)
                 ->selectablePlaceholder(false),
             Select::make('programming_language_id')
@@ -100,12 +96,7 @@ class CreateTeam extends Page
         ];
     }
 
-    private static function competitorSection(
-        string $label,
-        string $competitorKey,
-        bool   $isSubstitute = false,
-        bool   $self = false
-    )
+    private static function competitorSection(string $label, string $competitorKey, bool $isSubstitute = false, bool $self = false)
     {
         return Fieldset::make($label)->schema([
             Hidden::make("{$competitorKey}.id")->default(null),
@@ -131,19 +122,12 @@ class CreateTeam extends Page
                 ->hintIcon('heroicon-m-information-circle')
                 ->hintIconTooltip('Felhasználó meghívásához szükséges megadni')
                 ->email()
-                ->unique(
-                    'competitor_profiles',
-                    'email',
-                    ignorable: function (Get $get) use ($competitorKey) {
-                        if ($get("{$competitorKey}.id") != null) {
-                            return CompetitorProfile::find(
-                                $get("{$competitorKey}.id")
-                            );
-                        }
-
-                        return null;
+                ->unique('competitor_profiles', 'email', ignorable: function (Get $get) use ($competitorKey) {
+                    if ($get("{$competitorKey}.id") != null) {
+                        return CompetitorProfile::find($get("{$competitorKey}.id"));
                     }
-                )
+                    return null;
+                })
                 ->live(onBlur: true),
             self::inviteToggle($competitorKey, $self),
         ]);
@@ -162,21 +146,12 @@ class CreateTeam extends Page
             })
             ->inline(false)
             ->hidden($self)
-            ->disabled(
-                fn(Get $get) => !$get("{$competitorKey}.email") ||
-                    User::where(
-                        'email',
-                        $get("{$competitorKey}.email")
-                    )->exists()
-            );
+            ->disabled(fn(Get $get) => !$get("{$competitorKey}.email") || User::where('email', $get("{$competitorKey}.email"))->exists());
     }
 
     private static function teachersSection()
     {
-        $teachers = CompetitorProfile::where(
-            'type',
-            CompetitorProfileType::Teacher
-        )->pluck('name', 'id');
+        $teachers = CompetitorProfile::where('type', CompetitorProfileType::Teacher)->pluck('name', 'id');
 
         return Fieldset::make('Felkészítő tanárok')
             ->schema([
@@ -193,9 +168,7 @@ class CreateTeam extends Page
                                 TextInput::make('email')
                                     ->label('E-mail cím')
                                     ->hintIcon('heroicon-m-information-circle')
-                                    ->hintIconTooltip(
-                                        'Felhasználó meghívásához szükséges megadni'
-                                    )
+                                    ->hintIconTooltip('Felhasználó meghívásához szükséges megadni')
                                     ->email()
                                     ->live(onBlur: true),
                                 Select::make('school_ids')
@@ -210,47 +183,7 @@ class CreateTeam extends Page
                                 self::inviteToggleForTeacher(),
                             ])
                             ->createOptionUsing(function (array $data) {
-                                try {
-                                    $userId = User::where('email', $data['email'])->first()
-                                        ?->id;
-
-
-                                    DB::beginTransaction();
-
-                                    $profileKey = CompetitorProfile::create([
-                                        'name' => $data['name'],
-                                        'email' => $data['email'],
-                                        'school_ids' => $data['school_ids'],
-                                        'type' =>
-                                            CompetitorProfileType::Teacher,
-                                        'user_id' => $userId
-                                    ])->getKey();
-
-                                    if (isset($data['invite']) && $data['invite']) {
-                                        $inv = UserInvite::create([
-                                            'role' => UserRole::Teacher,
-                                            'email' => $data['email'],
-                                            'token' => Str::random(64),
-                                            'competitor_profile_id' => $profileKey,
-                                        ]);
-
-                                        Notification::route(
-                                            'mail',
-                                            $data['email']
-                                        )->notify(
-                                            new UserInviteNotification(
-                                                $inv->token
-                                            )
-                                        );
-                                    }
-
-                                    DB::commit();
-
-                                    return $profileKey;
-                                } catch (Throwable $e) {
-                                    DB::rollBack();
-                                    throw $e;
-                                }
+                                return self::createTeacherProfile($data);
                             })
                             ->native(false)
                             ->distinct()
@@ -280,10 +213,42 @@ class CreateTeam extends Page
                     : 'E-mail küldése a megadott e-mail címre a regisztrációs linkkel';
             })
             ->inline(false)
-            ->disabled(
-                fn(Get $get) => !$get('email') ||
-                    User::where('email', $get('email'))->exists()
-            );
+            ->disabled(fn(Get $get) => !$get('email') || User::where('email', $get('email'))->exists());
+    }
+
+    private static function createTeacherProfile(array $data)
+    {
+        try {
+            $userId = User::where('email', $data['email'])->first()?->id;
+
+            DB::beginTransaction();
+
+            $profileKey = CompetitorProfile::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'school_ids' => $data['school_ids'],
+                'type' => CompetitorProfileType::Teacher,
+                'user_id' => $userId
+            ])->getKey();
+
+            if (isset($data['invite']) && $data['invite']) {
+                $inv = UserInvite::create([
+                    'role' => UserRole::Teacher,
+                    'email' => $data['email'],
+                    'token' => Str::random(64),
+                    'competitor_profile_id' => $profileKey,
+                ]);
+
+                Notification::route('mail', $data['email'])->notify(new UserInviteNotification($inv->token));
+            }
+
+            DB::commit();
+
+            return $profileKey;
+        } catch (Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     public function create()
@@ -306,56 +271,46 @@ class CreateTeam extends Page
             $model->competitorProfiles()->attach($id);
         }
 
-
         $this->redirect(Filament::getPanel('competitor')->getUrl());
     }
 
-    private function createCompetitorProfile(
-        array $competitorData,
-        Team  $teamModel,
-        bool  $isSubstitute = false,
-        bool  $self = false
-    ): void
+    private function createCompetitorProfile(array $competitorData, Team $teamModel, bool $isSubstitute = false, bool $self = false): void
     {
-        $userId = $self ? null : User::where('email', $competitorData['email'])->first()
-            ?->id;
+        if (!empty($competitorData['name'])) {
 
-        try {
-            DB::beginTransaction();
+            $userId = $self ? null : User::where('email', $competitorData['email'])->first()?->id;
 
-            $competitorProfile = CompetitorProfile::create(
-                collect($competitorData)
-                    ->forget(['id', 'invite'])
-                    ->merge([
-                        'user_id' => $self ? auth()->id() : $userId,
-                        'type' => $isSubstitute
-                            ? CompetitorProfileType::SubstituteStudent
-                            : CompetitorProfileType::Student,
-                    ])
-                    ->when($self, fn($c) => $c->merge(['email' => auth()->user()->email]))
-                    ->toArray()
-            );
+            try {
+                DB::beginTransaction();
+                $competitorProfile = CompetitorProfile::create(
+                    collect($competitorData)
+                        ->forget(['id', 'invite'])
+                        ->merge([
+                            'user_id' => $self ? auth()->id() : $userId,
+                            'type' => $isSubstitute ? CompetitorProfileType::SubstituteStudent : CompetitorProfileType::Student,
+                        ])
+                        ->when($self, fn($c) => $c->merge(['email' => auth()->user()->email]))
+                        ->toArray()
+                );
 
-            $competitorProfile->teams()->attach($teamModel);
+                $competitorProfile->teams()->attach($teamModel);
 
-            if ($competitorData['invite'] ?? false) {
-                $inv = UserInvite::create([
-                    'role' => UserRole::Teacher,
-                    'email' => $competitorProfile['email'],
-                    'token' => Str::random(64),
-                    'competitor_profile_id' => $competitorProfile->id,
-                ]);
+                if ($competitorData['invite'] ?? false) {
+                    $inv = UserInvite::create([
+                        'role' => UserRole::Teacher,
+                        'email' => $competitorProfile['email'],
+                        'token' => Str::random(64),
+                        'competitor_profile_id' => $competitorProfile->id,
+                    ]);
 
-                Notification::route(
-                    'mail',
-                    $competitorProfile['email']
-                )->notify(new UserInviteNotification($inv->token));
+                    Notification::route('mail', $competitorProfile['email'])->notify(new UserInviteNotification($inv->token));
+                }
+
+                DB::commit();
+            } catch (Throwable $e) {
+                DB::rollBack();
+                throw $e;
             }
-
-            DB::commit();
-        } catch (Throwable $e) {
-            DB::rollBack();
-            throw $e;
         }
     }
 

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Common\Pages\Auth;
 
-
 use App\Enums\UserRole;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Select;
@@ -32,6 +31,16 @@ class Register extends \Filament\Pages\Auth\Register
             ->autofocus();
     }
 
+    protected function getEmailFormComponent(): Component
+    {
+        return TextInput::make('email')
+            ->label('Email')
+            ->required()
+            ->email()
+            ->maxLength(255)
+            ->unique('users', 'email');
+    }
+
     protected function getRoleFormComponent(): Component
     {
         return Select::make('role')
@@ -46,5 +55,23 @@ class Register extends \Filament\Pages\Auth\Register
             ->selectablePlaceholder(false)
             ->required()
             ->in([UserRole::Competitor->value, UserRole::Teacher->value]);
+    }
+
+    protected function getPasswordFormComponent(): Component
+    {
+        return TextInput::make('password')
+            ->label('Jelszó')
+            ->required()
+            ->password()
+            ->minLength(8);
+    }
+
+    protected function getPasswordConfirmationFormComponent(): Component
+    {
+        return TextInput::make('password_confirmation')
+            ->label('Jelszó megerősítése')
+            ->required()
+            ->password()
+            ->same('password');
     }
 }

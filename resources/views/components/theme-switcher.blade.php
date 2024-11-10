@@ -1,6 +1,6 @@
 <div class="absolute top-2 right-2 z-40">
-    <x-filament::button
-        color="gray"
+    <button
+        class="text-gray-950 dark:text-gray-50"
         id="themeSwitcher"
         size="lg"
         x-data="{ theme: localStorage.getItem('theme') || 'system' }"
@@ -9,7 +9,7 @@
         <x-heroicon-m-moon class="h-6 w-6" x-show="theme === 'dark'" />
         <x-heroicon-m-sun class="h-6 w-6" x-show="theme === 'light'" />
         <x-heroicon-m-computer-desktop class="h-6 w-6" x-show="theme === 'system'" />
-    </x-filament::button>
+    </button>
 </div>
 
 @push('scripts')

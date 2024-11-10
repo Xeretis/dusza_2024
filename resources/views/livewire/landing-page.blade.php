@@ -28,6 +28,18 @@
         <p id="8" name="star" class="absolute h-6 w-6 text-blue-900">
             <x-heroicon-m-star/>
         </p>
+        <p id="9" name="star" class="absolute h-6 w-6 text-blue-900">
+            <x-heroicon-m-star/>
+        </p>
+        <p id="10" name="star" class="absolute h-6 w-6 text-blue-900">
+            <x-heroicon-m-star/>
+        </p>
+        <p id="11" name="star" class="absolute h-6 w-6 text-blue-900">
+            <x-heroicon-m-star/>
+        </p>
+        <p id="12" name="star" class="absolute h-6 w-6 text-blue-900">
+            <x-heroicon-m-star/>
+        </p>
         <svg id="lines" class="absolute top-0 left-0 w-full h-full z-10"></svg>
     </div>
     <div class="flex justify-center items-center max-w-screen max-h-screen h-screen w-screen absolute inset-0 z-40">
@@ -38,7 +50,7 @@
             </h1>
             <div name="Links">
                 <x-filament::button class="z-20 mr-1" href="/login" tag="a" color="gray">Bejelentkezés</x-filament::button>
-                <x-filament::button class="z-20" href="/kb/prologue/getting-started" tag="a" color="gray">Dokumentáció
+                <x-filament::button class="z-20" href="/kb/_prologue/about" tag="a" color="gray">Dokumentáció
                 </x-filament::button>
             </div>
         </div>
