@@ -9,12 +9,12 @@ order: 2
 A vezérlőpulton megtekinthetjük a felhasználók-, csapatok- és iskolák számát egy-egy vonal diagram formájában.
 Ezeken kívül egy-egy oszlop diagrammal gazdagítottuk a felületet.
 
-### INSERT SCREENSHOT
+### INSERT SCREENSHOT OF THE CONTROL PANEL
 
 > **Extra Funkció**
 >
 >A vonaldiagrammok napokra lebontva mutatják a létrejött adatokat.
 
-> **Extra Funkció** 
-> 
+> **Extra Funkció**
+>
 > Abban az esetben, ha különböző írásmóddal (pl.: nagybetűvel és kisbetűvel is) vannak megadva a különböző iskolákhoz tartozó vármegyék és városok, a diagramm egybe veszi őket.
