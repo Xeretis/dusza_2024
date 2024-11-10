@@ -3,12 +3,16 @@
 namespace App\Filament\Teacher\Resources\TeamResource\Pages;
 
 use App\Enums\CompetitorProfileType;
+use App\Enums\TeamStatus;
+use App\Enums\UserRole;
 use App\Filament\Teacher\Resources\TeamResource;
 use App\Models\CompetitorProfile;
 use App\Models\User;
+use App\Notifications\TeamDataUpdated;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Notification;
 
 class EditTeam extends EditRecord
 {
@@ -16,21 +20,30 @@ class EditTeam extends EditRecord
 
     public static function canAccess(array $parameters = []): bool
     {
-        return auth()->user()->teams()
-                ->where('teams.id', $parameters['record']->id)
-                ->exists();
+        return auth()
+            ->user()
+            ->teams()
+            ->where('teams.id', $parameters['record']->id)
+            ->exists();
     }
 
     protected function getRedirectUrl(): ?string
     {
-        $partOfTeam = $this->getRecord()->refresh()->competitorProfiles()->where('user_id', auth()->id())->exists();
+        $partOfTeam = $this->getRecord()
+            ->refresh()
+            ->competitorProfiles()
+            ->where('user_id', auth()->id())
+            ->exists();
 
         return $partOfTeam ? null : TeamResource::getUrl('index');
     }
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $members = CompetitorProfile::where('type', CompetitorProfileType::Student)
+        $members = CompetitorProfile::where(
+            'type',
+            CompetitorProfileType::Student
+        )
             ->whereHas('teams', function ($query) use ($data) {
                 $query->where('teams.id', $data['id']);
             })
@@ -67,7 +80,10 @@ class EditTeam extends EditRecord
             ];
         }
 
-        $substitute = CompetitorProfile::where('type', CompetitorProfileType::SubstituteStudent)
+        $substitute = CompetitorProfile::where(
+            'type',
+            CompetitorProfileType::SubstituteStudent
+        )
             ->whereHas('teams', function ($query) use ($data) {
                 $query->where('teams.id', $data['id']);
             })
@@ -83,7 +99,10 @@ class EditTeam extends EditRecord
             ];
         }
 
-        $teachers = CompetitorProfile::where('type', CompetitorProfileType::Teacher)
+        $teachers = CompetitorProfile::where(
+            'type',
+            CompetitorProfileType::Teacher
+        )
             ->whereHas('teams', function ($query) use ($data) {
                 $query->where('teams.id', $data['id']);
             })
@@ -98,11 +117,10 @@ class EditTeam extends EditRecord
         return $data;
     }
 
-
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $record->update(
-            collect($data)
+        $record->update([
+            ...collect($data)
                 ->forget([
                     'competitor1',
                     'competitor2',
@@ -110,12 +128,17 @@ class EditTeam extends EditRecord
                     'substitute',
                     'teachers',
                 ])
-                ->toArray()
-        );
+                ->toArray(),
+            'status' => TeamStatus::SchoolApproved,
+        ]);
 
         if (isset($data['teachers'])) {
             $record->teachers()->detach();
-            $record->teachers()->sync(collect($data['teachers'])->map(fn($t) => $t['id'])->toArray());
+            $record->teachers()->sync(
+                collect($data['teachers'])
+                    ->map(fn($t) => $t['id'])
+                    ->toArray()
+            );
         }
 
         $this->updateCompetitor($record, $data['competitor1']);
@@ -123,20 +146,31 @@ class EditTeam extends EditRecord
         $this->updateCompetitor($record, $data['competitor3']);
         $this->updateCompetitor($record, $data['substitute'], true);
 
+        Notification::send(
+            User::whereRole(UserRole::Organizer)->get(),
+            new TeamDataUpdated($record)
+        );
+
         return $record;
     }
 
-    protected function updateCompetitor(Model $record, array $competitorData, bool $isSubstitute = false): void
-    {
+    protected function updateCompetitor(
+        Model $record,
+        array $competitorData,
+        bool $isSubstitute = false
+    ): void {
         if ($competitorData['id'] == null && !empty($competitorData['name'])) {
-            $userId = User::where('email', $competitorData['email'])->first()?->id;
+            $userId = User::where('email', $competitorData['email'])->first()
+                ?->id;
 
             $competitorProfile = CompetitorProfile::create(
                 collect($competitorData)
                     ->forget(['id', 'invite'])
                     ->merge([
                         'user_id' => $userId,
-                        'type' => $isSubstitute ? CompetitorProfileType::SubstituteStudent : CompetitorProfileType::Student,
+                        'type' => $isSubstitute
+                            ? CompetitorProfileType::SubstituteStudent
+                            : CompetitorProfileType::Student,
                     ])
                     ->toArray()
             );
@@ -145,15 +179,18 @@ class EditTeam extends EditRecord
         } elseif (empty($competitorData['name'])) {
             CompetitorProfile::whereId($competitorData['id'])->delete();
         } else {
-            $userId = User::where('email', $competitorData['email'])->first()?->id;
+            $userId = User::where('email', $competitorData['email'])->first()
+                ?->id;
 
-            $competitorProfile = CompetitorProfile::whereId($competitorData['id'])->first();
+            $competitorProfile = CompetitorProfile::whereId(
+                $competitorData['id']
+            )->first();
 
             $competitorProfile->update(
                 collect($competitorData)
                     ->forget(['id'])
                     ->merge([
-                        'user_id' => $userId
+                        'user_id' => $userId,
                     ])
                     ->toArray()
             );
@@ -163,9 +200,6 @@ class EditTeam extends EditRecord
 
     protected function getHeaderActions(): array
     {
-        return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
-        ];
+        return [Actions\ViewAction::make(), Actions\DeleteAction::make()];
     }
 }
