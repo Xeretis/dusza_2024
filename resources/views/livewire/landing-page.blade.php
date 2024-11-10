@@ -1,31 +1,31 @@
 <div
     class="bg-gray-50 dark:bg-gray-950 max-w-screen max-h-screen h-screen w-screen relative">
-    <div name="theme-switcher" class="fixed top-2 left-5 place-content-center z-50">
+    <div name="theme-switcher" class="fixed top-2 right-2 place-content-center z-50">
         <x-theme-switcher/>
     </div>
     <div class="constellations absolute inset-0 *:z-10">
-        <p id="1" name="star" class="absolute h-6 w-6 dark:text-blue-900 text-red-600">
+        <p id="1" name="star" class="absolute h-6 w-6 text-blue-900">
             <x-heroicon-m-star/>
         </p>
-        <p id="2" name="star" class="absolute h-6 w-6 dark:text-blue-900 text-red-600">
+        <p id="2" name="star" class="absolute h-6 w-6 text-blue-900">
             <x-heroicon-m-star/>
         </p>
-        <p id="3" name="star" class="absolute h-6 w-6 dark:text-blue-900 text-red-600">
+        <p id="3" name="star" class="absolute h-6 w-6 text-blue-900">
             <x-heroicon-m-star/>
         </p>
-        <p id="4" name="star" class="absolute h-6 w-6 dark:text-blue-900 text-red-600">
+        <p id="4" name="star" class="absolute h-6 w-6 text-blue-900">
             <x-heroicon-m-star/>
         </p>
-        <p id="5" name="star" class="absolute h-6 w-6 dark:text-blue-900 text-red-600">
+        <p id="5" name="star" class="absolute h-6 w-6 text-blue-900">
             <x-heroicon-m-star/>
         </p>
-        <p id="6" name="star" class="absolute h-6 w-6 dark:text-blue-900 text-red-600">
+        <p id="6" name="star" class="absolute h-6 w-6 text-blue-900">
             <x-heroicon-m-star/>
         </p>
-        <p id="7" name="star" class="absolute h-6 w-6 dark:text-blue-900 text-red-600">
+        <p id="7" name="star" class="absolute h-6 w-6 text-blue-900">
             <x-heroicon-m-star/>
         </p>
-        <p id="8" name="star" class="absolute h-6 w-6 dark:text-blue-900 text-red-600">
+        <p id="8" name="star" class="absolute h-6 w-6 text-blue-900">
             <x-heroicon-m-star/>
         </p>
         <svg id="lines" class="absolute top-0 left-0 w-full h-full z-10"></svg>
@@ -34,7 +34,7 @@
         <div name="center" class="text-center">
             <h1 class="z-20 text-black dark:text-white sm:px-8 md:px-16 lg:px-32 xl:px-42 text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-bold mb-20">
                 Jelentkezés a <span
-                    class="z-20 font-bold whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r dark:from-blue-800 dark:via-purple dark:to-blue-800 from-red-500 via-purple to-red-500 bg-200% animate-bgpan">Dusza Versenyre</span>
+                    class="z-20 font-bold whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-blue-800 via-purple to-blue-800 bg-200% animate-bgpan">Dusza Versenyre</span>
             </h1>
             <div name="Links">
                 <x-filament::button class="z-20 mr-1" href="/login" tag="a" color="gray">Bejelentkezés</x-filament::button>
@@ -163,9 +163,6 @@
                 }
             }
 
-            const isDarkMode = document.documentElement.classList.contains('dark');
-            const lineColor = isDarkMode ? 'blue' : 'red';
-
             connections.forEach((connectedStars, i) => {
                 connectedStars.forEach(j => {
                     const x1 = stars[i].offsetLeft + stars[i].offsetWidth / 2;
@@ -178,7 +175,7 @@
                     line.setAttribute('y1', y1);
                     line.setAttribute('x2', x2);
                     line.setAttribute('y2', y2);
-                    line.setAttribute('stroke', lineColor);
+                    line.setAttribute('stroke', 'blue');
                     line.setAttribute('stroke-opacity', '0.2');
                     line.setAttribute('stroke-width', '2');
                     lines.appendChild(line);
