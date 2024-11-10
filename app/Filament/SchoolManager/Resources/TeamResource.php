@@ -26,6 +26,8 @@ class TeamResource extends Resource
 
     protected static ?string $pluralLabel = 'Csapatok';
 
+    protected static ?string $navigationGroup = 'Jelentkezések';
+
     public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist

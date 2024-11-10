@@ -40,6 +40,8 @@ class TeamResource extends Resource
 
     protected static ?string $pluralLabel = 'Csapatok';
 
+    protected static ?string $navigationGroup = 'Jelentkezések';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -92,7 +94,7 @@ class TeamResource extends Resource
     private static function competitorSection(
         string $label,
         string $competitorKey,
-        bool $isSubstitute = false
+        bool   $isSubstitute = false
     )
     {
         return Forms\Components\Fieldset::make($label)->schema([
@@ -165,7 +167,7 @@ class TeamResource extends Resource
             CompetitorProfileType::Teacher
         )->pluck('name', 'id');
 
-        return Forms\Components\Fieldset::make(fn ($operation) => $operation == 'edit' ? 'Felkészítő tanárok' : 'További felkészítő tanárok')
+        return Forms\Components\Fieldset::make(fn($operation) => $operation == 'edit' ? 'Felkészítő tanárok' : 'További felkészítő tanárok')
             ->schema([
                 Forms\Components\Repeater::make('teachers')
                     ->label('')
@@ -178,7 +180,7 @@ class TeamResource extends Resource
                                     ->label('Szerkesztés')
                                     ->icon('heroicon-c-pencil')
                                     ->color('gray')
-                                    ->visible(fn ($state) => $state == auth()->user()->competitorProfile->id)
+                                    ->visible(fn($state) => $state == auth()->user()->competitorProfile->id)
                                     ->fillForm(function () {
                                         $profile = auth()->user()->competitorProfile;
 
@@ -282,7 +284,7 @@ class TeamResource extends Resource
                     ->reorderable(false)
                     ->itemLabel('Új felkészítő tanár')
                     ->defaultItems(0)
-                    ->minItems(fn ($operation) => $operation == 'edit' ? 1 : 0),
+                    ->minItems(fn($operation) => $operation == 'edit' ? 1 : 0),
             ])
             ->columns(1);
     }

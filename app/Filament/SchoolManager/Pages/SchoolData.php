@@ -27,13 +27,15 @@ class SchoolData extends Page implements HasForms
         CanUseDatabaseTransactions,
         InteractsWithForms;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-pencil';
 
     protected static string $view = 'filament.school-manager.pages.school-data';
 
     protected static ?string $navigationLabel = 'Iskola adatai';
 
     protected static ?string $title = 'Iskola adatai';
+
+    protected static ?string $navigationGroup = 'Iskolai';
 
     public array $data = [];
 
