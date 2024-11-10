@@ -52,8 +52,14 @@ class AcceptInvitation extends SimplePage
             return;
         }
 
-        $this->userInvite = UserInvite::where('token', $this->token)->whereNull('accepted_at')->where('expires_at', '>', now())->orWhereNull('expires_at')->first();
-
+        $this->userInvite = UserInvite::where('token', $this->token)
+            ->whereNull('accepted_at')
+            ->where(function ($query) {
+                $query->where('expires_at', '>', now())
+                    ->orWhereNull('expires_at');
+            })
+            ->first();
+        
         if ($this->userInvite != null) {
             $this->data = [
                 'email' => $this->userInvite->email,

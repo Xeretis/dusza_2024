@@ -118,6 +118,10 @@ class SchoolResource extends Resource
                             ->email()
                             ->required()
                             ->maxLength(255),
+                        Forms\Components\Toggle::make('invite')
+                            ->label('Felhasználó meghívása')
+                            ->default(true)
+                            ->required(),
                     ])
                     ->columns(),
             ])
@@ -226,7 +230,7 @@ class SchoolResource extends Resource
                     ->options(
                         Station::all()->mapWithKeys(
                             fn($val) => [
-                                (string) $val->zip => (string) $val->zip,
+                                (string)$val->zip => (string)$val->zip,
                             ]
                         )
                     )
@@ -238,7 +242,7 @@ class SchoolResource extends Resource
                             ->unique('state')
                             ->mapWithKeys(
                                 fn($val) => [
-                                    (string) $val->state => (string) $val->sate,
+                                    (string)$val->state => (string)$val->sate,
                                 ]
                             )
                     )
@@ -250,7 +254,7 @@ class SchoolResource extends Resource
                             ->unique('city')
                             ->mapWithKeys(
                                 fn($val) => [
-                                    (string) $val->city => (string) $val->city,
+                                    (string)$val->city => (string)$val->city,
                                 ]
                             )
                     )

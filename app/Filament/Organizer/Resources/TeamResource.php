@@ -26,6 +26,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\HtmlString;
+use Throwable;
 
 class TeamResource extends Resource
 {
@@ -181,30 +182,35 @@ class TeamResource extends Resource
                                     ->live(onBlur: true),
                                 self::inviteToggleForTeacher(),
                             ])
-                            ->createOptionUsing(function (array $data): int {
-                                DB::beginTransaction();
+                            ->createOptionUsing(function (array $data) {
+                                try {
+                                    DB::beginTransaction();
 
-                                $profileKey = CompetitorProfile::create([
-                                    'name' => $data['name'],
-                                    'email' => $data['email'],
-                                    'type' => CompetitorProfileType::Teacher,
-                                ])->getKey();
-
-                                if ($data['invite']) {
-                                    $inv = UserInvite::create([
-                                        'role' => UserRole::Teacher,
+                                    $profileKey = CompetitorProfile::create([
+                                        'name' => $data['name'],
                                         'email' => $data['email'],
-                                        'token' => Str::random(64),
-                                        'competitor_profile_id' => $profileKey
-                                    ]);
+                                        'type' => CompetitorProfileType::Teacher,
+                                    ])->getKey();
 
-                                    Notification::route('mail', $data['email'])
-                                        ->notify(new UserInviteNotification($inv->token));
+                                    if ($data['invite']) {
+                                        $inv = UserInvite::create([
+                                            'role' => UserRole::Teacher,
+                                            'email' => $data['email'],
+                                            'token' => Str::random(64),
+                                            'competitor_profile_id' => $profileKey
+                                        ]);
+
+                                        Notification::route('mail', $data['email'])
+                                            ->notify(new UserInviteNotification($inv->token));
+                                    }
+
+                                    DB::commit();
+
+                                    return $profileKey;
+                                } catch (Throwable $e) {
+                                    DB::rollBack();
+                                    throw $e;
                                 }
-
-                                DB::commit();
-
-                                return $profileKey;
                             })
                             ->native(false)
                             ->distinct()

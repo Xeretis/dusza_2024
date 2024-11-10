@@ -14,6 +14,7 @@ use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
+use Throwable;
 
 class CreateTeam extends CreateRecord
 {
@@ -45,43 +46,49 @@ class CreateTeam extends CreateRecord
     private function createCompetitorProfile(
         array $competitorData,
         Model $teamModel,
-        bool $isSubstitute = false
-    ): void {
+        bool  $isSubstitute = false
+    ): void
+    {
         if (!empty($competitorData['name'])) {
             $userId = User::where('email', $competitorData['email'])->first()
                 ?->id;
 
-            DB::beginTransaction();
+            try {
+                DB::beginTransaction();
 
-            $competitorProfile = CompetitorProfile::create(
-                collect($competitorData)
-                    ->forget(['id', 'invite'])
-                    ->merge([
-                        'user_id' => $userId,
-                        'type' => $isSubstitute
-                            ? CompetitorProfileType::SubstituteStudent
-                            : CompetitorProfileType::Student,
-                    ])
-                    ->toArray()
-            );
+                $competitorProfile = CompetitorProfile::create(
+                    collect($competitorData)
+                        ->forget(['id', 'invite'])
+                        ->merge([
+                            'user_id' => $userId,
+                            'type' => $isSubstitute
+                                ? CompetitorProfileType::SubstituteStudent
+                                : CompetitorProfileType::Student,
+                        ])
+                        ->toArray()
+                );
 
-            $competitorProfile->teams()->attach($teamModel);
+                $competitorProfile->teams()->attach($teamModel);
 
-            if ($competitorData['invite'] ?? false) {
-                $inv = UserInvite::create([
-                    'role' => UserRole::Teacher,
-                    'email' => $competitorProfile['email'],
-                    'token' => Str::random(64),
-                    'competitor_profile_id' => $competitorProfile->id,
-                ]);
+                if ($competitorData['invite'] ?? false) {
+                    $inv = UserInvite::create([
+                        'role' => UserRole::Teacher,
+                        'email' => $competitorProfile['email'],
+                        'token' => Str::random(64),
+                        'competitor_profile_id' => $competitorProfile->id,
+                    ]);
 
-                Notification::route(
-                    'mail',
-                    $competitorProfile['email']
-                )->notify(new UserInviteNotification($inv->token));
+                    Notification::route(
+                        'mail',
+                        $competitorProfile['email']
+                    )->notify(new UserInviteNotification($inv->token));
+                }
+
+                DB::commit();
+            } catch (Throwable $e) {
+                DB::rollBack();
+                throw $e;
             }
-
-            DB::commit();
         }
     }
 }
