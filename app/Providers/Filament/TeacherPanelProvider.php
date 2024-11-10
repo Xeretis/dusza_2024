@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Livewire\PersonalInfo;
+use App\Livewire\ProfileInfo;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -51,6 +52,7 @@ class TeacherPanelProvider extends PanelProvider
                     ->myProfile()
                     ->myProfileComponents([
                         'personal_info' => PersonalInfo::class,
+                        ProfileInfo::class
                     ])
                     ->enableTwoFactorAuthentication(),
             ])
