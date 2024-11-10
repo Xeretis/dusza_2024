@@ -5,7 +5,6 @@ icon: heroicon-o-computer-desktop
 ---
 
 ## Világos-, sötét- és rendszermód
-### INSERT SCREENSHOT
 A három ikonnal válthatjuk az oldal témáját.
 
 *Nap ikon* – világos

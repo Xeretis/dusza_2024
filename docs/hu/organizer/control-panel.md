@@ -9,8 +9,6 @@ order: 2
 A vezérlőpulton megtekinthetjük a felhasználók-, csapatok- és iskolák számát egy-egy vonal diagram formájában.
 Ezeken kívül egy-egy oszlop diagrammal gazdagítottuk a felületet.
 
-### INSERT SCREENSHOT OF THE CONTROL PANEL
-
 > **Extra Funkció**
 >
 >A vonaldiagrammok napokra lebontva mutatják a létrejött adatokat.

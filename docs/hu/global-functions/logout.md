@@ -5,5 +5,4 @@ icon: heroicon-o-arrow-left-end-on-rectangle
 ---
 
 ## Kijelentkezés
-### INSERT SCREENSHOT
 A kijelentkezés opcióra kattintva kijelentkezhetünk a fiókunkból.

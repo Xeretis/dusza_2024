@@ -31,6 +31,8 @@ class TeamEventResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
+    protected static ?string $navigationGroup = 'Jelentkezés';
+
     public static function form(Form $form): Form
     {
         return $form->schema([

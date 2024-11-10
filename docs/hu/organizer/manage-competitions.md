@@ -2,12 +2,11 @@
 group: Szervező
 title: Verseny Kezelése
 icon: heroicon-o-cog-6-tooth
-order: 8
+order: 9
 ---
 
 ## Verseny Kezelése
 
-![my image](resources/img/organizer/manage_competition.png)
 A verseny kezelése részen személyre szabhatjuk a versenyt.
 Átnevezhetjük, megváltoztathatjuk a leírását és megadhatjuk a leadás határidejét.
 
