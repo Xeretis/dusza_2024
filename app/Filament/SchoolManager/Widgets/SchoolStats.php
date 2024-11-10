@@ -20,20 +20,39 @@ class SchoolStats extends StatsOverviewWidget
         $school_id = auth()->user()->school_id;
 
         $userQuery = User::whereSchoolId($school_id);
-
-        $usersTrend = Trend::make($userQuery)
-            ->countByDays('created_at')
-            ->getData();
+        $usersTrend = $this->getTrendData($userQuery);
 
         $teamQuery = Team::whereSchoolId($school_id);
+        $teamsTrend = $this->getTrendData($teamQuery);
 
-        $teamsTrend = Trend::make($teamQuery)
+        $competitorProfileQuery = $this->getCompetitorProfileQuery($teamQuery);
+        $competitorProfileTrend = $this->getTrendData($competitorProfileQuery);
+
+        return [
+            BaseWidget\Stat::make('Felhasználók száma', $userQuery->count())
+                ->chart($usersTrend)
+                ->color('success'),
+            BaseWidget\Stat::make('Csapatok száma', $teamQuery->count())
+                ->chart($teamsTrend)
+                ->color('success'),
+            BaseWidget\Stat::make('Versenyzők száma', $competitorProfileQuery->count())
+                ->chart($competitorProfileTrend)
+                ->color('success'),
+        ];
+    }
+
+    protected function getTrendData($query)
+    {
+        return Trend::make($query)
             ->countByDays('created_at')
             ->getData();
+    }
 
+    protected function getCompetitorProfileQuery($teamQuery)
+    {
         $ids = $teamQuery->get()->pluck('id');
 
-        $competitorProfileQuery = CompetitorProfile::query()
+        return CompetitorProfile::query()
             ->whereIn('type', [
                 CompetitorProfileType::Student,
                 CompetitorProfileType::SubstituteStudent,
@@ -41,24 +60,5 @@ class SchoolStats extends StatsOverviewWidget
             ->whereHas('teams', function ($query) use ($ids) {
                 $query->whereIn('teams.id', $ids);
             });
-
-        $competitorProfileTrend = Trend::make($competitorProfileQuery)
-            ->countByDays('created_at')
-            ->getData();
-
-        return [
-            BaseWidget\Stat::make('Felhasználók száma', $userQuery->count())
-                ->chart($usersTrend)
-                ->color('success'),
-            BaseWidget\Stat::make('Cspatok száma', $teamQuery->count())
-                ->chart($teamsTrend)
-                ->color('success'),
-            BaseWidget\Stat::make(
-                'Versenyzők száma',
-                $competitorProfileQuery->count()
-            )
-                ->chart($competitorProfileTrend)
-                ->color('success'),
-        ];
     }
 }

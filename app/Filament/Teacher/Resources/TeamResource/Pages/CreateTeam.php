@@ -27,15 +27,7 @@ class CreateTeam extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        $filteredTeachers = array_filter($data['teachers'], function($item) {
-            return isset($item['id']) && $item['id'] === auth()->user()->competitorProfile->id;
-        });
-
-        if (count($filteredTeachers) !== 1) {
-            $data['teachers'][] = [
-                'id' => auth()->user()->competitorProfile->id
-            ];
-        }
+        $this->ensureTeacherIsIncluded($data);
 
         $model = static::getModel()::create([
             'name' => $data['name'],
@@ -44,10 +36,7 @@ class CreateTeam extends CreateRecord
             'school_id' => $data['school_id'],
         ]);
 
-        $this->createCompetitorProfile($data['competitor1'], $model);
-        $this->createCompetitorProfile($data['competitor2'], $model);
-        $this->createCompetitorProfile($data['competitor3'], $model);
-        $this->createCompetitorProfile($data['substitute'], $model, true);
+        $this->createCompetitorProfiles($data, $model);
 
         if (!empty($data['teachers'])) {
             foreach ($data['teachers'] as ['id' => $id]) {
@@ -58,6 +47,27 @@ class CreateTeam extends CreateRecord
         return $model;
     }
 
+    private function ensureTeacherIsIncluded(array &$data): void
+    {
+        $filteredTeachers = array_filter($data['teachers'], function($item) {
+            return isset($item['id']) && $item['id'] === auth()->user()->competitorProfile->id;
+        });
+
+        if (count($filteredTeachers) !== 1) {
+            $data['teachers'][] = [
+                'id' => auth()->user()->competitorProfile->id
+            ];
+        }
+    }
+
+    private function createCompetitorProfiles(array $data, Model $model): void
+    {
+        $this->createCompetitorProfile($data['competitor1'], $model);
+        $this->createCompetitorProfile($data['competitor2'], $model);
+        $this->createCompetitorProfile($data['competitor3'], $model);
+        $this->createCompetitorProfile($data['substitute'], $model, true);
+    }
+
     private function createCompetitorProfile(
         array $competitorData,
         Model $teamModel,
@@ -65,8 +75,7 @@ class CreateTeam extends CreateRecord
     ): void
     {
         if (!empty($competitorData['name'])) {
-            $userId = User::where('email', $competitorData['email'])->first()
-                ?->id;
+            $userId = User::where('email', $competitorData['email'])->first()?->id;
 
             try {
                 DB::beginTransaction();
@@ -86,17 +95,7 @@ class CreateTeam extends CreateRecord
                 $competitorProfile->teams()->attach($teamModel);
 
                 if ($competitorData['invite'] ?? false) {
-                    $inv = UserInvite::create([
-                        'role' => UserRole::Teacher,
-                        'email' => $competitorProfile['email'],
-                        'token' => Str::random(64),
-                        'competitor_profile_id' => $competitorProfile->id,
-                    ]);
-
-                    Notification::route(
-                        'mail',
-                        $competitorProfile['email']
-                    )->notify(new UserInviteNotification($inv->token));
+                    $this->sendInvite($competitorProfile);
                 }
 
                 DB::commit();
@@ -105,5 +104,18 @@ class CreateTeam extends CreateRecord
                 throw $e;
             }
         }
+    }
+
+    private function sendInvite(CompetitorProfile $competitorProfile): void
+    {
+        $inv = UserInvite::create([
+            'role' => UserRole::Teacher,
+            'email' => $competitorProfile['email'],
+            'token' => Str::random(64),
+            'competitor_profile_id' => $competitorProfile->id,
+        ]);
+
+        Notification::route('mail', $competitorProfile['email'])
+            ->notify(new UserInviteNotification($inv->token));
     }
 }
