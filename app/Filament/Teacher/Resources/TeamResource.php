@@ -175,7 +175,7 @@ class TeamResource extends Resource
                                     return CompetitorProfile::where(
                                         'type',
                                         CompetitorProfileType::Teacher
-                                    )->whereJsonContains('school_ids', $get('../../school_id'))->pluck('name', 'id');
+                                    )->whereJsonContains('school_ids', intval($get('../../school_id')))->pluck('name', 'id');
                                 }
 
                                 return CompetitorProfile::where(
