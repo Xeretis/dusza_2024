@@ -12,6 +12,9 @@ class ParticipantStats extends BaseWidget
 {
     protected static bool $isLazy = true;
 
+
+    protected static ?int $sort = 1;
+
     protected function getStats(): array
     {
         $usersTrend = Trend::make(User::class)

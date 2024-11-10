@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\SchoolManager\Widgets;
+namespace App\Filament\Organizer\Widgets;
 
 use App\Enums\TeamStatus;
-use App\Filament\SchoolManager\Resources\TeamResource;
+use App\Filament\Organizer\Resources\TeamResource;
 use App\Models\Team;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -12,7 +12,7 @@ use Illuminate\Support\HtmlString;
 
 class NonApprovedTeamsWidget extends BaseWidget
 {
-    public static ?int $sort = 3;
+    public static ?int $sort = 2;
     protected static ?string $heading = 'Jóváhagyásra váró csapatok';
     protected int|string|array $columnSpan = 'full';
 
@@ -28,8 +28,7 @@ class NonApprovedTeamsWidget extends BaseWidget
     protected function getQuery()
     {
         return Team::query()
-            ->whereStatus(TeamStatus::Inactive)
-            ->whereSchoolId(auth()->user()->school_id);
+            ->whereStatus(TeamStatus::SchoolApproved);
     }
 
     protected function getColumns(): array
