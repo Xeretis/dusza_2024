@@ -25,24 +25,27 @@ class OrganizerPanelProvider extends PanelProvider
         return $panel
             ->id('organizer')
             ->path('organizer')
+            ->spa()
             ->viteTheme('resources/css/filament/organizer/theme.css')
             ->colors([
                 'primary' => Color::Amber,
             ])
             ->databaseNotifications()
-            ->discoverResources(in: app_path('Filament/Organizer/Resources'), for: 'App\\Filament\\Organizer\\Resources')
-            ->discoverPages(in: app_path('Filament/Organizer/Pages'), for: 'App\\Filament\\Organizer\\Pages')
-            ->pages([
-                Pages\Dashboard::class,
-            ])
-            ->discoverWidgets(in: app_path('Filament/Organizer/Widgets'), for: 'App\\Filament\\Organizer\\Widgets')
-            ->navigationGroups([
-                'Résztvevők',
-                'Verseny'
-            ])
-            ->plugins([
-                KnowledgeBasePlugin::make(),
-            ])
+            ->discoverResources(
+                in: app_path('Filament/Organizer/Resources'),
+                for: 'App\\Filament\\Organizer\\Resources'
+            )
+            ->discoverPages(
+                in: app_path('Filament/Organizer/Pages'),
+                for: 'App\\Filament\\Organizer\\Pages'
+            )
+            ->pages([Pages\Dashboard::class])
+            ->discoverWidgets(
+                in: app_path('Filament/Organizer/Widgets'),
+                for: 'App\\Filament\\Organizer\\Widgets'
+            )
+            ->navigationGroups(['Résztvevők', 'Verseny'])
+            ->plugins([KnowledgeBasePlugin::make()])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -54,8 +57,6 @@ class OrganizerPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->authMiddleware([
-                Authenticate::class,
-            ]);
+            ->authMiddleware([Authenticate::class]);
     }
 }

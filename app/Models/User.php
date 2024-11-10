@@ -12,20 +12,33 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use OwenIt\Auditing\Auditable as AuditingAuditable;
+use OwenIt\Auditing\Contracts\Auditable;
 use Spiritix\LadaCache\Database\LadaCacheTrait;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
-class User extends Authenticatable implements FilamentUser, HasName
+class User extends Authenticatable implements FilamentUser, HasName, Auditable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasRelationships, LadaCacheTrait;
+    use HasFactory,
+        Notifiable,
+        HasRelationships,
+        LadaCacheTrait,
+        AuditingAuditable;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-    protected $fillable = ["name", "email", "password", "username", "role", "email_verified_at"];
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'username',
+        'role',
+        'email_verified_at',
+    ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -55,7 +68,7 @@ class User extends Authenticatable implements FilamentUser, HasName
     {
         return $this->hasManyDeep(Team::class, [
             CompetitorProfile::class,
-            "team_competitor_profile",
+            'team_competitor_profile',
         ]);
     }
 
@@ -93,9 +106,9 @@ class User extends Authenticatable implements FilamentUser, HasName
     protected function casts(): array
     {
         return [
-            "email_verified_at" => "datetime",
-            "password" => "hashed",
-            "role" => UserRole::class,
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'role' => UserRole::class,
         ];
     }
 }
