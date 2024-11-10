@@ -9,8 +9,6 @@ use App\Enums\TeamEventType;
 use App\Filament\Competitor\Resources\TeamEventResource\Pages;
 use App\Filament\Competitor\Resources\TeamEventResource\RelationManagers;
 use App\Models\TeamEvent;
-use DragonCode\Contracts\Cashier\Auth\Auth;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\TextEntry;
@@ -20,8 +18,6 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\Auth as FacadesAuth;
 
 class TeamEventResource extends Resource
 {
@@ -42,7 +38,7 @@ class TeamEventResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $team_id = FacadesAuth::user()->competitorProfile->teams->first()->id;
+        $team_id = auth()->user()->teams()->first()->id;
 
         return $table
             ->recordTitleAttribute('type')
@@ -194,8 +190,8 @@ class TeamEventResource extends Resource
     public static function getRelations(): array
     {
         return [
-                //
-            ];
+            //
+        ];
     }
 
     public static function getPages(): array

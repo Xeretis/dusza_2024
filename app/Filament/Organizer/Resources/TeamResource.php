@@ -90,7 +90,8 @@ class TeamResource extends Resource
                 ->relationship('school', 'name')
                 ->required()
                 ->native(false)
-                ->selectablePlaceholder(false),
+                ->selectablePlaceholder(false)
+                ->live(),
         ];
     }
 
@@ -158,11 +159,6 @@ class TeamResource extends Resource
 
     private static function teachersSection()
     {
-        $teachers = CompetitorProfile::where(
-            'type',
-            CompetitorProfileType::Teacher
-        )->pluck('name', 'id');
-
         return Forms\Components\Fieldset::make('Felkészítő tanárok')
             ->schema([
                 Forms\Components\Repeater::make('teachers')
@@ -170,7 +166,19 @@ class TeamResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('id')
                             ->label('Név')
-                            ->options($teachers->toArray())
+                            ->options(function (Forms\Get $get) {
+                                if ($get('school_only')) {
+                                    return CompetitorProfile::where(
+                                        'type',
+                                        CompetitorProfileType::Teacher
+                                    )->whereJsonContains('school_ids', $get('../../school_id'))->pluck('name', 'id');
+                                }
+
+                                return CompetitorProfile::where(
+                                    'type',
+                                    CompetitorProfileType::Teacher
+                                )->pluck('name', 'id');
+                            })
                             ->createOptionForm([
                                 Forms\Components\TextInput::make('name')
                                     ->label('Név')
@@ -279,6 +287,12 @@ class TeamResource extends Resource
                             ->required()
                             ->selectablePlaceholder(false)
                             ->fixIndistinctState(),
+                        Forms\Components\Toggle::make('school_only')
+                            ->label('Csak a megadott iskolai tanárainak megjelenítése')
+                            ->dehydrated(false)
+                            ->disabled(fn(Forms\Get $get) => $get('../../school_id') == null)
+                            ->afterStateUpdated(fn(Forms\Set $set) => $set('id', null))
+                            ->live()
                     ])
                     ->columns(1)
                     ->addActionLabel('Új tanár hozzáadása')

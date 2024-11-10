@@ -17,6 +17,13 @@ class ViewTeamEvent extends ViewRecord
 {
     protected static string $resource = TeamEventResource::class;
 
+    public static function canAccess(array $parameters = []): bool
+    {
+        return auth()->user()->teams()
+            ->first()->events()->where('id', $parameters['record']->id)
+            ->exists();
+    }
+
     protected function getHeaderActions(): array
     {
         return [
