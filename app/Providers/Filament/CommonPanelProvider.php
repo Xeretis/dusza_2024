@@ -28,6 +28,7 @@ class CommonPanelProvider extends PanelProvider
             ->path('common')
             ->viteTheme('resources/css/filament/common/theme.css')
             ->login(Login::class)
+            ->emailVerification()
             ->spa()
             ->registration(Register::class)
             ->passwordReset()

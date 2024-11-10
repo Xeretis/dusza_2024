@@ -26,6 +26,7 @@ class OrganizerPanelProvider extends PanelProvider
             ->id('organizer')
             ->path('organizer')
             ->spa()
+            ->emailVerification()
             ->viteTheme('resources/css/filament/organizer/theme.css')
             ->colors([
                 'primary' => Color::Amber,

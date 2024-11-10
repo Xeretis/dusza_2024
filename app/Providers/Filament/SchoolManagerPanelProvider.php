@@ -26,6 +26,7 @@ class SchoolManagerPanelProvider extends PanelProvider
             ->id('school-manager')
             ->path('school-manager')
             ->spa()
+            ->emailVerification()
             ->viteTheme('resources/css/filament/school-manager/theme.css')
             ->colors([
                 'primary' => Color::Amber,
