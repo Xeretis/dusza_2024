@@ -5,7 +5,7 @@ namespace App\Filament\Organizer\Resources;
 use App\Enums\CompetitorProfileType;
 use App\Enums\UserRole;
 use App\Filament\Organizer\Resources\TeamResource\Pages;
-use App\Filament\Teacher\Resources\TeamResource\RelationManagers;
+use App\Filament\Organizer\Resources\TeamResource\RelationManagers;
 use App\Livewire\TeamEventsActivitySection;
 use App\Models\CompetitorProfile;
 use App\Models\Team;

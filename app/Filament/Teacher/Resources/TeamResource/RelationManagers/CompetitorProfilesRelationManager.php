@@ -2,7 +2,7 @@
 
 namespace App\Filament\Teacher\Resources\TeamResource\RelationManagers;
 
-use App\Filament\Organizer\Resources\TeamResource\Pages\ViewTeam;
+use App\Filament\Teacher\Resources\TeamResource\Pages\ViewTeam;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
