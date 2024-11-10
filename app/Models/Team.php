@@ -13,7 +13,7 @@ class Team extends BaseModel
     protected $guarded = [];
 
     public $casts = [
-        "status" => TeamStatus::class,
+        'status' => TeamStatus::class,
     ];
 
     public function category()
@@ -29,22 +29,22 @@ class Team extends BaseModel
     public function competitors()
     {
         return $this->competitorProfiles()
-            ->where("type", CompetitorProfileType::Student)
-            ->orWhere("type", CompetitorProfileType::SubstituteStudent);
+            ->where('type', CompetitorProfileType::Student)
+            ->orWhere('type', CompetitorProfileType::SubstituteStudent);
     }
 
     public function competitorProfiles()
     {
         return $this->belongsToMany(
             CompetitorProfile::class,
-            "team_competitor_profile"
+            'team_competitor_profile'
         );
     }
 
     public function students()
     {
         return $this->competitorProfiles()->where(
-            "type",
+            'type',
             CompetitorProfileType::Student
         );
     }
@@ -52,7 +52,7 @@ class Team extends BaseModel
     public function substitutes()
     {
         return $this->competitorProfiles()->where(
-            "type",
+            'type',
             CompetitorProfileType::SubstituteStudent
         );
     }
@@ -65,7 +65,7 @@ class Team extends BaseModel
     public function teachers()
     {
         return $this->competitorProfiles()->where(
-            "type",
+            'type',
             CompetitorProfileType::Teacher
         );
     }

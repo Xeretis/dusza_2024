@@ -9,11 +9,14 @@ use App\Enums\TeamStatus;
 use App\Filament\Organizer\Resources\TeamResource;
 use App\Models\Team;
 use App\Models\TeamEvent;
+use App\Notifications\AmendRequestNotification;
+use Barryvdh\Debugbar\Facade;
 use Filament\Actions;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Support\Facades\Notification as FacadesNotification;
 
 class ViewTeam extends ViewRecord
 {
@@ -66,7 +69,7 @@ class ViewTeam extends ViewRecord
                         ->required(),
                 ])
                 ->action(function (array $data, Team $record, $livewire) {
-                    TeamEvent::create([
+                    $event = TeamEvent::create([
                         'message' => $data['message'],
                         'team_id' => $record->id,
                         'scope' => TeamEventScope::Organizer,
@@ -74,6 +77,24 @@ class ViewTeam extends ViewRecord
                         'status' => TeamEventStatus::Pending,
                         'user_id' => auth()->id(),
                     ]);
+
+                    $record->status = TeamStatus::SchoolApproved;
+                    $record->save();
+
+                    $event = new AmendRequestNotification($event);
+
+                    FacadesNotification::send(
+                        $record->competitorProfiles,
+                        $event
+                    );
+
+                    FacadesNotification::send(
+                        $record->competitorProfiles
+                            ->map(fn($profile) => $profile->user)
+                            ->unique()
+                            ->filter(),
+                        $event
+                    );
 
                     //TODO: Send out an email notification about this
 
