@@ -25,19 +25,25 @@ class TeacherPanelProvider extends PanelProvider
         return $panel
             ->id('teacher')
             ->path('teacher')
+            ->spa()
             ->viteTheme('resources/css/filament/teacher/theme.css')
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->discoverResources(in: app_path('Filament/Teacher/Resources'), for: 'App\\Filament\\Teacher\\Resources')
-            ->discoverPages(in: app_path('Filament/Teacher/Pages'), for: 'App\\Filament\\Teacher\\Pages')
-            ->pages([
-                Pages\Dashboard::class,
-            ])
-            ->discoverWidgets(in: app_path('Filament/Teacher/Widgets'), for: 'App\\Filament\\Teacher\\Widgets')
-            ->plugins([
-                KnowledgeBasePlugin::make(),
-            ])
+            ->discoverResources(
+                in: app_path('Filament/Teacher/Resources'),
+                for: 'App\\Filament\\Teacher\\Resources'
+            )
+            ->discoverPages(
+                in: app_path('Filament/Teacher/Pages'),
+                for: 'App\\Filament\\Teacher\\Pages'
+            )
+            ->pages([Pages\Dashboard::class])
+            ->discoverWidgets(
+                in: app_path('Filament/Teacher/Widgets'),
+                for: 'App\\Filament\\Teacher\\Widgets'
+            )
+            ->plugins([KnowledgeBasePlugin::make()])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -49,8 +55,6 @@ class TeacherPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->authMiddleware([
-                Authenticate::class,
-            ]);
+            ->authMiddleware([Authenticate::class]);
     }
 }

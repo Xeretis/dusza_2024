@@ -25,19 +25,25 @@ class CompetitorPanelProvider extends PanelProvider
         return $panel
             ->id('competitor')
             ->path('competitor')
+            ->spa()
             ->viteTheme('resources/css/filament/competitor/theme.css')
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->discoverResources(in: app_path('Filament/Competitor/Resources'), for: 'App\\Filament\\Competitor\\Resources')
-            ->discoverPages(in: app_path('Filament/Competitor/Pages'), for: 'App\\Filament\\Competitor\\Pages')
-            ->pages([
-                Pages\Dashboard::class,
-            ])
-            ->discoverWidgets(in: app_path('Filament/Competitor/Widgets'), for: 'App\\Filament\\Competitor\\Widgets')
-            ->plugins([
-                KnowledgeBasePlugin::make(),
-            ])
+            ->discoverResources(
+                in: app_path('Filament/Competitor/Resources'),
+                for: 'App\\Filament\\Competitor\\Resources'
+            )
+            ->discoverPages(
+                in: app_path('Filament/Competitor/Pages'),
+                for: 'App\\Filament\\Competitor\\Pages'
+            )
+            ->pages([Pages\Dashboard::class])
+            ->discoverWidgets(
+                in: app_path('Filament/Competitor/Widgets'),
+                for: 'App\\Filament\\Competitor\\Widgets'
+            )
+            ->plugins([KnowledgeBasePlugin::make()])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -49,8 +55,6 @@ class CompetitorPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->authMiddleware([
-                Authenticate::class,
-            ]);
+            ->authMiddleware([Authenticate::class]);
     }
 }

@@ -23,28 +23,27 @@ class SchoolManagerPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->id("school-manager")
-            ->path("school-manager")
-            ->viteTheme("resources/css/filament/school-manager/theme.css")
+            ->id('school-manager')
+            ->path('school-manager')
+            ->spa()
+            ->viteTheme('resources/css/filament/school-manager/theme.css')
             ->colors([
-                "primary" => Color::Amber,
+                'primary' => Color::Amber,
             ])
             ->discoverResources(
-                in: app_path("Filament/SchoolManager/Resources"),
-                for: "App\\Filament\\SchoolManager\\Resources"
+                in: app_path('Filament/SchoolManager/Resources'),
+                for: 'App\\Filament\\SchoolManager\\Resources'
             )
             ->discoverPages(
-                in: app_path("Filament/SchoolManager/Pages"),
-                for: "App\\Filament\\SchoolManager\\Pages"
+                in: app_path('Filament/SchoolManager/Pages'),
+                for: 'App\\Filament\\SchoolManager\\Pages'
             )
             ->pages([Pages\Dashboard::class])
             ->discoverWidgets(
-                in: app_path("Filament/SchoolManager/Widgets"),
-                for: "App\\Filament\\SchoolManager\\Widgets"
+                in: app_path('Filament/SchoolManager/Widgets'),
+                for: 'App\\Filament\\SchoolManager\\Widgets'
             )
-            ->plugins([
-                KnowledgeBasePlugin::make(),
-            ])
+            ->plugins([KnowledgeBasePlugin::make()])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

@@ -26,14 +26,24 @@ class CommonPanelProvider extends PanelProvider
             ->path('common')
             ->viteTheme('resources/css/filament/common/theme.css')
             ->login()
+            ->spa()
             ->registration()
             ->passwordReset()
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->discoverResources(in: app_path('Filament/Common/Resources'), for: 'App\\Filament\\Common\\Resources')
-            ->discoverPages(in: app_path('Filament/Common/Pages'), for: 'App\\Filament\\Common\\Pages')
-            ->discoverWidgets(in: app_path('Filament/Common/Widgets'), for: 'App\\Filament\\Common\\Widgets')
+            ->discoverResources(
+                in: app_path('Filament/Common/Resources'),
+                for: 'App\\Filament\\Common\\Resources'
+            )
+            ->discoverPages(
+                in: app_path('Filament/Common/Pages'),
+                for: 'App\\Filament\\Common\\Pages'
+            )
+            ->discoverWidgets(
+                in: app_path('Filament/Common/Widgets'),
+                for: 'App\\Filament\\Common\\Widgets'
+            )
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -45,8 +55,6 @@ class CommonPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->authMiddleware([
-                Authenticate::class,
-            ]);
+            ->authMiddleware([Authenticate::class]);
     }
 }
