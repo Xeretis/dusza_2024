@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
 
@@ -20,11 +21,13 @@
 </head>
 
 <body class="antialiased">
-{{ $slot }}
+    {{ $slot }}
 
-@filamentScripts
-@vite('resources/js/app.js')
-@stack('scripts')
-@stack('styles')
+    @filamentScripts
+    @vite('resources/js/app.js')
+    @stack('scripts')
+    @vite('resources/js/livewire_debounce.js')
+    @stack('styles')
 </body>
+
 </html>
