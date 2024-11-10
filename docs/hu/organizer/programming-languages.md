@@ -2,7 +2,7 @@
 group: Szervező
 title: Programozási Nyelvek
 icon: heroicon-o-code-bracket
-order: 7
+order: 8
 ---
 
 ## Programozási Nyelvek részleg
