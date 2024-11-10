@@ -7,7 +7,6 @@ order: 9
 
 ## Verseny Kezelése
 
-![my image](resources/img/organizer/manage_competition.png)
 A verseny kezelése részen személyre szabhatjuk a versenyt.
 Átnevezhetjük, megváltoztathatjuk a leírását és megadhatjuk a leadás határidejét.
 
