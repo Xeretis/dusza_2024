@@ -2,8 +2,7 @@
 
 namespace App\Notifications;
 
-use App\Models\CompetitorProfile;
-use App\Models\TeamEvent;
+use App\Models\Team;
 use App\Models\User;
 use Filament\Notifications\Notification as NotificationsNotification;
 use Illuminate\Bus\Queueable;
@@ -11,16 +10,15 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Broadcast;
 
-class AmendRequestNotification extends Notification implements ShouldQueue
+class TeamDataUpdatedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(public readonly TeamEvent $event)
+    public function __construct(public readonly Team $team)
     {
         //
     }
@@ -32,17 +30,14 @@ class AmendRequestNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        if ($notifiable instanceof CompetitorProfile) {
-            return ['mail'];
-        }
         return ['mail', 'broadcast', 'database'];
     }
 
     private function renderText(): string
     {
         return 'A "' .
-            $this->event->team->name .
-            '" csapat részére hiánypótlási kérelem érkezett. Kérjük, hogy a csapatod tagjai ellenőrizzék a kérelmet.';
+            $this->team->name .
+            '" csapat adatai frissültek. Kérjük, hogy ellenőrizd ezeket.';
     }
 
     /**
@@ -51,16 +46,22 @@ class AmendRequestNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage())
-            ->subject('Dusza verseny - Hiánypótlási kérelem')
+            ->subject('Dusza verseny - Adatváltozás')
             ->greeting('Helló!')
             ->line($this->renderText())
-            ->action('Tovább az oldalra', route('filament.common.home'));
+            ->action(
+                'Csapat megnyitása',
+                route(
+                    'filament.organizer.resources.teams.view',
+                    $this->team->id
+                )
+            );
     }
 
     public function toBroadcast(): BroadcastMessage
     {
         return NotificationsNotification::make()
-            ->title('Hiánypótlási kérelem')
+            ->title('Adatváltozás')
             ->body($this->renderText())
             ->getBroadcastMessage();
     }
@@ -68,7 +69,7 @@ class AmendRequestNotification extends Notification implements ShouldQueue
     public function toDatabase(object $notifiable): array
     {
         return NotificationsNotification::make()
-            ->title('Hiánypótlási kérelem')
+            ->title('Adatváltozás')
             ->body($this->renderText())
             ->getDatabaseMessage();
     }

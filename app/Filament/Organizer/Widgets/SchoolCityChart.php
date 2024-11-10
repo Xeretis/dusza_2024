@@ -9,6 +9,8 @@ class SchoolCityChart extends ChartWidget
 {
     protected static ?string $heading = 'Iskolák eloszlása város szerint';
 
+    protected static ?int $sort = 4;
+
     protected function getData(): array
     {
         $schoolCounts = School::selectRaw("city, COUNT(*) as count")

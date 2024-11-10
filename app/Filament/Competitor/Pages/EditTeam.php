@@ -3,6 +3,7 @@
 namespace App\Filament\Competitor\Pages;
 
 use App\Enums\CompetitorProfileType;
+use App\Enums\TeamStatus;
 use App\Enums\UserRole;
 use App\Models\Category;
 use App\Models\CompetitorProfile;
@@ -11,6 +12,7 @@ use App\Models\School;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\UserInvite;
+use App\Notifications\TeamDataUpdatedNotification;
 use App\Notifications\UserInviteNotification;
 use DragonCode\Support\Facades\Helpers\Str;
 use Filament\Actions\Action;
@@ -56,7 +58,11 @@ class EditTeam extends Page
                     )
                     ->collapsible()
                     ->schema([
-                        self::competitorSection('1. Csapattag - Saját adataid', 'competitor1', self: true),
+                        self::competitorSection(
+                            '1. Csapattag - Saját adataid',
+                            'competitor1',
+                            self: true
+                        ),
                         self::competitorSection('2. Csapattag', 'competitor2'),
                         self::competitorSection('3. Csapattag', 'competitor3'),
                         self::competitorSection('Póttag', 'substitute', true),
@@ -76,7 +82,8 @@ class EditTeam extends Page
                 ->maxLength(255),
             Select::make('category_id')
                 ->label('Kategória')
-                ->options(Category::all()->pluck('name', 'id'))->required()
+                ->options(Category::all()->pluck('name', 'id'))
+                ->required()
                 ->native(false)
                 ->selectablePlaceholder(false),
             Select::make('programming_language_id')
@@ -98,17 +105,17 @@ class EditTeam extends Page
     private static function competitorSection(
         string $label,
         string $competitorKey,
-        bool   $isSubstitute = false,
-        bool   $self = false
-    )
-    {
+        bool $isSubstitute = false,
+        bool $self = false
+    ) {
         return Fieldset::make($label)->schema([
             Hidden::make("{$competitorKey}.id")->default(null),
             TextInput::make("{$competitorKey}.name")
                 ->label('Név')
                 ->required(!$isSubstitute)
                 ->when($isSubstitute, function ($f) use ($competitorKey) {
-                    return $f->requiredWith("{$competitorKey}.grade")
+                    return $f
+                        ->requiredWith("{$competitorKey}.grade")
                         ->requiredWith("{$competitorKey}.email");
                 }),
             TextInput::make("{$competitorKey}.grade")
@@ -117,7 +124,8 @@ class EditTeam extends Page
                 ->minValue(0)
                 ->required(!$isSubstitute)
                 ->when($isSubstitute, function ($f) use ($competitorKey) {
-                    return $f->requiredWith("{$competitorKey}.name")
+                    return $f
+                        ->requiredWith("{$competitorKey}.name")
                         ->requiredWith("{$competitorKey}.email");
                 }),
             TextInput::make("{$competitorKey}.email")
@@ -162,7 +170,12 @@ class EditTeam extends Page
                                     return CompetitorProfile::where(
                                         'type',
                                         CompetitorProfileType::Teacher
-                                    )->whereJsonContains('school_ids', intval($get('../../school_id')))->pluck('name', 'id');
+                                    )
+                                        ->whereJsonContains(
+                                            'school_ids',
+                                            intval($get('../../school_id'))
+                                        )
+                                        ->pluck('name', 'id');
                                 }
 
                                 return CompetitorProfile::where(
@@ -184,19 +197,27 @@ class EditTeam extends Page
                                     ->live(onBlur: true),
                                 Select::make('school_ids')
                                     ->label('Iskolák')
-                                    ->options(School::all()->pluck('name', 'id'))
+                                    ->options(
+                                        School::all()->pluck('name', 'id')
+                                    )
                                     ->multiple()
                                     ->searchable()
                                     ->native(false)
                                     ->minItems(1)
                                     ->required()
-                                    ->dehydrateStateUsing(fn($state) => collect($state)->map(fn($e) => intval($e))->toArray()),
+                                    ->dehydrateStateUsing(
+                                        fn($state) => collect($state)
+                                            ->map(fn($e) => intval($e))
+                                            ->toArray()
+                                    ),
                                 self::inviteToggleForTeacher(),
                             ])
                             ->createOptionUsing(function (array $data) {
                                 try {
-                                    $userId = User::where('email', $data['email'])->first()
-                                        ?->id;
+                                    $userId = User::where(
+                                        'email',
+                                        $data['email']
+                                    )->first()?->id;
 
                                     DB::beginTransaction();
 
@@ -206,10 +227,13 @@ class EditTeam extends Page
                                         'school_ids' => $data['school_ids'],
                                         'type' =>
                                             CompetitorProfileType::Teacher,
-                                        'user_id' => $userId
+                                        'user_id' => $userId,
                                     ])->getKey();
 
-                                    if (isset($data['invite']) && $data['invite']) {
+                                    if (
+                                        isset($data['invite']) &&
+                                        $data['invite']
+                                    ) {
                                         $inv = UserInvite::create([
                                             'role' => UserRole::Teacher,
                                             'email' => $data['email'],
@@ -241,11 +265,17 @@ class EditTeam extends Page
                             ->selectablePlaceholder(false)
                             ->fixIndistinctState(),
                         Toggle::make('school_only')
-                            ->label('Csak a megadott iskolai tanárainak megjelenítése')
+                            ->label(
+                                'Csak a megadott iskolai tanárainak megjelenítése'
+                            )
                             ->dehydrated(false)
-                            ->disabled(fn(Get $get) => $get('../../school_id') == null)
-                            ->afterStateUpdated(fn(Set $set) => $set('id', null))
-                            ->live()
+                            ->disabled(
+                                fn(Get $get) => $get('../../school_id') == null
+                            )
+                            ->afterStateUpdated(
+                                fn(Set $set) => $set('id', null)
+                            )
+                            ->live(),
                     ])
                     ->columns(1)
                     ->addActionLabel('Új tanár hozzáadása')
@@ -279,10 +309,13 @@ class EditTeam extends Page
     {
         $data = $this->form->getState();
 
-        $record = auth()->user()->teams()->first();
+        $record = auth()
+            ->user()
+            ->teams()
+            ->first();
 
-        $record->update(
-            collect($data)
+        $record->update([
+            ...collect($data)
                 ->forget([
                     'competitor1',
                     'competitor2',
@@ -290,12 +323,17 @@ class EditTeam extends Page
                     'substitute',
                     'teachers',
                 ])
-                ->toArray()
-        );
+                ->toArray(),
+            'status' => TeamStatus::SchoolApproved,
+        ]);
 
         if (isset($data['teachers'])) {
             $record->teachers()->detach();
-            $record->teachers()->sync(collect($data['teachers'])->map(fn($t) => $t['id'])->toArray());
+            $record->teachers()->sync(
+                collect($data['teachers'])
+                    ->map(fn($t) => $t['id'])
+                    ->toArray()
+            );
         }
 
         $this->updateCompetitor($record, $data['competitor1'], self: true);
@@ -303,25 +341,40 @@ class EditTeam extends Page
         $this->updateCompetitor($record, $data['competitor3']);
         $this->updateCompetitor($record, $data['substitute'], true);
 
+        Notification::send(
+            User::whereRole(UserRole::Organizer)->get(),
+            new TeamDataUpdatedNotification($record)
+        );
+
         \Filament\Notifications\Notification::make()
             ->success()
             ->title('Csapat sikeresen módosítva!')
             ->send();
     }
 
-    protected function updateCompetitor(Model $record, array $competitorData, bool $isSubstitute = false, bool $self = false): void
-    {
+    protected function updateCompetitor(
+        Model $record,
+        array $competitorData,
+        bool $isSubstitute = false,
+        bool $self = false
+    ): void {
         if ($competitorData['id'] == null && !empty($competitorData['name'])) {
-            $userId = User::where('email', $competitorData['email'])->first()?->id;
+            $userId = User::where('email', $competitorData['email'])->first()
+                ?->id;
 
             $competitorProfile = CompetitorProfile::create(
                 collect($competitorData)
                     ->forget(['id', 'invite'])
                     ->merge([
                         'user_id' => $userId,
-                        'type' => $isSubstitute ? CompetitorProfileType::SubstituteStudent : CompetitorProfileType::Student,
+                        'type' => $isSubstitute
+                            ? CompetitorProfileType::SubstituteStudent
+                            : CompetitorProfileType::Student,
                     ])
-                    ->when($self, fn($c) => $c->merge(['email' => auth()->user()->email]))
+                    ->when(
+                        $self,
+                        fn($c) => $c->merge(['email' => auth()->user()->email])
+                    )
                     ->toArray()
             );
 
@@ -329,17 +382,24 @@ class EditTeam extends Page
         } elseif (empty($competitorData['name'])) {
             CompetitorProfile::whereId($competitorData['id'])->delete();
         } else {
-            $userId = $self ? null : User::where('email', $competitorData['email'])->first()?->id;
+            $userId = $self
+                ? null
+                : User::where('email', $competitorData['email'])->first()?->id;
 
-            $competitorProfile = CompetitorProfile::whereId($competitorData['id'])->first();
+            $competitorProfile = CompetitorProfile::whereId(
+                $competitorData['id']
+            )->first();
 
             $competitorProfile->update(
                 collect($competitorData)
                     ->forget(['id'])
                     ->merge([
-                        'user_id' => $self ? auth()->id() : $userId
+                        'user_id' => $self ? auth()->id() : $userId,
                     ])
-                    ->when($self, fn($c) => $c->merge(['email' => auth()->user()->email]))
+                    ->when(
+                        $self,
+                        fn($c) => $c->merge(['email' => auth()->user()->email])
+                    )
                     ->toArray()
             );
             $competitorProfile->teams()->attach($record->id);
@@ -349,18 +409,32 @@ class EditTeam extends Page
     public function mount()
     {
         if (self::canAccess()) {
-            $this->form->fill($this->mutateFormDataBeforeFill(auth()->user()->teams()->first()->toArray()));
+            $this->form->fill(
+                $this->mutateFormDataBeforeFill(
+                    auth()
+                        ->user()
+                        ->teams()
+                        ->first()
+                        ->toArray()
+                )
+            );
         }
     }
 
     public static function canAccess(): bool
     {
-        return auth()->user()->teams()->count() == 1;
+        return auth()
+            ->user()
+            ->teams()
+            ->count() == 1;
     }
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $members = CompetitorProfile::where('type', CompetitorProfileType::Student)
+        $members = CompetitorProfile::where(
+            'type',
+            CompetitorProfileType::Student
+        )
             ->whereHas('teams', function ($query) use ($data) {
                 $query->where('teams.id', $data['id']);
             })
@@ -397,7 +471,10 @@ class EditTeam extends Page
             ];
         }
 
-        $substitute = CompetitorProfile::where('type', CompetitorProfileType::SubstituteStudent)
+        $substitute = CompetitorProfile::where(
+            'type',
+            CompetitorProfileType::SubstituteStudent
+        )
             ->whereHas('teams', function ($query) use ($data) {
                 $query->where('teams.id', $data['id']);
             })
@@ -413,7 +490,10 @@ class EditTeam extends Page
             ];
         }
 
-        $teachers = CompetitorProfile::where('type', CompetitorProfileType::Teacher)
+        $teachers = CompetitorProfile::where(
+            'type',
+            CompetitorProfileType::Teacher
+        )
             ->whereHas('teams', function ($query) use ($data) {
                 $query->where('teams.id', $data['id']);
             })
@@ -465,13 +545,13 @@ class EditTeam extends Page
 
     private function createCompetitorProfile(
         array $competitorData,
-        Team  $teamModel,
-        bool  $isSubstitute = false,
-        bool  $self = false
-    ): void
-    {
-        $userId = $self ? null : User::where('email', $competitorData['email'])->first()
-            ?->id;
+        Team $teamModel,
+        bool $isSubstitute = false,
+        bool $self = false
+    ): void {
+        $userId = $self
+            ? null
+            : User::where('email', $competitorData['email'])->first()?->id;
 
         try {
             DB::beginTransaction();
@@ -485,7 +565,10 @@ class EditTeam extends Page
                             ? CompetitorProfileType::SubstituteStudent
                             : CompetitorProfileType::Student,
                     ])
-                    ->when($self, fn($c) => $c->merge(['email' => auth()->user()->email]))
+                    ->when(
+                        $self,
+                        fn($c) => $c->merge(['email' => auth()->user()->email])
+                    )
                     ->toArray()
             );
 
