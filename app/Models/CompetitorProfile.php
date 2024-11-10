@@ -24,19 +24,4 @@ class CompetitorProfile extends BaseModel
     {
         return $this->belongsTo(User::class);
     }
-
-    public function isStudent(): bool
-    {
-        return $this->type === CompetitorProfileType::Student;
-    }
-
-    public function isTeacher(): bool
-    {
-        return $this->type === CompetitorProfileType::Teacher;
-    }
-
-    public function isSubstitute(): bool
-    {
-        return $this->type === CompetitorProfileType::SubstituteStudent;
-    }
 }

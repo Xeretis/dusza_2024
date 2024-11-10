@@ -10,11 +10,10 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 #[ObservedBy([TeamObserver::class])]
 class Team extends BaseModel
 {
-    protected $guarded = [];
-
     public $casts = [
         'status' => TeamStatus::class,
     ];
+    protected $guarded = [];
 
     public function category()
     {
@@ -24,37 +23,6 @@ class Team extends BaseModel
     public function programmingLanguage()
     {
         return $this->belongsTo(ProgrammingLanguage::class);
-    }
-
-    public function competitors()
-    {
-        return $this->competitorProfiles()
-            ->where('type', CompetitorProfileType::Student)
-            ->orWhere('type', CompetitorProfileType::SubstituteStudent);
-    }
-
-    public function competitorProfiles()
-    {
-        return $this->belongsToMany(
-            CompetitorProfile::class,
-            'team_competitor_profile'
-        );
-    }
-
-    public function students()
-    {
-        return $this->competitorProfiles()->where(
-            'type',
-            CompetitorProfileType::Student
-        );
-    }
-
-    public function substitutes()
-    {
-        return $this->competitorProfiles()->where(
-            'type',
-            CompetitorProfileType::SubstituteStudent
-        );
     }
 
     public function school()
@@ -67,6 +35,14 @@ class Team extends BaseModel
         return $this->competitorProfiles()->where(
             'type',
             CompetitorProfileType::Teacher
+        );
+    }
+
+    public function competitorProfiles()
+    {
+        return $this->belongsToMany(
+            CompetitorProfile::class,
+            'team_competitor_profile'
         );
     }
 
