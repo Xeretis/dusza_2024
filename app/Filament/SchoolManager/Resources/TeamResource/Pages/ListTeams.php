@@ -2,13 +2,20 @@
 
 namespace App\Filament\SchoolManager\Resources\TeamResource\Pages;
 
-use App\Enums\TeamStatus;
+use App\Filament\Exports\TeamExporter;
 use App\Filament\SchoolManager\Resources\TeamResource;
-use App\Models\Team;
 use Filament\Actions;
-use Filament\Forms\Components\FileUpload;
+use Filament\Actions\ExportAction;
+use Filament\Actions\Exports\ExportColumn;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Split;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
 use Filament\Resources\Pages\ListRecords;
-use Saade\FilamentAutograph\Forms\Components\SignaturePad;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Tables\Actions\ExportAction as ExportTableAction;
+use Filament\Tables\Actions\ExportBulkAction as ExportTableBulkAction;
 
 class ListTeams extends ListRecords
 {
@@ -17,7 +24,39 @@ class ListTeams extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-                // Actions\CreateAction::make(),
-            ];
+            Actions\ExportAction::make()
+                ->label('Csapatok exportálása')
+                ->modalHeading('Csapatok exportálása')
+                ->exporter(TeamExporter::class)
+                ->form(fn(ExportAction|ExportTableAction|ExportTableBulkAction $action): array => [
+                    ...($action->hasColumnMapping() ? [Fieldset::make(__('filament-actions::export.modal.form.columns.label'))
+                        ->columns(3)
+                        ->inlineLabel()
+                        ->schema(function () use ($action): array {
+                            return array_map(
+                                fn(ExportColumn $column): Split => Split::make([
+                                    Checkbox::make('isEnabled')
+                                        ->label(__('filament-actions::export.modal.form.columns.form.is_enabled.label', ['column' => $column->getName()]))
+                                        ->hiddenLabel()
+                                        ->default($column->isEnabledByDefault())
+                                        ->live()
+                                        ->grow(false),
+                                    TextInput::make('label')
+                                        ->label(__('filament-actions::export.modal.form.columns.form.label.label', ['column' => $column->getName()]))
+                                        ->hiddenLabel()
+                                        ->default($column->getLabel())
+                                        ->placeholder($column->getLabel())
+                                        ->disabled(fn(Get $get): bool => !$get('isEnabled'))
+                                ])
+                                    ->verticallyAlignCenter()
+                                    ->statePath($column->getName()),
+                                $action->getExporter()::getColumns(),
+                            );
+                        })
+                        ->statePath('columnMap')] : []),
+                    ...$action->getExporter()::getOptionsFormComponents(),
+                ])
+                ->modalWidth(MaxWidth::ScreenExtraLarge),
+        ];
     }
 }
