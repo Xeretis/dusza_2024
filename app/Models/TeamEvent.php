@@ -9,9 +9,9 @@ use App\Enums\TeamEventType;
 class TeamEvent extends BaseModel
 {
     public $casts = [
-        "type" => TeamEventType::class,
-        "status" => TeamEventStatus::class,
-        "scope" => TeamEventScope::class,
+        'type' => TeamEventType::class,
+        'status' => TeamEventStatus::class,
+        'scope' => TeamEventScope::class,
     ];
 
     protected $guarded = [];
@@ -23,6 +23,6 @@ class TeamEvent extends BaseModel
 
     public function response()
     {
-        return $this->hasMany(TeamEventResponse::class);
+        return $this->hasOne(TeamEventResponse::class);
     }
 }
