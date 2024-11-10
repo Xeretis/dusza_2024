@@ -6,7 +6,6 @@ use App\Livewire\PersonalInfo;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -41,7 +40,6 @@ class TeacherPanelProvider extends PanelProvider
                 in: app_path('Filament/Teacher/Pages'),
                 for: 'App\\Filament\\Teacher\\Pages'
             )
-            ->pages([Pages\Dashboard::class])
             ->discoverWidgets(
                 in: app_path('Filament/Teacher/Widgets'),
                 for: 'App\\Filament\\Teacher\\Widgets'

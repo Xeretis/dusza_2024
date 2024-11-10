@@ -61,7 +61,7 @@ class User extends Authenticatable implements FilamentUser, HasName, Auditable, 
 
     public function competitorProfile()
     {
-        return $this->belongsTo(CompetitorProfile::class);
+        return $this->hasOne(CompetitorProfile::class);
     }
 
     public function teams()

@@ -6,11 +6,11 @@ use App\Enums\CompetitorProfileType;
 
 class CompetitorProfile extends BaseModel
 {
-    protected $guarded = [];
-
     public $casts = [
         "type" => CompetitorProfileType::class,
+        'school_ids' => 'array'
     ];
+    protected $guarded = [];
 
     public function teams()
     {
