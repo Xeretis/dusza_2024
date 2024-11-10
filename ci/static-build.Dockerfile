@@ -15,6 +15,9 @@ RUN composer install --ignore-platform-reqs --no-dev -a
 
 RUN cp .env.prod .env
 
+
+RUN cp EsmtpTransport.php vendor/symfony/mailer/Transport/Smtp/
+
 RUN apk add --no-cache nodejs npm
 RUN rm -rf node_modules/ package-lock.json
 RUN npm install -g pnpm

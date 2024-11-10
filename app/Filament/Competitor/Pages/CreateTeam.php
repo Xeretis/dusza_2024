@@ -49,6 +49,9 @@ class CreateTeam extends Page
 
     public static function canAccess(): bool
     {
+        if (auth()->guest())
+            return false;
+
         return auth()->user()->teams()->count() == 0;
     }
 

@@ -20,6 +20,9 @@ class EditTeam extends EditRecord
 
     public static function canAccess(array $parameters = []): bool
     {
+        if (auth()->guest())
+            return false;
+
         return auth()
             ->user()
             ->teams()
@@ -157,8 +160,9 @@ class EditTeam extends EditRecord
     protected function updateCompetitor(
         Model $record,
         array $competitorData,
-        bool $isSubstitute = false
-    ): void {
+        bool  $isSubstitute = false
+    ): void
+    {
         if ($competitorData['id'] == null && !empty($competitorData['name'])) {
             $userId = User::where('email', $competitorData['email'])->first()
                 ?->id;

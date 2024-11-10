@@ -29,6 +29,9 @@ class Competition extends Page
 
     public static function canAccess(): bool
     {
+        if (auth()->guest())
+            return false;
+
         if (auth()->user()->role == UserRole::Teacher) {
             return CompetitorProfile::where('user_id', auth()->user()->id)->exists();
         }
