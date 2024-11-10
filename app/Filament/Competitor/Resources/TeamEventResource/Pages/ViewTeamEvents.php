@@ -226,7 +226,7 @@ class ViewTeamEvents extends Page
             'activity_title' => [
                 'modify_state' => function (array $state) {
                     if ($state['description'] == $state['event']) {
-                        $className = ::lower(
+                        $className = Str::lower(
                             Str::snake(class_basename($state['subject']), ' ')
                         );
                         $causerName =
