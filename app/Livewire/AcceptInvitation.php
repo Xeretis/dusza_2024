@@ -137,6 +137,14 @@ class AcceptInvitation extends SimplePage
             return null;
         }
 
+        if (User::where('email', $this->userInvite->email)->exists()) {
+            Notification::make()
+                ->danger()
+                ->title('Már létezik felhasználó ezzel az e-mail címmel!')
+                ->send();
+            return null;
+        }
+
         $user = $this->wrapInDatabaseTransaction(function () {
             $data = $this->form->getState();
 
@@ -178,7 +186,8 @@ class AcceptInvitation extends SimplePage
 
     protected function getRateLimitedNotification(
         TooManyRequestsException $exception
-    ): ?Notification {
+    ): ?Notification
+    {
         return Notification::make()
             ->title(
                 __(
@@ -195,15 +204,15 @@ class AcceptInvitation extends SimplePage
                     __(
                         'filament-panels::pages/auth/register.notifications.throttled'
                     ) ?:
-                    []
+                        []
                 )
                     ? __(
-                        'filament-panels::pages/auth/register.notifications.throttled.body',
-                        [
-                            'seconds' => $exception->secondsUntilAvailable,
-                            'minutes' => $exception->minutesUntilAvailable,
-                        ]
-                    )
+                    'filament-panels::pages/auth/register.notifications.throttled.body',
+                    [
+                        'seconds' => $exception->secondsUntilAvailable,
+                        'minutes' => $exception->minutesUntilAvailable,
+                    ]
+                )
                     : null
             )
             ->danger();

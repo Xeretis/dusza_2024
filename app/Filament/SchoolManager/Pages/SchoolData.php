@@ -7,18 +7,19 @@ use App\Models\Station;
 use App\Models\Street;
 use App\Models\UserInvite;
 use App\Notifications\UserInviteNotification;
+use DragonCode\Support\Facades\Helpers\Str;
 use Filament\Actions\Action;
-use Filament\Forms\Form;
-use Filament\Pages\Page;
 use Filament\Forms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 
 class SchoolData extends Page implements HasForms
 {
@@ -36,22 +37,13 @@ class SchoolData extends Page implements HasForms
 
     public array $data = [];
 
-    protected function getFormActions(): array
-    {
-        return [
-            Action::make('save')
-                ->label('Mentés')
-                ->submit('save'),
-        ];
-    }
-
     public function save()
     {
         $this->beginDatabaseTransaction();
 
         $this->validate();
 
-        $data = $this->form->toArray();
+        $data = $this->form->getState();
 
         $school = Auth::user()->school;
 
@@ -84,21 +76,19 @@ class SchoolData extends Page implements HasForms
 
         $this->commitDatabaseTransaction();
 
-        $this->notify('Az iskola adatai sikeresen frissítve lettek.');
-
-        $this->redirect(url()->current());
+        \Filament\Notifications\Notification::make()
+            ->success()
+            ->title('Iskola adatai sikeresen frissítve!')
+            ->send();
     }
 
     public function mount(): void
     {
         $this->fillForm();
-        $this->form->columns(1);
     }
 
     protected function fillForm(): void
     {
-        $this->callHook('beforeFill');
-
         $school = Auth::user()->school;
 
         if (!$school) {
@@ -117,13 +107,11 @@ class SchoolData extends Page implements HasForms
         ];
 
         $this->form->fill($this->data);
-
-        $this->callHook('afterFill');
     }
 
     public function form(Form $form): Form
     {
-        return $form->schema($this->getFormSchema())->columns(1);
+        return $form->schema($this->getFormSchema())->statePath('data')->columns(1);
     }
 
     protected function getFormSchema(): array
@@ -206,11 +194,20 @@ class SchoolData extends Page implements HasForms
                         ->required()
                         ->maxLength(255),
                     Forms\Components\Toggle::make('invite')
-                        ->label('Felhasználó meghívása')
-                        ->default(true)
+                        ->label('Meghívó újraküldése')
+                        ->default(false)
                         ->required(),
                 ])
                 ->columns(),
+        ];
+    }
+
+    protected function getFormActions(): array
+    {
+        return [
+            Action::make('save')
+                ->label('Mentés')
+                ->submit('save'),
         ];
     }
 }
