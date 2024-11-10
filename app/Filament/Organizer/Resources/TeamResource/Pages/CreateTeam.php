@@ -46,9 +46,8 @@ class CreateTeam extends CreateRecord
     private function createCompetitorProfile(
         array $competitorData,
         Model $teamModel,
-        bool  $isSubstitute = false
-    ): void
-    {
+        bool $isSubstitute = false
+    ): void {
         if (!empty($competitorData['name'])) {
             $userId = User::where('email', $competitorData['email'])->first()
                 ?->id;
@@ -72,7 +71,7 @@ class CreateTeam extends CreateRecord
 
                 if ($competitorData['invite'] ?? false) {
                     $inv = UserInvite::create([
-                        'role' => UserRole::Teacher,
+                        'role' => UserRole::Competitor,
                         'email' => $competitorProfile['email'],
                         'token' => Str::random(64),
                         'competitor_profile_id' => $competitorProfile->id,

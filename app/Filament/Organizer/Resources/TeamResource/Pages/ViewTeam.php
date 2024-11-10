@@ -68,6 +68,15 @@ class ViewTeam extends ViewRecord
                         ->label('Üzenet')
                         ->required(),
                 ])
+                ->disabled(
+                    fn(Team $record) => $record->status ===
+                        TeamStatus::Inactive ||
+                        $record
+                            ->events()
+                            ->where('type', TeamEventType::AmendRequest)
+                            ->where('status', TeamEventStatus::Pending)
+                            ->exists()
+                )
                 ->action(function (array $data, Team $record, $livewire) {
                     $event = TeamEvent::create([
                         'message' => $data['message'],
