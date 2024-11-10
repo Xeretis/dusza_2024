@@ -24,11 +24,14 @@ class CreateCompetitorProfile extends Page
     protected static string $layout = 'filament-panels::components.layout.simple';
     protected static string $view = 'filament.teacher.pages.create-competitor-profile';
     protected static ?string $title = 'Add meg az adataid!';
-    protected ?string $subheading = 'Ahhoz, hogy a diákok megtaláljanak, vagy hogy csapatot hozzhass létre, előbb meg kell adnod pár dolgot magadról.';
     public array $data;
+    protected ?string $subheading = 'Ahhoz, hogy a diákok megtaláljanak, vagy hogy csapatot hozzhass létre, előbb meg kell adnod pár dolgot magadról.';
 
     public static function canAccess(): bool
     {
+        if (auth()->guest())
+            return false;
+
         return CompetitorProfile::where('user_id', auth()->id())->doesntExist();
     }
 

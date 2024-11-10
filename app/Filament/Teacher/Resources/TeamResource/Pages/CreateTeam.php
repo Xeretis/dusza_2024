@@ -22,6 +22,9 @@ class CreateTeam extends CreateRecord
 
     public static function canAccess(array $parameters = []): bool
     {
+        if (auth()->guest())
+            return false;
+
         $competitionSettings = app(CompetitionSettings::class);
         $canCreate = $competitionSettings->registration_deadline->isFuture() && $competitionSettings->registration_cancelled_at == null;
         return CompetitorProfile::where('user_id', auth()->id())->exists() && $canCreate;

@@ -12,6 +12,9 @@ class ViewTeam extends ViewRecord
 
     public static function canAccess(array $parameters = []): bool
     {
+        if (auth()->guest())
+            return false;
+
         return auth()->user()->teams()
             ->where('teams.id', $parameters['record']->id)
             ->exists();

@@ -14,6 +14,9 @@ class ListTeams extends ListRecords
 
     public static function canAccess(array $parameters = []): bool
     {
+        if (auth()->guest())
+            return false;
+
         return CompetitorProfile::where('user_id', auth()->id())->exists();
     }
 

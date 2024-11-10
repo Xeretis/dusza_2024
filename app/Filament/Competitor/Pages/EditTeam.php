@@ -430,6 +430,9 @@ class EditTeam extends Page
 
     public static function canAccess(): bool
     {
+        if (auth()->guest())
+            return false;
+
         return auth()
                 ->user()
                 ->teams()
