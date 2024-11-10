@@ -9,8 +9,8 @@ use App\Models\CompetitorProfile;
 use App\Models\User;
 use App\Models\UserInvite;
 use App\Notifications\UserInviteNotification;
+use App\Settings\CompetitionSettings;
 use DragonCode\Support\Facades\Helpers\Str;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +22,9 @@ class CreateTeam extends CreateRecord
 
     public static function canAccess(array $parameters = []): bool
     {
-        return CompetitorProfile::where('user_id', auth()->id())->exists();
+        $competitionSettings = app(CompetitionSettings::class);
+        $canCreate = $competitionSettings->registration_deadline->isFuture() && $competitionSettings->registration_cancelled_at == null;
+        return CompetitorProfile::where('user_id', auth()->id())->exists() && $canCreate;
     }
 
     protected function handleRecordCreation(array $data): Model
@@ -49,7 +51,7 @@ class CreateTeam extends CreateRecord
 
     private function ensureTeacherIsIncluded(array &$data): void
     {
-        $filteredTeachers = array_filter($data['teachers'], function($item) {
+        $filteredTeachers = array_filter($data['teachers'], function ($item) {
             return isset($item['id']) && $item['id'] === auth()->user()->competitorProfile->id;
         });
 

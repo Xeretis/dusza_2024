@@ -12,6 +12,7 @@ use App\Models\Team;
 use App\Models\User;
 use App\Models\UserInvite;
 use App\Notifications\UserInviteNotification;
+use App\Settings\CompetitionSettings;
 use DragonCode\Support\Facades\Helpers\Str;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -43,6 +44,8 @@ class CreateTeam extends Page
     protected static string $view = 'filament.competitor.pages.create-team';
     protected static ?string $title = 'Hozz létre egy csapatot!';
     public array $data;
+
+    public bool $canCreate;
 
     public static function canAccess(): bool
     {
@@ -273,6 +276,14 @@ class CreateTeam extends Page
 
     public function create()
     {
+        if (!$this->canCreate) {
+            \Filament\Notifications\Notification::make()
+                ->danger()
+                ->title('Nem hozhatsz létre csapatot!')
+                ->send();
+            return;
+        }
+
         $data = $this->form->getState();
 
         $model = Team::create([
@@ -336,6 +347,8 @@ class CreateTeam extends Page
 
     public function mount()
     {
+        $competitionSettings = app(CompetitionSettings::class);
+        $this->canCreate = $competitionSettings->registration_deadline->isFuture() && $competitionSettings->registration_cancelled_at == null;
         $this->form->fill();
     }
 
@@ -359,7 +372,7 @@ class CreateTeam extends Page
 
     public function getMaxWidth(): MaxWidth|string|null
     {
-        return MaxWidth::SevenExtraLarge;
+        return $this->canCreate ? MaxWidth::SevenExtraLarge : null;
     }
 
     protected function getFormActions(): array
