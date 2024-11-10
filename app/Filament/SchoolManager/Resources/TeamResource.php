@@ -26,6 +26,8 @@ class TeamResource extends Resource
 
     protected static ?string $pluralLabel = 'Csapatok';
 
+    protected static ?string $navigationGroup = 'Jelentkezések';
+
     public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist
@@ -34,6 +36,9 @@ class TeamResource extends Resource
                     Grid::make(1)->schema([
                         Section::make([
                             TextEntry::make('name')->label('Név'),
+                            TextEntry::make('status')
+                                ->label('Státusz')
+                                ->badge(),
                             TextEntry::make('category.name')
                                 ->label('Kategória')
                                 ->badge(),
@@ -42,7 +47,7 @@ class TeamResource extends Resource
                             ),
                             TextEntry::make('school.name')->label('Iskola'),
                         ])
-                            ->columns()
+                            ->columns(3)
                             ->grow(),
                     ]),
                     Section::make([

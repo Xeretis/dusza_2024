@@ -6,13 +6,11 @@ use App\Enums\UserRole;
 use App\Filament\SchoolManager\Resources\UserResource\Pages;
 use App\Filament\SchoolManager\Resources\UserResource\RelationManagers;
 use App\Models\User;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class UserResource extends Resource
 {
@@ -23,6 +21,8 @@ class UserResource extends Resource
     protected static ?string $label = 'felhasználó';
 
     protected static ?string $pluralLabel = 'felhasználók';
+
+    protected static ?string $navigationGroup = 'Iskolai';
 
     public static function form(Form $form): Form
     {
@@ -76,8 +76,8 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-                //
-            ];
+            //
+        ];
     }
 
     public static function getPages(): array

@@ -10,10 +10,8 @@ use App\Filament\Organizer\Resources\TeamResource;
 use App\Models\Team;
 use App\Models\TeamEvent;
 use App\Notifications\AmendRequestNotification;
-use Barryvdh\Debugbar\Facade;
 use Filament\Actions;
 use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\Notification as FacadesNotification;
@@ -26,9 +24,9 @@ class ViewTeam extends ViewRecord
     {
         return [
             Actions\Action::make('forceActive')
-                ->label('Aktiválás kényszerítése')
+                ->label('Elfogadás kényszerítése')
                 ->tooltip(
-                    'A csapat aktiválásának kényszerítése. Minden korábbi kérvényt figyelmen kívül hagy.'
+                    'A csapat elfogadásának kényszerítése. Minden korábbi kérvényt figyelmen kívül hagy.'
                 )
                 ->color('danger')
                 ->requiresConfirmation()
@@ -37,7 +35,7 @@ class ViewTeam extends ViewRecord
                     $record->save();
 
                     TeamEvent::create([
-                        'message' => 'A csapat aktiválása kényszerítve lett.',
+                        'message' => 'A csapat elfogadása kényszerítve lett.',
                         'team_id' => $record->id,
                         'scope' => TeamEventScope::Organizer,
                         'type' => TeamEventType::Approval,
@@ -68,7 +66,16 @@ class ViewTeam extends ViewRecord
                         ->label('Üzenet')
                         ->required(),
                 ])
-                ->action(function (array $data, Team $record, $livewire) {
+                ->disabled(
+                    fn(Team $record) => $record->status ===
+                        TeamStatus::Inactive ||
+                        $record
+                            ->events()
+                            ->where('type', TeamEventType::AmendRequest)
+                            ->where('status', TeamEventStatus::Pending)
+                            ->exists()
+                )
+                ->action(function (array $data, Team $record) {
                     $event = TeamEvent::create([
                         'message' => $data['message'],
                         'team_id' => $record->id,

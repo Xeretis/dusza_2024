@@ -34,7 +34,7 @@ class CommonPanelProvider extends PanelProvider
             ->registration(Register::class)
             ->passwordReset()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Blue,
             ])
             ->discoverResources(
                 in: app_path('Filament/Common/Resources'),

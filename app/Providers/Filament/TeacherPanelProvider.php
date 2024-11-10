@@ -2,7 +2,9 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Competition;
 use App\Livewire\PersonalInfo;
+use App\Livewire\ProfileInfo;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -31,7 +33,7 @@ class TeacherPanelProvider extends PanelProvider
             ->databaseNotifications()
             ->viteTheme('resources/css/filament/teacher/theme.css')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Teal,
             ])
             ->discoverResources(
                 in: app_path('Filament/Teacher/Resources'),
@@ -45,12 +47,16 @@ class TeacherPanelProvider extends PanelProvider
                 in: app_path('Filament/Teacher/Widgets'),
                 for: 'App\\Filament\\Teacher\\Widgets'
             )
+            ->pages([
+                Competition::class
+            ])
             ->plugins([
                 KnowledgeBasePlugin::make(),
                 BreezyCore::make()
                     ->myProfile()
                     ->myProfileComponents([
                         'personal_info' => PersonalInfo::class,
+                        ProfileInfo::class
                     ])
                     ->enableTwoFactorAuthentication(),
             ])

@@ -6,7 +6,6 @@ export default {
         './app/Filament/**/*.php',
         './resources/views/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
-        './vendor/jaocero/activity-timeline/resources/views/**/*.blade.php',
         './vendor/codewithdennis/filament-simple-alert/resources/**/*.blade.php',
     ],
     theme: {
@@ -21,8 +20,8 @@ export default {
             },
             keyframes: {
                 bgpankf: {
-                    '0%': { backgroundPosition: '0% center' },
-                    '100%': { backgroundPosition: '-200% center' },
+                    '0%': {backgroundPosition: '0% center'},
+                    '100%': {backgroundPosition: '-200% center'},
                 },
             },
             animation: {
@@ -30,4 +29,7 @@ export default {
             },
         },
     },
+    plugins: [
+        require('@tailwindcss/typography'),
+    ]
 };

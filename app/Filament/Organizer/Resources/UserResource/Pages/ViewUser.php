@@ -5,7 +5,6 @@ namespace App\Filament\Organizer\Resources\UserResource\Pages;
 use App\Filament\Organizer\Resources\UserResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 use STS\FilamentImpersonate\Pages\Actions\Impersonate;
 
 class ViewUser extends ViewRecord
@@ -17,6 +16,7 @@ class ViewUser extends ViewRecord
         return [
             Impersonate::make()
                 ->label("Megszemélyesítés")
+                ->color('gray')
                 ->redirectTo(route("filament.common.home")),
             Actions\EditAction::make(),
         ];
