@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Livewire\PersonalInfo;
+use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Guava\FilamentKnowledgeBase\Filament\Panels\KnowledgeBasePanel;
@@ -21,6 +22,9 @@ class AppServiceProvider extends ServiceProvider
             fn(KnowledgeBasePanel $panel) => $panel
                 ->viteTheme('resources/css/filament/common/theme.css')
                 ->pages([])
+                ->colors([
+                    'primary' => Color::Blue
+                ])
                 ->guestAccess()
         );
 
