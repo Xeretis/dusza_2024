@@ -80,6 +80,7 @@ class CreateCompetitorProfile extends Page
                 ->native(false)
                 ->minItems(1)
                 ->required()
+                ->dehydrateStateUsing(fn($state) => collect($state)->map(fn($e) => intval($e))->toArray())
         ])->statePath('data');
     }
 
