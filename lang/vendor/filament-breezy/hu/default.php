@@ -57,7 +57,7 @@ return [
     'profile' => [
         'account' => 'Fiók',
         'profile' => 'Fiók',
-        'my_profile' => 'Saját profil',
+        'my_profile' => 'Saját fiók',
         'subheading' => 'A saját felhasználói fiókod kezelése',
         'personal_info' => [
             'heading' => 'Fiók információk',
