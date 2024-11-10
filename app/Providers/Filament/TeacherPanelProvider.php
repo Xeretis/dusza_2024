@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Competition;
 use App\Livewire\PersonalInfo;
 use App\Livewire\ProfileInfo;
 use Filament\Http\Middleware\Authenticate;
@@ -46,6 +47,9 @@ class TeacherPanelProvider extends PanelProvider
                 in: app_path('Filament/Teacher/Widgets'),
                 for: 'App\\Filament\\Teacher\\Widgets'
             )
+            ->pages([
+                Competition::class
+            ])
             ->plugins([
                 KnowledgeBasePlugin::make(),
                 BreezyCore::make()

@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Competition;
 use App\Livewire\PersonalInfo;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -41,7 +42,10 @@ class SchoolManagerPanelProvider extends PanelProvider
                 in: app_path('Filament/SchoolManager/Pages'),
                 for: 'App\\Filament\\SchoolManager\\Pages'
             )
-            ->pages([Pages\Dashboard::class])
+            ->pages([
+                Pages\Dashboard::class,
+                Competition::class
+            ])
             ->discoverWidgets(
                 in: app_path('Filament/SchoolManager/Widgets'),
                 for: 'App\\Filament\\SchoolManager\\Widgets'

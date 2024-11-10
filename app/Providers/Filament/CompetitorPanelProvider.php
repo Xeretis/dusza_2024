@@ -2,12 +2,12 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Competition;
 use App\Livewire\PersonalInfo;
 use App\Livewire\ProfileInfo;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -43,7 +43,9 @@ class CompetitorPanelProvider extends PanelProvider
                 in: app_path('Filament/Competitor/Pages'),
                 for: 'App\\Filament\\Competitor\\Pages'
             )
-            ->pages([Pages\Dashboard::class])
+            ->pages([
+                Competition::class
+            ])
             ->discoverWidgets(
                 in: app_path('Filament/Competitor/Widgets'),
                 for: 'App\\Filament\\Competitor\\Widgets'

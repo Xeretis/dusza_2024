@@ -20,8 +20,8 @@ export default {
             },
             keyframes: {
                 bgpankf: {
-                    '0%': { backgroundPosition: '0% center' },
-                    '100%': { backgroundPosition: '-200% center' },
+                    '0%': {backgroundPosition: '0% center'},
+                    '100%': {backgroundPosition: '-200% center'},
                 },
             },
             animation: {
@@ -29,4 +29,7 @@ export default {
             },
         },
     },
+    plugins: [
+        require('@tailwindcss/typography'),
+    ]
 };
