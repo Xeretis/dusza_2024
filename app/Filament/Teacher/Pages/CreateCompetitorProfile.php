@@ -19,18 +19,13 @@ use Filament\Pages\Page;
 
 class CreateCompetitorProfile extends Page
 {
-    use HasMaxWidth;
-    use HasTopbar;
-    use InteractsWithFormActions;
-    use CanUseDatabaseTransactions;
+    use HasMaxWidth, HasTopbar, InteractsWithFormActions, CanUseDatabaseTransactions;
 
     protected static string $layout = 'filament-panels::components.layout.simple';
-
     protected static string $view = 'filament.teacher.pages.create-competitor-profile';
-
     protected static ?string $title = 'Add meg az adataid!';
-    public array $data;
     protected ?string $subheading = 'Ahhoz, hogy a diákok megtaláljanak, vagy hogy csapatot hozzhass létre, előbb meg kell adnod pár dolgot magadról.';
+    public array $data;
 
     public static function canAccess(): bool
     {

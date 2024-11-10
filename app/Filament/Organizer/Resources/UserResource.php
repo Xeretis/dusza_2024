@@ -161,14 +161,14 @@ class UserResource extends Resource
                     ->relationship('school', 'name'),
                 Tables\Filters\TernaryFilter::make('email_verified_at')
                     ->label('E-mail megerősítve')
-                    ->queries(
+                    ->queries( // Üdvözlömm a zsűrit
                         true: fn(Builder $query) => $query->whereNotNull(
                             'email_verified_at'
                         ),
                         false: fn(Builder $query) => $query->whereNull(
                             'email_verified_at'
                         ),
-                        blank: fn(Builder $query) => $query // In this example, we do not want to filter the query when it is blank.
+                        blank: fn(Builder $query) => $query
                     ),
             ])
             ->actions([
