@@ -47,6 +47,16 @@ class CompetitorProfilesRelationManager extends RelationManager
                     ->copyable()
                     ->placeholder('Nem létezik a felhasználó'),
             ])
+            ->actions([
+                Tables\Actions\ViewAction::make()
+                    ->url(
+                        fn($record) => route(
+                            'filament.organizer.resources.users.view',
+                            $record->user_id
+                        )
+                    )
+                    ->hidden(fn($record) => !$record->user),
+            ])
             ->defaultSort('type');
     }
 }

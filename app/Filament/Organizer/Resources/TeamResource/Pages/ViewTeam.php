@@ -15,6 +15,8 @@ use Filament\Forms\Components\MarkdownEditor;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\Notification as FacadesNotification;
+use Illuminate\Support\Facades\Storage;
+use Joaopaulolndev\FilamentPdfViewer\Forms\Components\PdfViewerField;
 
 class ViewTeam extends ViewRecord
 {
@@ -23,6 +25,24 @@ class ViewTeam extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('viewPdf')
+                ->label('Jelentkezési lap / Aláírás megtekintése')
+                ->color('gray')
+                ->hidden(
+                    fn(Team $record) => $record->status === TeamStatus::Inactive
+                )
+                ->form([
+                    PdfViewerField::make('accept_artifact_path')
+                        ->label('Jelentkezési lap / Aláírás')
+                        ->required()
+                        ->fileUrl(
+                            fn(Team $record) => Storage::disk('public')->url(
+                                $record->accept_artifact_path
+                            )
+                        )
+                        ->disabled(),
+                ])
+                ->modalSubmitAction(false),
             Actions\Action::make('forceActive')
                 ->label('Elfogadás kényszerítése')
                 ->tooltip(
