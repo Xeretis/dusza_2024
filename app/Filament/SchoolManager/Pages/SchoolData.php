@@ -23,18 +23,12 @@ use Illuminate\Support\Facades\Notification;
 
 class SchoolData extends Page implements HasForms
 {
-    use InteractsWithFormActions,
-        CanUseDatabaseTransactions,
-        InteractsWithForms;
+    use InteractsWithFormActions, CanUseDatabaseTransactions, InteractsWithForms;
 
     protected static ?string $navigationIcon = 'heroicon-o-pencil';
-
     protected static string $view = 'filament.school-manager.pages.school-data';
-
     protected static ?string $navigationLabel = 'Iskola adatai';
-
     protected static ?string $title = 'Iskola adatai';
-
     protected static ?string $navigationGroup = 'Iskolai';
 
     public array $data = [];
@@ -42,38 +36,18 @@ class SchoolData extends Page implements HasForms
     public function save()
     {
         $this->beginDatabaseTransaction();
-
         $this->validate();
-
         $data = $this->form->getState();
-
         $school = Auth::user()->school;
 
         if (!$school) {
             abort(404);
         }
 
-        $school->update([
-            'name' => $data['name'],
-            'zip' => $data['zip'],
-            'city' => $data['city'],
-            'state' => $data['state'],
-            'street' => $data['street'],
-            'contact_name' => $data['contact_name'],
-            'contact_email' => $data['contact_email'],
-        ]);
+        $school->update($this->getSchoolData($data));
 
         if ($data['invite']) {
-            $inv = UserInvite::create([
-                'role' => UserRole::SchoolManager,
-                'email' => $school->contact_email,
-                'token' => Str::random(64),
-                'school_id' => $school->id,
-            ]);
-
-            Notification::route('mail', $school->contact_email)->notify(
-                new UserInviteNotification($inv->token)
-            );
+            $this->sendInvite($school);
         }
 
         $this->commitDatabaseTransaction();
@@ -82,6 +56,33 @@ class SchoolData extends Page implements HasForms
             ->success()
             ->title('Iskola adatai sikeresen frissítve!')
             ->send();
+    }
+
+    protected function getSchoolData(array $data): array
+    {
+        return [
+            'name' => $data['name'],
+            'zip' => $data['zip'],
+            'city' => $data['city'],
+            'state' => $data['state'],
+            'street' => $data['street'],
+            'contact_name' => $data['contact_name'],
+            'contact_email' => $data['contact_email'],
+        ];
+    }
+
+    protected function sendInvite($school)
+    {
+        $inv = UserInvite::create([
+            'role' => UserRole::SchoolManager,
+            'email' => $school->contact_email,
+            'token' => Str::random(64),
+            'school_id' => $school->id,
+        ]);
+
+        Notification::route('mail', $school->contact_email)->notify(
+            new UserInviteNotification($inv->token)
+        );
     }
 
     public function mount(): void
@@ -97,7 +98,13 @@ class SchoolData extends Page implements HasForms
             abort(404);
         }
 
-        $this->data = [
+        $this->data = $this->getSchoolDataArray($school);
+        $this->form->fill($this->data);
+    }
+
+    protected function getSchoolDataArray($school): array
+    {
+        return [
             'name' => $school->name,
             'zip' => $school->zip,
             'city' => $school->city,
@@ -107,8 +114,6 @@ class SchoolData extends Page implements HasForms
             'contact_email' => $school->contact_email,
             'invite' => true,
         ];
-
-        $this->form->fill($this->data);
     }
 
     public function form(Form $form): Form
@@ -127,83 +132,91 @@ class SchoolData extends Page implements HasForms
                 ->required()
                 ->maxLength(255),
             Forms\Components\Fieldset::make('Cím')
-                ->schema([
-                    Forms\Components\TextInput::make('zip')
-                        ->label('Irányítószám')
-                        ->required()
-                        ->mask('9999')
-                        ->placeholder('0000')
-                        ->maxLength(255)
-                        ->live()
-                        ->afterStateUpdated(function (Get $get, Set $set) {
-                            $zip = $get('zip');
-                            $station = Station::whereZip($zip)->first();
-                            if ($station) {
-                                $set('city', $station->city);
-                                $set('state', $station->state);
-                            }
-                        }),
-                    Forms\Components\TextInput::make('city')
-                        ->label('Város')
-                        ->required()
-                        ->live()
-                        ->afterStateUpdated(function (Get $get, Set $set) {
-                            $city = $get('city');
-                            $station = Station::whereCity($city)->first();
-                            if ($station) {
-                                $set('zip', $station->zip);
-                                $set('state', $station->state);
-                            }
-                        })
-                        ->live()
-                        ->datalist(function (Get $get) {
-                            return Station::whereLike(
-                                'city',
-                                '%' . $get('city') . '%'
-                            )
-                                ->take(10)
-                                ->pluck('city')
-                                ->unique();
-                        })
-                        ->maxLength(255),
-                    Forms\Components\TextInput::make('state')
-                        ->label('Vármegye')
-                        ->required()
-                        ->live()
-                        ->maxLength(255),
-                    Forms\Components\TextInput::make('street')
-                        ->label('Utca, házszám')
-                        ->required()
-                        ->datalist(function (Get $get) {
-                            $zip = $get('zip');
-                            return Street::whereZip($zip)
-                                ->whereNotIn('zip', [''])
-                                ->whereLike('name', '%' . $get('street') . '%')
-                                ->take(10)
-                                ->pluck('name')
-                                ->unique();
-                        })
-                        ->live()
-                        ->maxLength(255),
-                ])
+                ->schema($this->getAddressSchema())
                 ->columns(),
             Forms\Components\Fieldset::make('A kapcsolattartó adatai')
-                ->schema([
-                    Forms\Components\TextInput::make('contact_name')
-                        ->label('Kapcsolattartó neve')
-                        ->required()
-                        ->maxLength(255),
-                    Forms\Components\TextInput::make('contact_email')
-                        ->label('Kapcsolattartó e-mail címe')
-                        ->email()
-                        ->required()
-                        ->maxLength(255),
-                    Forms\Components\Toggle::make('invite')
-                        ->label('Meghívó újraküldése')
-                        ->default(false)
-                        ->required(),
-                ])
+                ->schema($this->getContactSchema())
                 ->columns(),
+        ];
+    }
+
+    protected function getAddressSchema(): array
+    {
+        return [
+            Forms\Components\TextInput::make('zip')
+                ->label('Irányítószám')
+                ->required()
+                ->mask('9999')
+                ->placeholder('0000')
+                ->maxLength(255)
+                ->live()
+                ->afterStateUpdated(fn(Get $get, Set $set) => $this->updateAddressState($get, $set, 'zip', 'city', 'state')),
+            Forms\Components\TextInput::make('city')
+                ->label('Város')
+                ->required()
+                ->live()
+                ->afterStateUpdated(fn(Get $get, Set $set) => $this->updateAddressState($get, $set, 'city', 'zip', 'state'))
+                ->datalist(fn(Get $get) => $this->getCityDatalist($get))
+                ->maxLength(255),
+            Forms\Components\TextInput::make('state')
+                ->label('Vármegye')
+                ->required()
+                ->live()
+                ->maxLength(255),
+            Forms\Components\TextInput::make('street')
+                ->label('Utca, házszám')
+                ->required()
+                ->datalist(fn(Get $get) => $this->getStreetDatalist($get))
+                ->live()
+                ->maxLength(255),
+        ];
+    }
+
+    protected function updateAddressState(Get $get, Set $set, string $source, string $target1, string $target2): void
+    {
+        $value = $get($source);
+        $station = Station::where($source, $value)->first();
+        if ($station) {
+            $set($target1, $station->$target1);
+            $set($target2, $station->$target2);
+        }
+    }
+
+    protected function getCityDatalist(Get $get)
+    {
+        return Station::whereLike('city', '%' . $get('city') . '%')
+            ->take(10)
+            ->pluck('city')
+            ->unique();
+    }
+
+    protected function getStreetDatalist(Get $get)
+    {
+        $zip = $get('zip');
+        return Street::whereZip($zip)
+            ->whereNotIn('zip', [''])
+            ->whereLike('name', '%' . $get('street') . '%')
+            ->take(10)
+            ->pluck('name')
+            ->unique();
+    }
+
+    protected function getContactSchema(): array
+    {
+        return [
+            Forms\Components\TextInput::make('contact_name')
+                ->label('Kapcsolattartó neve')
+                ->required()
+                ->maxLength(255),
+            Forms\Components\TextInput::make('contact_email')
+                ->label('Kapcsolattartó e-mail címe')
+                ->email()
+                ->required()
+                ->maxLength(255),
+            Forms\Components\Toggle::make('invite')
+                ->label('Meghívó újraküldése')
+                ->default(false)
+                ->required(),
         ];
     }
 
