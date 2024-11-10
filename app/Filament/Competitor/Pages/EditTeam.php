@@ -45,6 +45,8 @@ class EditTeam extends Page
 
     protected static string $view = 'filament.competitor.pages.edit-team';
     protected static ?string $title = 'Csapat szerkesztése';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    protected static ?int $navigationSort = 2;
     public array $data;
 
     public function form(Form $form): Form
@@ -105,9 +107,10 @@ class EditTeam extends Page
     private static function competitorSection(
         string $label,
         string $competitorKey,
-        bool $isSubstitute = false,
-        bool $self = false
-    ) {
+        bool   $isSubstitute = false,
+        bool   $self = false
+    )
+    {
         return Fieldset::make($label)->schema([
             Hidden::make("{$competitorKey}.id")->default(null),
             TextInput::make("{$competitorKey}.name")
@@ -355,9 +358,10 @@ class EditTeam extends Page
     protected function updateCompetitor(
         Model $record,
         array $competitorData,
-        bool $isSubstitute = false,
-        bool $self = false
-    ): void {
+        bool  $isSubstitute = false,
+        bool  $self = false
+    ): void
+    {
         if ($competitorData['id'] == null && !empty($competitorData['name'])) {
             $userId = User::where('email', $competitorData['email'])->first()
                 ?->id;
@@ -424,9 +428,9 @@ class EditTeam extends Page
     public static function canAccess(): bool
     {
         return auth()
-            ->user()
-            ->teams()
-            ->count() == 1;
+                ->user()
+                ->teams()
+                ->count() == 1;
     }
 
     protected function mutateFormDataBeforeFill(array $data): array
@@ -545,10 +549,11 @@ class EditTeam extends Page
 
     private function createCompetitorProfile(
         array $competitorData,
-        Team $teamModel,
-        bool $isSubstitute = false,
-        bool $self = false
-    ): void {
+        Team  $teamModel,
+        bool  $isSubstitute = false,
+        bool  $self = false
+    ): void
+    {
         $userId = $self
             ? null
             : User::where('email', $competitorData['email'])->first()?->id;
