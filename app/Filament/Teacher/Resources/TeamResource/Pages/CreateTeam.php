@@ -20,6 +20,11 @@ class CreateTeam extends CreateRecord
 {
     protected static string $resource = TeamResource::class;
 
+    public static function canAccess(array $parameters = []): bool
+    {
+        return CompetitorProfile::where('user_id', auth()->id())->exists();
+    }
+
     protected function handleRecordCreation(array $data): Model
     {
         $filteredTeachers = array_filter($data['teachers'], function($item) {
