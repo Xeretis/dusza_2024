@@ -87,17 +87,17 @@ return [
             ],
             'setup_key' => 'Beállítási kulcs',
             'not_enabled' => [
-                'title' => 'Nem engedélyezted a kétfaktoros hitelesítést',
-                'description' => 'Ha a kétfaktoros hitelesítés engedélyezve van, a rendszer a belépés után egy egyszeri, idő alapú kódot kér. Ezt a kódot a telefonod hitelesítő alkalmazásából (pl.: Google Authenticator) kérheted le.',
+                'title' => 'Nincs bekapcsolva a kétfaktoros hitelesítés',
+                'description' => 'Ha a kétfaktoros hitelesítést bekapcsolod, a rendszer a belépés után egy egyszeri, idő alapú kódot kér. Ezt a kódot a telefonod hitelesítő alkalmazásából (pl.: Google Authenticator) kérheted le.',
             ],
             'finish_enabling' => [
                 'title' => 'Kétfaktoros hitelesítés bekapcsolásának befejezése',
                 'description' => 'A kétfaktoros hitelesítés bekapcsolásának befejezéséhez olvasd be a következő QR-kódot telefonod hitelesítő alkalmazásával (pl.: Google Authenticator), vagy add meg a beállítási kulcsot, és végül add meg itt a generált egyszeri kódot.',
             ],
             'enabled' => [
-                'title' => 'Bekapcsoltad a kétfaktoros hitelesítést!',
+                'title' => 'Be van kapcsolva a kétfaktoros hitelesítés',
                 'description' => 'A kétfaktoros hitelesítés mostmár be van kapcsolva. Olvasd be a következő QR-kódot telefonod hitelesítő alkalmazásával, vagy írd be a beállítási kulcsot.',
-                'store_codes' => 'Tárold ezeket a helyreállítási kódokat egy biztonságos helyen (pl.: egy papírra leírva). Ezek egyike szükséges a fiókodhoz való hozzáférés helyreállításához, ha a hitelesítési eszközöd elveszik.',
+                'store_codes' => 'Tárold ezeket a helyreállítási kódokat egy biztonságos helyen (pl.: egy külön papírlapra leírva). Ezek egyike szükséges a fiókodhoz való hozzáférés helyreállításához, ha a hitelesítési eszközöd elveszik.',
                 'show_codes' => 'Helyreállítási kódok megjelenítése',
                 'hide_codes' => 'Helyreállítási kódok elrejtése',
             ],
@@ -121,7 +121,7 @@ return [
         ],
     ],
     'clipboard' => [
-        'link' => 'Link másolása',
+        'link' => 'Kódok másolása',
         'tooltip' => 'Kimásolva!',
     ],
     'fields' => [
