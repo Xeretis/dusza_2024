@@ -50,6 +50,7 @@ class SchoolManagerPanelProvider extends PanelProvider
                 in: app_path('Filament/SchoolManager/Widgets'),
                 for: 'App\\Filament\\SchoolManager\\Widgets'
             )
+            ->databaseNotifications()
             ->plugins([KnowledgeBasePlugin::make(), BreezyCore::make()->myProfile()->myProfileComponents([
                 'personal_info' => PersonalInfo::class
             ])->enableTwoFactorAuthentication(),])

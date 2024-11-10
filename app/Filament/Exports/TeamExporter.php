@@ -50,22 +50,22 @@ class TeamExporter extends Exporter
 
     private static function getCompetitorState(Team $record, int $index, string $attribute, string $default = 'NEM LÉTEZIK'): string
     {
-        return $record->competitorProfiles->where('type', CompetitorProfileType::Student)->sortBy('id')->values()->get($index, (object) [$attribute => $default])->$attribute;
+        return $record->competitorProfiles->where('type', CompetitorProfileType::Student)->sortBy('id')->values()->get($index, (object)[$attribute => $default])?->$attribute ?? $default;
     }
 
     private static function getCompetitorUsername(Team $record, int $index): string
     {
-        return $record->competitorProfiles->where('type', CompetitorProfileType::Student)->sortBy('id')->values()->get($index, (object) ['user' => ['username' => 'NEM LÉTEZIK']])->user?->username ?? 'NEM LÉTEZIK A FELHASZNÁLÓ';
+        return $record->competitorProfiles->where('type', CompetitorProfileType::Student)->sortBy('id')->values()->get($index, (object)['user' => ['username' => 'NEM LÉTEZIK']])?->user?->username ?? 'NEM LÉTEZIK A FELHASZNÁLÓ';
     }
 
     private static function getSubstituteState(Team $record, string $attribute, string $default = 'NEM LÉTEZIK'): string
     {
-        return $record->competitorProfiles->where('type', CompetitorProfileType::SubstituteStudent)->sortBy('id')->values()->get(0, (object) [$attribute => $default])->$attribute;
+        return $record->competitorProfiles->where('type', CompetitorProfileType::SubstituteStudent)->sortBy('id')->values()->get(0, (object)[$attribute => $default])?->$attribute ?? $default;
     }
 
     private static function getSubstituteUsername(Team $record): string
     {
-        return $record->competitorProfiles->where('type', CompetitorProfileType::SubstituteStudent)->sortBy('id')->values()->get(0, (object) ['user' => ['username' => 'NEM LÉTEZIK']])->user?->username ?? 'NEM LÉTEZIK A FELHASZNÁLÓ';
+        return $record->competitorProfiles->where('type', CompetitorProfileType::SubstituteStudent)->sortBy('id')->values()->get(0, (object)['user' => ['username' => 'NEM LÉTEZIK']])?->user?->username ?? 'NEM LÉTEZIK A FELHASZNÁLÓ';
     }
 
     private static function getTeacherNames(Team $record): string
