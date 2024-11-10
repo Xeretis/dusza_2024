@@ -80,8 +80,6 @@ class SchoolData extends Page implements HasForms
             ->success()
             ->title('Iskola adatai sikeresen frissítve!')
             ->send();
-        
-        $this->redirect(url()->current());
     }
 
     public function mount(): void
@@ -196,8 +194,8 @@ class SchoolData extends Page implements HasForms
                         ->required()
                         ->maxLength(255),
                     Forms\Components\Toggle::make('invite')
-                        ->label('Felhasználó meghívása')
-                        ->default(true)
+                        ->label('Meghívó újraküldése')
+                        ->default(false)
                         ->required(),
                 ])
                 ->columns(),
