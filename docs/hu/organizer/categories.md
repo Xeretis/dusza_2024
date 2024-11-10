@@ -2,7 +2,7 @@
 group: Szervező
 title: Kategóriák
 icon: heroicon-o-tag
-order: 6
+order: 7
 ---
 
 ## Kategóriák részleg
