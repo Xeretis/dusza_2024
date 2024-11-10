@@ -5,7 +5,7 @@ namespace App\Filament\Organizer\Resources;
 use App\Enums\CompetitorProfileType;
 use App\Enums\UserRole;
 use App\Filament\Organizer\Resources\TeamResource\Pages;
-use App\Filament\Organizer\Resources\TeamResource\RelationManagers;
+use App\Filament\Teacher\Resources\TeamResource\RelationManagers;
 use App\Livewire\TeamEventsActivitySection;
 use App\Models\CompetitorProfile;
 use App\Models\Team;
@@ -94,7 +94,8 @@ class TeamResource extends Resource
     private static function competitorSection(
         string $label,
         string $competitorKey
-    ) {
+    )
+    {
         return Forms\Components\Fieldset::make($label)->schema([
             Forms\Components\Hidden::make("{$competitorKey}.id")->default(null),
             Forms\Components\TextInput::make("{$competitorKey}.name")

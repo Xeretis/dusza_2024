@@ -86,7 +86,8 @@ class TeamResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\CompetitorProfilesRelationManager::class,
+            RelationManagers\EventsRelationManager::class
         ];
     }
 
