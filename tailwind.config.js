@@ -1,4 +1,4 @@
-import preset from './vendor/filament/support/tailwind.config.preset'
+import preset from './vendor/filament/support/tailwind.config.preset';
 
 export default {
     presets: [preset],
@@ -7,13 +7,14 @@ export default {
         './resources/views/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
         './vendor/jaocero/activity-timeline/resources/views/**/*.blade.php',
+        './vendor/codewithdennis/filament-simple-alert/resources/**/*.blade.php',
     ],
     theme: {
         extend: {
             colors: {
-                'purple': 'rgb(123, 31, 162)',
-                'violet': 'rgb(103, 58, 183)',
-                'pink': 'rgb(244, 143, 177)',
+                purple: 'rgb(123, 31, 162)',
+                violet: 'rgb(103, 58, 183)',
+                pink: 'rgb(244, 143, 177)',
             },
             backgroundSize: {
                 '200%': '200%',
@@ -29,4 +30,4 @@ export default {
             },
         },
     },
-}
+};

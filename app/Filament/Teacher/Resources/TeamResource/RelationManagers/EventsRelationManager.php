@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Filament\Organizer\Resources\TeamResource\RelationManagers;
+namespace App\Filament\Teacher\Resources\TeamResource\RelationManagers;
 
 use App\Enums\TeamEventScope;
 use App\Enums\TeamEventStatus;
 use App\Enums\TeamEventType;
-use App\Filament\Organizer\Resources\TeamResource\Pages\ViewTeam;
+use App\Filament\Teacher\Resources\TeamResource\Pages\ViewTeam;
 use App\Models\TeamEvent;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\TextEntry;
@@ -22,10 +22,9 @@ class EventsRelationManager extends RelationManager
 
     protected static ?string $title = 'Események';
 
-    public static function canViewForRecord(
-        Model $ownerRecord,
-        string $pageClass
-    ): bool {
+
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
         return $pageClass == ViewTeam::class;
     }
 
@@ -36,57 +35,49 @@ class EventsRelationManager extends RelationManager
 
     public function infolist(Infolist $infolist): Infolist
     {
-        return $infolist
-            ->schema([
-                TextEntry::make('type')
-                    ->label('Típus')
-                    ->formatStateUsing(function ($state) {
-                        return match ($state) {
-                            TeamEventType::AmendRequest => 'Módosítási kérvény',
-                            TeamEventType::Approval => 'Elfogadás',
-                        };
-                    }),
-                TextEntry::make('scope')
-                    ->label('Kezdeményező')
-                    ->formatStateUsing(function ($state) {
-                        return match ($state) {
-                            TeamEventScope::School => 'Iskola menedzser',
-                            TeamEventScope::Organizer => 'Szervező',
-                        };
-                    }),
-                TextEntry::make('status')
-                    ->label('Állapot')
-                    ->formatStateUsing(function ($state) {
-                        return match ($state) {
-                            TeamEventStatus::Pending => 'Folyamatban',
-                            TeamEventStatus::Approved => 'Elfogadva',
-                            TeamEventStatus::Rejected => 'Elutasítva',
-                        };
-                    })
-                    ->color(function ($state) {
-                        return match ($state) {
-                            TeamEventStatus::Pending => 'warning',
-                            TeamEventStatus::Approved => 'success',
-                            TeamEventStatus::Rejected => 'danger',
-                        };
-                    })
-                    ->badge(),
-                TextEntry::make('created_at')
-                    ->label('Létrehozva')
-                    ->dateTime(),
-                Grid::make(1)->schema([
-                    TextEntry::make('message')
-                        ->html(true)
-                        ->formatStateUsing(function ($state) {
-                            return str($state)
-                                ->markdown()
-                                ->sanitizeHtml()
-                                ->toHtmlString();
-                        })
-                        ->label('Üzenet'),
-                ]),
-            ])
-            ->columns();
+        return $infolist->schema([
+            TextEntry::make('type')
+                ->label('Típus')
+                ->formatStateUsing(function ($state) {
+                    return match ($state) {
+                        TeamEventType::AmendRequest => 'Módosítási kérvény',
+                        TeamEventType::Approval => 'Elfogadás'
+                    };
+                }),
+            TextEntry::make('scope')
+                ->label('Kezdeményező')
+                ->formatStateUsing(function ($state) {
+                    return match ($state) {
+                        TeamEventScope::School => 'Iskola menedzser',
+                        TeamEventScope::Organizer => 'Szervező'
+                    };
+                }),
+            TextEntry::make('status')
+                ->label('Állapot')
+                ->formatStateUsing(function ($state) {
+                    return match ($state) {
+                        TeamEventStatus::Pending => 'Folyamatban',
+                        TeamEventStatus::Approved => 'Elfogadva',
+                        TeamEventStatus::Rejected => 'Elutasítva',
+                    };
+                })
+                ->color(function ($state) {
+                    return match ($state) {
+                        TeamEventStatus::Pending => 'warning',
+                        TeamEventStatus::Approved => 'success',
+                        TeamEventStatus::Rejected => 'danger',
+                    };
+                })
+                ->badge(),
+            TextEntry::make('created_at')
+                ->label('Létrehozva')
+                ->dateTime(),
+            Grid::make(1)->schema([
+                TextEntry::make('message')
+                    ->label('Üzenet')
+            ]),
+
+        ])->columns();
     }
 
     public function table(Table $table): Table
@@ -96,7 +87,7 @@ class EventsRelationManager extends RelationManager
             ->recordTitle(function (TeamEvent $record) {
                 return match ($record->type) {
                     TeamEventType::AmendRequest => 'Módosítási kérvény',
-                    TeamEventType::Approval => 'Elfogadás',
+                    TeamEventType::Approval => 'Elfogadás'
                 };
             })
             ->columns([
@@ -105,7 +96,7 @@ class EventsRelationManager extends RelationManager
                     ->formatStateUsing(function ($state) {
                         return match ($state) {
                             TeamEventType::AmendRequest => 'Módosítási kérvény',
-                            TeamEventType::Approval => 'Elfogadás',
+                            TeamEventType::Approval => 'Elfogadás'
                         };
                     })
                     ->sortable(),
@@ -115,7 +106,7 @@ class EventsRelationManager extends RelationManager
                     ->formatStateUsing(function ($state) {
                         return match ($state) {
                             TeamEventScope::School => 'Iskola menedzser',
-                            TeamEventScope::Organizer => 'Szervező',
+                            TeamEventScope::Organizer => 'Szervező'
                         };
                     })
                     ->sortable(),
@@ -140,9 +131,11 @@ class EventsRelationManager extends RelationManager
                     ->label('Létrehozva')
                     ->date()
                     ->since()
-                    ->sortable(),
+                    ->sortable()
             ])
-            ->actions([Tables\Actions\ViewAction::make()])
+            ->actions([
+                Tables\Actions\ViewAction::make(),
+            ])
             ->poll('5s');
     }
 }

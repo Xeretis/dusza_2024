@@ -27,6 +27,7 @@ class CompetitorPanelProvider extends PanelProvider
         return $panel
             ->id('competitor')
             ->path('competitor')
+            ->databaseNotifications()
             ->spa()
             ->emailVerification()
             ->viteTheme('resources/css/filament/competitor/theme.css')
@@ -46,9 +47,15 @@ class CompetitorPanelProvider extends PanelProvider
                 in: app_path('Filament/Competitor/Widgets'),
                 for: 'App\\Filament\\Competitor\\Widgets'
             )
-            ->plugins([KnowledgeBasePlugin::make(), BreezyCore::make()->myProfile()->myProfileComponents([
-                'personal_info' => PersonalInfo::class
-            ])->enableTwoFactorAuthentication(),])
+            ->plugins([
+                KnowledgeBasePlugin::make(),
+                BreezyCore::make()
+                    ->myProfile()
+                    ->myProfileComponents([
+                        'personal_info' => PersonalInfo::class,
+                    ])
+                    ->enableTwoFactorAuthentication(),
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

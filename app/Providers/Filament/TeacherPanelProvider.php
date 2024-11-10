@@ -28,6 +28,7 @@ class TeacherPanelProvider extends PanelProvider
             ->path('teacher')
             ->spa()
             ->emailVerification()
+            ->databaseNotifications()
             ->viteTheme('resources/css/filament/teacher/theme.css')
             ->colors([
                 'primary' => Color::Amber,
@@ -44,9 +45,14 @@ class TeacherPanelProvider extends PanelProvider
                 in: app_path('Filament/Teacher/Widgets'),
                 for: 'App\\Filament\\Teacher\\Widgets'
             )
-            ->plugins([KnowledgeBasePlugin::make(), BreezyCore::make()->myProfile()->myProfileComponents([
-                'personal_info' => PersonalInfo::class
-            ])->enableTwoFactorAuthentication(),
+            ->plugins([
+                KnowledgeBasePlugin::make(),
+                BreezyCore::make()
+                    ->myProfile()
+                    ->myProfileComponents([
+                        'personal_info' => PersonalInfo::class,
+                    ])
+                    ->enableTwoFactorAuthentication(),
             ])
             ->middleware([
                 EncryptCookies::class,
