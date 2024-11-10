@@ -33,7 +33,7 @@ class CompetitorPanelProvider extends PanelProvider
             ->emailVerification()
             ->viteTheme('resources/css/filament/competitor/theme.css')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Sky,
             ])
             ->discoverResources(
                 in: app_path('Filament/Competitor/Resources'),

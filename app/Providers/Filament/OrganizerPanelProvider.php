@@ -31,7 +31,7 @@ class OrganizerPanelProvider extends PanelProvider
             ->emailVerification()
             ->viteTheme('resources/css/filament/organizer/theme.css')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Orange,
             ])
             ->databaseNotifications()
             ->discoverResources(
