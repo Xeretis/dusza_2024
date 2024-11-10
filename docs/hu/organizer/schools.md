@@ -6,7 +6,7 @@ order: 5
 ---
 
 ## Iskolák részleg
-Az iskolák részlegen megtekinthetjük és szerkeszthetüjk az iskolákat, emellet új iskolákat hozhatunk létre
+Az iskolák részlegen megtekinthetjük és szerkeszthetüjk az iskolákat, emellet új iskolákat hozhatunk létre.
 
 ### Új iskola
 ![my image](/public/img/organizer/new_school.png)
@@ -14,7 +14,7 @@ A szükséges információk megadása után a **Létrehozás** vagy a **Mentés 
 
 > **Extra Funkció**
 > 
-> Az irányítószám és a város mezők automatikusan kitöltődnek az egyik megadása után
+> Az irányítószám és a város mezők automatikusan kitöltődnek az egyik megadása után.
 
 ### Iskolák táblázat
 ![my image](/public/img/organizer/school_table.png)
