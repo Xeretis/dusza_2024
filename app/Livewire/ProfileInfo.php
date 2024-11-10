@@ -64,7 +64,7 @@ class ProfileInfo extends MyProfileComponent
         $this->competitorProfile->update($data);
         Notification::make()
             ->success()
-            ->title('Profil sikeresen frissítve!')
+            ->title('Személyes adatok sikeresen frissítve!')
             ->send();
     }
 }
